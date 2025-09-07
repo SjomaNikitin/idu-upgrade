@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+  <script>
+    async function sendData() {
+      try {
+        const res = await fetch("http://127.0.0.1:8787/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: "S.n.30132", password: "-iWyHKkGuQ" }),
+        });
+        const text = await res.text(); // not json() yet, to see raw output if it errors
+        console.log("status:", res.status);
+        console.log("body:", text);
+      } catch (e) {
+        console.error("fetch error:", e);
+      }
+    }
+    sendData();
+
+  </script>
+</body>
+
+</html>

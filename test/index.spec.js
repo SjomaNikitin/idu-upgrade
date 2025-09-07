@@ -17,4 +17,10 @@ describe('Hello World worker', () => {
 		const response = await SELF.fetch('http://example.com');
 		expect(await response.text()).toMatchInlineSnapshot(`"Hello World!"`);
 	});
+
+	it('dfetet', async () => {
+		const result = fn1("<div class='my-header' width='440'></div>")
+		// expect($(result).width).toBe(900)
+		expect(result).toEqual("<div class='my-header' width='900'></div>")
+	})
 });
