@@ -8,6 +8,7 @@
 		"start": "wrangler dev",
 		"test": "vitest"
 	},
+	"type": "module",
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.8.19",
 		"vitest": "~3.2.0",
