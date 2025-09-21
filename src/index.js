@@ -32,7 +32,7 @@ export default {
 		const body = needsBody ? await request.arrayBuffer() : undefined;
 
 		if (url.pathname === "/my-styles.css") {
-			const css = `body{background-color:aqua} `;
+			const css = `body[path="/users/sign_in"] #container { background-color: blue; } `;
 			return new Response(css, {
 				headers: {
 					"content-type": "text/css; charset=utf-8",
@@ -77,9 +77,10 @@ export default {
 
 		// Stream-inject <link> into <head> and return the transformed *original* response
 		return new HTMLRewriter()
-			.on("head", {
+			.on("body", {
 				element(el) {
-					el.append(`\n<link rel="stylesheet" href="${cssHref}" />\n`, { html: true });
+					el.setAttribute("path", path);
+					el.append(`\n<link rel="stylesheet" href=/my-styles.css />\n`, { html: true });
 				}
 			})
 			.transform(resp);
