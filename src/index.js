@@ -8,7 +8,7 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-// import * as cheerio from 'cheerio'
+import * as cheerio from 'cheerio'
 
 export function manipulateWithMainPage(html) {
 	const $ = cheerio.load(html);
@@ -30,6 +30,17 @@ export default {
 		const path = url.pathname;
 		const needsBody = request.method !== 'GET' && request.method !== 'HEAD';
 		const body = needsBody ? await request.arrayBuffer() : undefined;
+
+		if (url.pathname === "/my-styles.css") {
+			const css = `body{background-color:aqua} `;
+			return new Response(css, {
+				headers: {
+					"content-type": "text/css; charset=utf-8",
+					"cache-control": "public, max-age=3600"
+				}
+			});
+		}
+
 		let res = await fetch('https://s35.idu.edu.pl' + path, {
 			method: request.method,
 			headers: request.headers,
@@ -59,8 +70,20 @@ export default {
 			resp.headers.set('Set-Cookie', setCookies);
 		}
 
-		return resp;
-		// return res;
+		const ct = resp.headers.get("content-type") || "";
+		if (!ct.includes("text/html")) return resp;
+
+		const cssHref = "/my-styles.css"; // or an absolute URL
+
+		// Stream-inject <link> into <head> and return the transformed *original* response
+		return new HTMLRewriter()
+			.on("head", {
+				element(el) {
+					el.append(`\n<link rel="stylesheet" href="${cssHref}" />\n`, { html: true });
+				}
+			})
+			.transform(resp);
+		// return resp;
 	}
 };
 
