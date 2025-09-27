@@ -32,7 +32,126 @@ export default {
 		const body = needsBody ? await request.arrayBuffer() : undefined;
 
 		if (url.pathname === "/my-styles.css") {
-			const css = `body[path="/users/sign_in"] #container { background-color: blue; } `;
+			const css = `
+@media screen and (orientation: portrait) {
+\tbody[path="/users/sign_in"] #container {
+\t\twidth: 100%;
+\t\theight: 100%;
+\t\tleft: 0;
+\t\ttop: 0;
+\t\tmargin-top: 0;
+\t\tmargin-left: 0;
+\t\tz-index: -1;
+\t}
+\tbody[path="/users/sign_in"] .module{
+\t\tposition: absolute;
+\t\ttop: 50%;
+\t\ttransform: translateY(-50%);
+\t\twidth: 100%;
+\t\tdisplay: grid;
+\t\tplace-items: center;
+\t}
+\tbody[path="/users/sign_in"] label{
+\t\tfont-size: 3rem;
+\t}
+\tbody[path="/users/sign_in"] input{
+\t\tfont-size: 2rem;
+\t\twidth: 50%;
+\t\tpadding: 1rem 1rem;
+\t}
+\tbody[path="/users/sign_in"] .field{
+\t\tdisplay: flex;
+\t\tjustify-content: center;
+\t\twidth: 750px;
+\t\theight: 100px;
+\t\tgap: 10rem;
+\t\talign-items: center;
+\t}
+\tbody[path="/users/sign_in"] .remember-me{
+\t\tfont-size: 2rem;
+\t\tmargin-left: 0;
+\t\tdisplay: flex;
+\t\tjustify-content: center;
+\t\twidth: 750px;
+\t\theight: 100px;
+\t\talign-items: center;
+\t}
+\tbody[path="/users/sign_in"] .remember-me input{
+\t\twidth: 10%;
+\t\theight: 25%;
+\t}
+\tbody[path="/users/sign_in"] .actions{
+\t\tdisplay: flex;
+\t\tjustify-content: center;
+\t\twidth: 750px;
+\t\theight: 100px;
+\t\tgap: 10rem;
+\t\talign-items: center;
+\t}
+\tbody[path="/users/sign_in"] div.actions input{
+\t\tmargin: 0;
+\t}
+\tbody[path="/users/sign_in"] form{
+\t\tjustify-content: center;
+\t\tdisplay: grid;
+\t\tplace-items: center;
+\t\tmargin: 0;
+\t\tpadding: 0;
+\t\twidth: 750px;
+\t\tborder: black solid 2px;
+\t\tborder-radius: 20px;
+\t}
+\tbody[path="/users/sign_in"] html{
+\t\tfont-size: 16px;
+\t}
+\tbody[path="/users/sign_in"]{
+\t\toverflow: hidden;
+\t}
+\tbody[path="/users/sign_in"] h1{
+\t\tfont-size: 3rem;
+\t\ttext-align: center;
+\t}
+\tbody[path="/users/sign_in"] label[for="nothing"]{
+\t\tdisplay: none;
+\t}
+\tbody[path="/users/sign_in"] #password-recovery{
+\t\twidth: 750px;
+\t\theight: 150px;
+\t\tpadding-left: 0;
+\t\tdisplay: grid;
+\t\tplace-items: center;
+\t}
+\tbody[path="/users/sign_in"] a{
+\t\tfont-size: 2rem;
+\t}
+\tbody[path="/users/sign_in"] .idu-notice{
+\t\tfont-size: 0.75rem;
+\t\topacity: 1;
+\t\tanimation: fadeAway 1s ease forwards;
+\t\tanimation-delay: 2s;
+\t}
+
+\t@keyframes fadeAway {
+\t\tto {
+\t\t\topacity: 0;
+\t\t}
+\t}
+\tbody[path="/users/sign_in"] #top{
+\t\theight: 100px;
+\t\tdisplay: flex;
+\t\talign-items: center;
+\t}
+\tbody[path="/users/sign_in"] #language{
+\t\tpadding: 0;
+\t}
+\tbody[path="/users/sign_in"] img{
+\t\twidth: 150px;
+\t\theight: auto;
+\t}
+}
+`;
+// 			let res = await fetch('http://localhost:3002/styles.css',);
+// 			let css = await res.text();
 			return new Response(css, {
 				headers: {
 					"content-type": "text/css; charset=utf-8",
