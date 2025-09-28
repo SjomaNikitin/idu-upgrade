@@ -32,6 +32,9 @@
 		gap: 10rem;
 		align-items: center;
 	}
+	a, button, input, label, div {
+		touch-action: manipulation;
+	}
 	body[path="/users/sign_in"] .remember-me{
 		font-size: 2rem;
 		margin-left: 0;
@@ -66,7 +69,7 @@
 		border: black solid 2px;
 		border-radius: 20px;
 	}
-	body[path="/users/sign_in"] html{
+	html{
 		font-size: 16px;
 	}
 	body[path="/users/sign_in"]{
@@ -112,5 +115,15 @@
 	body[path="/users/sign_in"] img{
 		width: 150px;
 		height: auto;
+	}
+
+	body[path="/"] .no-menu #content .left-column{
+		width: 100%; !important;
+	}
+	body[path="/"] .no-menu #content .right-column{
+		width: 100%; !important;
+	}
+	body[path="/"] h3{
+		font-size: 2rem;
 	}
 }
