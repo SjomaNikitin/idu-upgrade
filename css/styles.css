@@ -196,8 +196,8 @@
 		gap: 0px;                 /* optional spacing between items */
 	}
 	body[path="/"] #account-actions{
-		font-size: 2rem;
-		height: 150px;
+		font-size: 1.9rem;
+		height: 100px;
 		display: flex;
 		justify-content: center;   /* center horizontally */
 		align-items: center;       /* center vertically (for single row height) */
@@ -214,7 +214,7 @@
 	}
 	body[path="/"] #top-selection {
 		display: block;
-		margin-top: 150px;
+		margin-top: 100px;
 		font-size: 2rem;
 	}
 	body[path="/"] #top-selection form {
@@ -236,10 +236,71 @@
 		padding: 0;
 		margin: 0;
 	}
-	body[path="/"] #footer{
+	#footer{
 		font-size: 2rem;
 	}
 	body[path="/"] div.schedule table img{
 		display: none;
+	}
+	body[path="/"] div.schedule table{
+		font-size: 1rem;
+	}
+	body[path="/"] div.schedule table span.subject{
+		font-size: 1rem; !important;
+		font-weight: bold;
+	}
+	body[path="/"] div.schedule table span.location{
+		font-size: 1rem; !important;
+		font-weight: bold;
+	}
+	body[path="/"] .message-container{
+		width: 150px;
+		height: 150px;
+		position: fixed;
+		background-color: rgba(255, 255, 255, 0.90);
+		border-radius: 100px;
+		left: 25px;
+		top: 25px;
+		box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.3);
+		transition: opacity 0.3s ease;
+		text-align: center;
+		line-height: 150px;
+	}
+	body[path="/"] .message-container svg{
+		vertical-align: middle;
+	}
+	body[path="/"] .news-container{
+		width: 150px;
+		height: 150px;
+		position: fixed;
+		background-color: rgba(255, 255, 255, 0.90);
+		border-radius: 100px;
+		right: 25px;
+		top: 25px;
+		box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.3);
+		transition: opacity 0.3s ease;
+		text-align: center;
+		line-height: 150px;
+	}
+	body[path="/"] .news-container svg{
+		vertical-align: middle;
+	}
+	#breadcrumbs{
+		font-size: 2rem;
+	}
+	.notification-number{
+		font-size: 3rem;
+		position: absolute;
+		right: 10px;
+		bottom: 10px;
+		height: 3rem;
+		width: 3rem;
+		text-align: center;
+		align-items: center;
+		line-height: 3rem;
+		/*color: #7c9ab7;*/
+		color: #54687c;
+		font-weight: bold;
+		text-shadow: -0px 0px 5px rgba(0, 0, 0, 1);
 	}
 }

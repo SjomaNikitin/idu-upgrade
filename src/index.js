@@ -45,6 +45,20 @@ export default {
 			});
 		}
 
+		if (url.pathname === "/content.js") {
+// 			const js = `
+//
+// `;
+			let res = await fetch('http://localhost:3002/content.js',);
+			let js = await res.text();
+			return new Response(js, {
+				headers: {
+					"content-type": "application/javascript; charset=utf-8",
+					"cache-control": "public, max-age=3600"
+				}
+			});
+		}
+
 		let res = await fetch('https://s35.idu.edu.pl' + path, {
 			method: request.method,
 			headers: request.headers,
@@ -64,7 +78,6 @@ export default {
 				.replace('https://www.idu.edu.pl', url.origin); // handles relative/absolute
 			resp.headers.set('Location', newLoc);
 		}
-		console.log('Location: ' + resp.headers.get('Location'));
 		let setCookies = resp.headers.get('Set-Cookie');
 		if (setCookies) {
 			setCookies = setCookies
@@ -93,7 +106,10 @@ export default {
 				element(el) {
 					el.setAttribute("path", path);
 					el.append(
-						`\n<link rel="stylesheet" href="/my-styles.css" />\n`,
+						`\n<link rel="stylesheet" href="/my-styles.css" />\n
+						<script type="module" src="/content.js"></script>
+						`,
+
 						{ html: true }
 					);
 				}

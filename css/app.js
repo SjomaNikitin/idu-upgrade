@@ -14,6 +14,11 @@ app.get("/styles.css", (req, res) => {
 	res.sendFile(path.join(__dirname, "styles.css"));
 });
 
+app.get("/content.js", (req, res) => {
+	res.type("application/javascript");
+	res.sendFile(path.join(__dirname, "content.js"));
+});
+
 app.listen(port, () => {
 	console.log(`CSS server running at http://localhost:${port}/styles.css`);
 });
