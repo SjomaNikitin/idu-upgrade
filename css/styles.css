@@ -195,17 +195,6 @@
 		flex-wrap: wrap;           /* allow items to wrap to next line if needed */
 		gap: 0px;                 /* optional spacing between items */
 	}
-	body[path="/"] #account-actions{
-		font-size: 1.9rem;
-		height: 100px;
-		display: flex;
-		justify-content: center;   /* center horizontally */
-		align-items: center;       /* center vertically (for single row height) */
-		flex-wrap: wrap;           /* allow items to wrap to next line if needed */
-		gap: 0px;
-		box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
-		border-radius: 15px;
-	}
 	body[path="/"] div.module:has(#unique-id26) {
 		display: none;
 	}
@@ -214,7 +203,7 @@
 	}
 	body[path="/"] #top-selection {
 		display: block;
-		margin-top: 100px;
+		margin-top: 150px;
 		font-size: 2rem;
 	}
 	body[path="/"] #top-selection form {
@@ -253,54 +242,48 @@
 		font-size: 1rem; !important;
 		font-weight: bold;
 	}
-	body[path="/"] .message-container{
-		width: 150px;
-		height: 150px;
-		position: fixed;
+	body[path="/"] .icon-container svg{
+		vertical-align: middle;
+		grid-area: 1 / 1;
+	}
+	body[path="/"] .icon-container{
+		width: 120px;
+		height: 120px;
 		background-color: rgba(255, 255, 255, 0.90);
 		border-radius: 100px;
-		left: 25px;
-		top: 25px;
 		box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.3);
 		transition: opacity 0.3s ease;
-		text-align: center;
-		line-height: 150px;
-	}
-	body[path="/"] .message-container svg{
-		vertical-align: middle;
-	}
-	body[path="/"] .news-container{
-		width: 150px;
-		height: 150px;
-		position: fixed;
-		background-color: rgba(255, 255, 255, 0.90);
-		border-radius: 100px;
-		right: 25px;
-		top: 25px;
-		box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.3);
-		transition: opacity 0.3s ease;
-		text-align: center;
-		line-height: 150px;
-	}
-	body[path="/"] .news-container svg{
-		vertical-align: middle;
+		line-height: 120px;
+		display: grid;
+		place-items: center;
+		align-items: center;
 	}
 	#breadcrumbs{
 		font-size: 2rem;
 	}
 	.notification-number{
-		font-size: 3rem;
-		position: absolute;
-		right: 10px;
-		bottom: 10px;
+		grid-area: 1 / 1;
+		justify-self: end;  /* right side */
+		align-self: end;
+		font-size: 2.5rem;
 		height: 3rem;
 		width: 3rem;
-		text-align: center;
-		align-items: center;
 		line-height: 3rem;
 		/*color: #7c9ab7;*/
-		color: #54687c;
+		color: red;
 		font-weight: bold;
-		text-shadow: -0px 0px 5px rgba(0, 0, 0, 1);
+		text-shadow: -0px 1px 5px rgba(0, 0, 0, 0.5);
+	}
+	body[path="/"] #account-actions{
+		font-size: 1.9rem;
+		display: grid;
+		height: 150px;
+		grid-auto-flow: column;         /* lays items out horizontally */
+		gap: 1rem;                      /* spacing between items */
+		justify-content: center;        /* center the whole row horizontally */
+		align-items: center;
+		box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.3);
+		border-radius: 15px;
+		padding: 0 1rem;
 	}
 }
