@@ -15,9 +15,9 @@
 		"wrangler": "^4.34.0"
 	},
 	"dependencies": {
-		"cheerio": "^1.1.2",
-		"express": "^5.1.0",
-		"node-fetch-cookies": "^2.1.1",
-		"tough-cookie": "^6.0.0"
+		"cheerio": "1.1.2",
+		"express": "5.1.0",
+		"node-fetch-cookies": "2.1.1",
+		"tough-cookie": "6.0.0"
 	}
 }

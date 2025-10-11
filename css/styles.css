@@ -142,7 +142,9 @@
 		width: 950px; !important;
 	}
 	body[path="/"] h3{
-		font-size: 3rem;
+		font-size: 3.5rem;
+		font-weight: bold;
+		text-align: center;
 	}
 	/*body[path="/"] div#account-actions{*/
 	/*	font-size: 1rem;*/
@@ -285,5 +287,11 @@
 		box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.3);
 		border-radius: 15px;
 		padding: 0 1rem;
+	}
+	body[path="/"] div.module a{
+		font-size: 3rem;
+	}
+	body[path="/"] div.module span{
+		font-size: 3rem;
 	}
 }
