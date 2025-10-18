@@ -294,4 +294,40 @@
 	body[path="/"] div.module span{
 		font-size: 3rem;
 	}
+	body[path="/"] tbody span a{
+		font-size: 1rem; !important;
+	}
+	body[path="/"] div.schedule{
+		overflow-x: auto !important;
+	}
+	body[path="/"] .schedule table tbody tr td:first-child{
+		position: sticky;
+		z-index: 10;
+		left: -1px;
+		background: white;
+		border-style: solid;
+		border-color: white;
+		border-width: 1px;
+	}
+	body[path="/"] thead :nth-child(2){
+		font-size: 3rem;
+	}
+	body[path="/"] thead :first-child :first-child:not(div){
+		position: sticky;
+		z-index: 10;
+		left: 0;
+		background: #e8e8e8;
+		border-style: solid;
+		border-color: white;
+		border-width: 1px;
+	}
+	body[path="/"] thead :nth-child(2) :first-child:not(b){
+		position: sticky;
+		z-index: 10;
+		left: 0;
+		background: #e8e8e8;
+		border-style: solid;
+		border-color: white;
+		border-width: 1px;
+	}
 }

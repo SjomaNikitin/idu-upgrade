@@ -56,12 +56,37 @@ if (window.location.pathname === "/") {
 </svg>
 	`);
 
+const tiptips = document.querySelectorAll("span.tiptip");
+tiptips.forEach(tiptip => {
+	if (tiptip.innerText[1] === "0") {
+		tiptip.innerText = "(0) 7:55-8:40"
+	}
+	if (tiptip.innerText[1] === "1") {
+		tiptip.innerText = "(1) 8:45-9:30"
+	}
+	if (tiptip.innerText[1] === "2") {
+		tiptip.innerText = "(2) 9:35-10:20"
+	}
+	if (tiptip.innerText[1] === "3") {
+		tiptip.innerText = "(3) 10:30-11:15"
+	}
+	if (tiptip.innerText[1] === "4") {
+		tiptip.innerText = "(4) 11:25-12:10"
+	}
+	if (tiptip.innerText[1] === "5") {
+		tiptip.innerText = "(5) 12:15-13:00"
+	}
+	if (tiptip.innerText[1] === "6") {
+		tiptip.innerText = "(6) 13:10-13:55"
+	}
+	if (tiptip.innerText[1] === "7") {
+		tiptip.innerText = "(7) 14:25-15:10"
+	}
+	if (tiptip.innerText[1] === "8") {
+		tiptip.innerText = "(8) 15:15-16:00"
+	}
 
-
-
-
-
-
+})
 }
 
 
