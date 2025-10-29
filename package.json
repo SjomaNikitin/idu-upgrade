@@ -4,15 +4,17 @@
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",
-		"dev": "wrangler dev",
-		"start": "wrangler dev",
+		"dev": "node dev-server.js",
+		"start": "node dev-server.js",
+		"dev:watch": "nodemon --ext js,css --watch src --watch css dev-server.js",
+		"release": "node scripts/release.js",
 		"test": "vitest"
 	},
 	"type": "module",
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.8.19",
-		"vitest": "~3.2.0",
-		"wrangler": "^4.34.0"
+		"esbuild": "^0.24.0",
+		"nodemon": "^3.1.0"
 	},
 	"dependencies": {
 		"cheerio": "1.1.2",
