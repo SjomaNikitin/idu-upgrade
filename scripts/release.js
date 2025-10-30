@@ -5,10 +5,10 @@ import { dirname, resolve } from 'node:path';
 
 const entry = 'src/worker.js';
 const outfile = 'dist/worker.js';
-const cssPath = 'css/styles.css';
 
 async function main() {
-  const css = await readFile(cssPath, 'utf8').catch(() => '');
+  const css = await readFile('css/styles.css', 'utf8').catch(() => '');
+  const js = await readFile('css/content.js', 'utf8').catch(() => '');
 
   await mkdir(dirname(resolve(outfile)), { recursive: true });
 
@@ -24,6 +24,7 @@ async function main() {
     legalComments: 'none',
     define: {
       CSS_TEXT: JSON.stringify(css),
+			JS_TEXT: JSON.stringify(js),
     },
     banner: {
       js: `/* Built ${new Date().toISOString()} */`,

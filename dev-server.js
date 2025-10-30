@@ -27,6 +27,8 @@ function toWebRequest(req) {
 
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     init.body = req; // stream body
+    // Node/undici requires duplex: 'half' when a Readable stream body is provided
+    init.duplex = 'half';
   }
 
   return new Request(url, init);

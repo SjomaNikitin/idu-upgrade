@@ -1,5 +1,19 @@
-if (window.location.pathname === "/") {
-	console.log("To hol szkolny :3")
+if (window.location.pathname === "/" && window.innerWidth < innerHeight) {
+
+	function closeAllTabs () {
+		localStorage.setItem("firstEnter", "1")
+		const switches = document.querySelectorAll("a.hide-me")
+		for (let i=0; i < switches.length; i++) {
+			switches[i].click();
+			console.log("clicked")
+		}
+	}
+	window.addEventListener("load", function() {
+		if(localStorage.getItem("firstEnter") !== "1"){
+			closeAllTabs()
+		}
+	})
+
 
 	function replaceWithIcon(elem, icon, num = null){
 		const cont = document.createElement("div");
