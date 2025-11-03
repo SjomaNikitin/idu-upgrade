@@ -141,19 +141,26 @@ export default {
 			'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\' https:; ' +
 			'style-src \'self\' \'unsafe-inline\' https:;'
 		);
+
+		// TODO: I removed references to path in CSS selectors and therefore, we may not need this logic at all.
+		const htmlPath = path; //path.includes('subjects') ? '/subjects' : path;
+		// noinspection HtmlUnknownTarget
+		const cssJsLinksHtml = '\n<link rel="stylesheet" href="/my-styles.css" />\n\n<script type="module" src="/content.js"></script>\n';
+		const metaViewport = `<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no" name="viewport">`;
+
 		// If running on Cloudflare (HTMLRewriter available), do streaming rewrite
 		if (typeof HTMLRewriter !== 'undefined') {
 			return new HTMLRewriter()
 				.on('head', {
 					element(el) {
-						el.append(`<meta content="user-scalable=no">`, { html: true });
+						el.append(metaViewport, { html: true });
 					}
 				})
 				.on('body', {
 					element(el) {
-						el.setAttribute('path', path);
+						el.setAttribute('path', htmlPath);
 						// noinspection HtmlUnknownTarget
-						el.append(`\n<link rel=\"stylesheet\" href=\"/my-styles.css\" />\n\n<script type=\"module\" src=\"/content.js\"></script>\n`, { html: true });
+						el.append(cssJsLinksHtml, { html: true });
 					}
 				})
 				.transform(resp);
@@ -163,18 +170,15 @@ export default {
 		const html = await resp.text();
 		const { load } = await import('cheerio');
 		const $ = load(html);
-		$('head').append('<meta content="user-scalable=no">');
+		$('head').append(metaViewport);
 		const $body = $('body');
-		$body.attr('path', path.includes('subjects') ? '/subjects' : path);
-		// noinspection HtmlUnknownTarget
-		$body.append('\n<link rel="stylesheet" href="/my-styles.css" />\n\n<script type="module" src="/content.js"></script>\n');
+		$body.attr('path', htmlPath);
+		$body.append(cssJsLinksHtml);
 
 		const newHtml = $.html();
-		const newHeaders = new Headers(resp.headers);
-		newHeaders.set('content-type', 'text/html; charset=utf-8');
-		newHeaders.delete('content-length');
-		newHeaders.delete('content-encoding');
-		return new Response(newHtml, { status: resp.status, statusText: resp.statusText, headers: newHeaders });
-		// return resp;
+		resp.headers.delete('content-length');
+		resp.headers.delete('content-encoding');
+		resp.headers.set('content-type', 'text/html; charset=utf-8');
+		return new Response(newHtml, { status: resp.status, statusText: resp.statusText, headers: resp.headers });
 	}
 };
