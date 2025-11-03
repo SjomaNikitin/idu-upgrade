@@ -141,6 +141,7 @@
 	body[path="/"] .no-menu #content .right-column{
 		width: 950px; !important;
 	}
+
 	body[path="/"] h3{
 		font-size: 3.5rem;
 		font-weight: bold;
@@ -329,5 +330,14 @@
 		border-style: solid;
 		border-color: white;
 		border-width: 1px;
+	}
+	body[path="/subjects"] .no-menu #content .left-column{
+		width: 950px; !important;
+	}
+	body[path="/subjects"] .no-menu #content .right-column{
+		width: 950px; !important;
+	}
+	body[path="/subjects"] td.thread-title{
+		font-size: 2rem;
 	}
 }

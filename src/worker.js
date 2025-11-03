@@ -38,9 +38,14 @@ async function getJsText() {
 export default {
   async fetch(request, env, ctx) {
 		const url = new URL(request.url);
-		const path = url.pathname;
+		let path = url.pathname;
 		const needsBody = request.method !== 'GET' && request.method !== 'HEAD';
 		const body = needsBody ? await request.arrayBuffer() : undefined;
+		const headers = new Headers(request.headers);
+		// Make sure browser cookies are forwarded to origin
+		if (request.headers.get("cookie")) {
+			headers.set("cookie", request.headers.get("cookie"));
+		}
 
 		if (url.pathname === '/my-styles.css') {
 			const css = await getCssText();
@@ -64,14 +69,15 @@ export default {
 			});
 		}
 
-		let res = await fetch('https://s35.idu.edu.pl' + path, {
+		let res = await fetch('https://s35.idu.edu.pl' + path + url.search, {
 			method: request.method,
-			headers: request.headers,
-			body: body,
-			credentials: request.credentials,
-			mode: request.mode,
+			headers: Object.fromEntries(
+				[...headers].filter(([key]) => key.toLowerCase() !== 'host' && key.toLowerCase() !== 'accept-encoding')
+			),
+			body,
 			redirect: 'manual'
 		});
+
 
 		// Clone upstream response into a mutable Response
 		const resp = new Response(res.body, {
@@ -88,13 +94,19 @@ export default {
 				.replace('https://www.idu.edu.pl', url.origin); // handles relative/absolute
 			resp.headers.set('Location', newLoc);
 		}
-		let setCookies = resp.headers.get('Set-Cookie');
-		if (setCookies) {
-			setCookies = setCookies
-				.replace('domain=.idu.edu.pl', 'domain=' + url.hostname)
-				.replace('domain=.idu.edu.pl', 'domain=' + url.hostname);
-
-			resp.headers.set('Set-Cookie', setCookies);
+		// Rewrite Set-Cookie domains and preserve multiple cookies
+		const cookieHeaders = [];
+		resp.headers.forEach((value, key) => {
+			if (key.toLowerCase() === 'set-cookie') cookieHeaders.push(value);
+		});
+		if (cookieHeaders.length > 0) {
+			resp.headers.delete('Set-Cookie');
+			for (let cookie of cookieHeaders) {
+				let rewritten = cookie
+					.replace(/domain=\.?idu\.edu\.pl/gi, 'Domain=' + url.hostname)
+					.replace(/domain=\.?s35\.idu\.edu\.pl/gi, 'Domain=' + url.hostname);
+				resp.headers.append('Set-Cookie', rewritten);
+			}
 		}
 
 		const ct = resp.headers.get("content-type") || "";
@@ -130,6 +142,7 @@ export default {
 		const html = await resp.text();
 		const { load } = await import('cheerio');
 		const $ = load(html);
+		if (path.includes("subjects")){path = "/subjects"}
 		$('head').append('<meta content="user-scalable=no">');
 		$('body').attr('path', path);
 		$('body').append('\n<link rel="stylesheet" href="/my-styles.css" />\n\n<script type="module" src="/content.js"></script>\n');
