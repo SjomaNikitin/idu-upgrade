@@ -1,6 +1,7 @@
 // In release builds, `CSS_TEXT` is injected by esbuild define.
 /* global CSS_TEXT */
 /* global JS_TEXT */
+/* global RELEASE_BUILD */
 
 const isWorkerRuntime = typeof WebSocketPair !== 'undefined' && typeof caches !== 'undefined';
 
@@ -167,18 +168,24 @@ export default {
 		}
 
 		// Fallback for Node dev: parse and modify HTML with cheerio
-		const html = await resp.text();
-		const { load } = await import('cheerio');
-		const $ = load(html);
-		$('head').append(metaViewport);
-		const $body = $('body');
-		$body.attr('path', htmlPath);
-		$body.append(cssJsLinksHtml);
+		// In release builds, this block is stripped by esbuild because RELEASE_BUILD is defined as true.
+		if (!(typeof RELEASE_BUILD !== 'undefined' && RELEASE_BUILD)) {
+			const html = await resp.text();
+			const { load } = await import('cheerio');
+			const $ = load(html);
+			$('head').append(metaViewport);
+			const $body = $('body');
+			$body.attr('path', htmlPath);
+			$body.append(cssJsLinksHtml);
 
-		const newHtml = $.html();
-		resp.headers.delete('content-length');
-		resp.headers.delete('content-encoding');
-		resp.headers.set('content-type', 'text/html; charset=utf-8');
-		return new Response(newHtml, { status: resp.status, statusText: resp.statusText, headers: resp.headers });
+			const newHtml = $.html();
+			resp.headers.delete('content-length');
+			resp.headers.delete('content-encoding');
+			resp.headers.set('content-type', 'text/html; charset=utf-8');
+			return new Response(newHtml, { status: resp.status, statusText: resp.statusText, headers: resp.headers });
+		}
+
+		// In release (or if cheerio path is disabled), just return the original response
+		return resp;
 	}
 };

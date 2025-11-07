@@ -1,6 +1,5 @@
 import { build } from 'esbuild';
-import { readFile } from 'node:fs/promises';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
 const entry = 'src/worker.js';
@@ -25,6 +24,7 @@ async function main() {
     define: {
       CSS_TEXT: JSON.stringify(css),
 			JS_TEXT: JSON.stringify(js),
+      RELEASE_BUILD: 'true',
     },
     banner: {
       js: `/* Built ${new Date().toISOString()} */`,
