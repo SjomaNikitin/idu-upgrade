@@ -3,6 +3,9 @@
 	--padding-1: 8px;
 	--padding-2: calc(var(--padding-1) * 2);
 	--padding-4: calc(var(--padding-1) * 4);
+	--mg: linear-gradient(90deg, rgba(0, 221, 255, 1) 0%, rgba(0, 13, 161, 1) 100%);
+	--mc: #0048aa;
+	--topmg: rgb(0, 81, 230);
 }
 
 /* Use media tag not to break desktop version */
@@ -12,12 +15,12 @@
 	}
 
 	html, body {
-		width: 100vw;
+		width: 100vw; !important;
 		max-width: 100vw;
 		font-size: var(--font-size);
 
 		& .container {
-			width: 100vw;
+			width: 100vw; !important;
 			max-width: 100vw;
 
 			& .span-24, .span-20 {
@@ -237,80 +240,125 @@
 		font-weight: bold;
 		font-size: 1.3rem;
 	}
+
+	body[path="/users/sign_in"] #container {
+		width: 100%;
+		height: 100%;
+		left: 0;
+		top: 0;
+		margin-top: 0;
+		margin-left: 0;
+		z-index: -1;
+	}
+
+	body[path="/users/sign_in"] .module{
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 100%;
+		display: grid;
+		place-items: center;
+	}
+	body[path="/users/sign_in"] label{
+		/*font-size: 3rem;*/
+	}
+	body[path="/users/sign_in"] input{
+		/*font-size: 2rem;*/
+		width: 50%;
+	}
+	body[path="/users/sign_in"] .field{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	body[path="/users/sign_in"] form{
+		justify-content: center;
+		display: grid;
+		place-items: center;
+		margin: 0;
+		width: 100%;
+		padding: 10%;
+	}
+
+		body[path="/users/sign_in"] .actions{
+			display: flex;
+			justify-content: center;
+			width: 75%;
+			align-items: center;
+		}
+
+	body[path="/users/sign_in"] .remember-me{
+		/*font-size: 2rem;*/
+		margin-left: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 1rem;
+	}
+	body[path="/users/sign_in"] .remember-me input{
+		width: 1rem;
+		aspect-ratio: 1 / 1;
+	}
+	label[for="user_password"]{
+		display: none;
+	}
+	label[for="user_login"]{
+		display: none;
+	}
+	label[for="nothing"]{
+		display: none;
+	}
+	body[path="/users/sign_in"] h1{
+		font-size: 2rem;
+	}
+	html body[path="/users/sign_in"] div.field input#user_login, input#user_password{
+		width: 75%;
+		height: 100%;
+		font-size: 1.5rem;
+		padding: 1rem;
+		margin: 0.5rem;
+		background-color: #ffffff;
+		border: 4px solid; /* required, sets border width */
+		border-image: var(--mg);
+		border-image-slice: 1;
+		border-radius: 5px;
+	}
+	body[path="/users/sign_in"] input[type="submit"]{
+		background: #00ddff;
+		background: var(--mg);
+		font-size: 1.5rem;
+		width: 75%;
+		padding: 1rem;
+		border-radius: 5px;
+		margin: 0.5rem;
+
+	}
+	#password-recovery{
+		padding: 0;
+	}
+	#password-recovery a{
+		font-size: 1rem;
+		color: var(--mc)
+	}
+
+	body[path="/users/sign_in"] #top{
+		background: var(--topmg)
+	}
 }
 
 
 /*@media screen and (orientation: portrait) {*/
-/*	body[path="/users/sign_in"] #container {*/
-/*		width: 100%;*/
-/*		height: 100%;*/
-/*		left: 0;*/
-/*		top: 0;*/
-/*		margin-top: 0;*/
-/*		margin-left: 0;*/
-/*		z-index: -1;*/
-/*	}*/
-/*	body[path="/users/sign_in"] .module{*/
-/*		position: absolute;*/
-/*		top: 50%;*/
-/*		transform: translateY(-50%);*/
-/*		width: 100%;*/
-/*		display: grid;*/
-/*		place-items: center;*/
-/*	}*/
-/*	body[path="/users/sign_in"] label{*/
-/*		!*font-size: 3rem;*!*/
-/*	}*/
-/*	body[path="/users/sign_in"] input{*/
-/*		!*font-size: 2rem;*!*/
-/*		width: 50%;*/
-/*		padding: 1rem 1rem;*/
-/*	}*/
-/*	body[path="/users/sign_in"] .field{*/
-/*		display: flex;*/
-/*		justify-content: center;*/
-/*		width: 750px;*/
-/*		height: 100px;*/
-/*		gap: 10rem;*/
-/*		align-items: center;*/
-/*	}*/
+
+
 /*	a, button, input, label, div {*/
 /*		touch-action: manipulation;*/
 /*	}*/
-/*	body[path="/users/sign_in"] .remember-me{*/
-/*		!*font-size: 2rem;*!*/
-/*		margin-left: 0;*/
-/*		display: flex;*/
-/*		justify-content: center;*/
-/*		width: 750px;*/
-/*		height: 100px;*/
-/*		align-items: center;*/
-/*	}*/
-/*	body[path="/users/sign_in"] .remember-me input{*/
-/*		width: 10%;*/
-/*		height: 25%;*/
-/*	}*/
-/*	body[path="/users/sign_in"] .actions{*/
-/*		display: flex;*/
-/*		justify-content: center;*/
-/*		width: 750px;*/
-/*		height: 100px;*/
-/*		gap: 10rem;*/
-/*		align-items: center;*/
-/*	}*/
+
+
 /*	body[path="/users/sign_in"] div.actions input{*/
 /*		margin: 0;*/
 /*	}*/
-/*	body[path="/users/sign_in"] form{*/
-/*		justify-content: center;*/
-/*		display: grid;*/
-/*		place-items: center;*/
-/*		margin: 0;*/
-/*		padding: 0;*/
-/*		width: 750px;*/
-/*		border: black solid 2px;*/
-/*		border-radius: 20px;*/
-/*	}*/
+
 /*	html{*/
 /*		font-size: 16px;*/
 /*	}*/

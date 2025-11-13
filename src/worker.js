@@ -142,7 +142,6 @@ export default {
 			'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\' https:; ' +
 			'style-src \'self\' \'unsafe-inline\' https:;'
 		);
-
 		// TODO: I removed references to path in CSS selectors and therefore, we may not need this logic at all.
 		const htmlPath = path; //path.includes('subjects') ? '/subjects' : path;
 		// noinspection HtmlUnknownTarget

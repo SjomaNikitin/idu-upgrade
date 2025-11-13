@@ -104,6 +104,11 @@
 			makeModulesShorter(document.querySelector("#unique-id14").parentElement);
 
 		}
+		if (document.querySelector("input#user_login")) {
+			document.querySelector("input#user_login").placeholder = "Login";
+			document.querySelector("input#user_password").placeholder = "Password";
+		}
+
 
 
 		let svgSize = "60%";
