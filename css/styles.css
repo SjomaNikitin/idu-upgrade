@@ -5,7 +5,7 @@
 	--padding-4: calc(var(--padding-1) * 4);
 	--mg: linear-gradient(90deg, rgba(0, 221, 255, 1) 0%, rgba(0, 13, 161, 1) 100%);
 	--mc: #0048aa;
-	--topmg: rgb(0, 81, 230);
+	--topmg: linear-gradient(90deg, rgb(0, 128, 255) 0%, rgba(0, 13, 161, 1) 100%);
 }
 
 /* Use media tag not to break desktop version */
@@ -342,8 +342,24 @@
 	}
 
 	body[path="/users/sign_in"] #top{
-		background: var(--topmg)
+		background: var(--topmg);
+		height: 80px;
 	}
+
+	#visual{
+		background: var(--topmg);
+		justify-content: center;
+		justify-items: center;
+	}
+	#logo{
+		justify-content: center;
+		justify-items: center;
+	}
+	#logo a{
+		justify-content: center;
+		justify-items: center;
+	}
+
 }
 
 
