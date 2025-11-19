@@ -27,21 +27,25 @@
 
 
 	function replaceWithIcon(elem, icon, num = null){
-		const cont = document.createElement("div");
-		cont.classList.add("icon-container");
-		cont.innerHTML = icon;
-		const href = elem.querySelector("a").href;
-		if (num != null) {
-			const number = document.createElement("div");
-			number.classList.add("notification-number");
-			number.innerHTML = num;
-			cont.appendChild(number);
+		if (window.innerWidth < window.innerHeight) {
+
+			const cont = document.createElement("div");
+			cont.classList.add("icon-container");
+			cont.innerHTML = icon;
+			const href = elem.querySelector("a").href;
+			if (num != null && num > 0) {
+				const number = document.createElement("div");
+				number.classList.add("notification-number");
+				number.innerHTML = num;
+				cont.appendChild(number);
+			}
+			elem.parentElement.appendChild(cont);
+			elem.parentElement.removeChild(elem);
+			cont.addEventListener("click", () => {
+				window.location.href = href;
+			})
 		}
-		elem.parentElement.appendChild(cont);
-		elem.parentElement.removeChild(elem);
-		cont.addEventListener("click", () => {
-			window.location.href = href;
-		})
+
 	}
 
 	function removeUnwantedLinks(container) {
