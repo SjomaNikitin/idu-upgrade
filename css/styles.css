@@ -1,25 +1,51 @@
+/*:root {*/
+/*	--font-size: 16px;*/
+/*	--padding-1: 8px;*/
+/*	--padding-2: calc(var(--padding-1) * 2);*/
+/*	--padding-4: calc(var(--padding-1) * 4);*/
+/*	--mg: linear-gradient(90deg, rgba(0, 221, 255, 1) 0%, rgba(0, 13, 161, 1) 100%);*/
+/*	--mc: #0062ea;*/
+/*	--topmg: linear-gradient(90deg, rgb(0, 128, 255) 0%, rgba(0, 13, 161, 1) 100%);*/
+/*	--module-color: #ffffff;*/
+/*	--background-color: #e8e8e8;*/
+/*	--module-shadow-color: rgba(0, 0, 0, 0.3);*/
+/*	--underline-color: #8c8c8c;*/
+/*	--module-border-color: #000000;*/
+/*	--main-text-color: #000000;*/
+/*	--input-field-color: #ffffff;*/
+/*	--darker-messages-color: #cdcdcd;*/
+/*	--form-background-color: #b5b5b5;*/
+/*	--akcent-color: #0095ff;*/
+/*	--icon-background-color: #ffffff;*/
+/*	--schedule-table-header-color: #aaaaaa;*/
+/*	--schedule-table-time-color: #aaaaaa;*/
+/*	--schedule-lesson-color: #f1f1f1;*/
+/*}*/
+
 :root {
 	--font-size: 16px;
 	--padding-1: 8px;
 	--padding-2: calc(var(--padding-1) * 2);
 	--padding-4: calc(var(--padding-1) * 4);
-	--mg: linear-gradient(90deg, rgba(0, 221, 255, 1) 0%, rgba(0, 13, 161, 1) 100%);
-	--mc: #0048aa;
-	--topmg: linear-gradient(90deg, rgb(0, 128, 255) 0%, rgba(0, 13, 161, 1) 100%);
-	--module-color: #ff0000;
-	--background-color: #7d0000;
-	--module-shadow-color: rgba(255, 0, 0, 0.63);
-	--underline-color: #ff6262;
-	--module-border-color: #000000;
-	--main-text-color: #ffffff;
-	--input-field-color: #ff0000;
-	--darker-messages-color: #b50000;
-	--form-background-color: #7d0000;
-	--akcent-color: #ff0000;
-	--icon-background-color: #ff0000;
-	--schedule-table-header-color: #bc0000;
-	--schedule-table-time-color: #bc0000;
-	--schedule-lesson-color: #ff5151;
+	--mg: rgb(3, 25, 38);
+	--gradient-text-color: rgb(244,233,205);
+	--mc: rgb(70,129,137);
+	--topmg: rgb(3, 25, 38);
+	--module-color: rgb(244,233,205);
+	--background-color: rgb(157,190,187);
+	--module-shadow-color: rgba(0, 0, 0, 0.3);
+	--underline-color: #8c8c8c;
+	--module-border-color: rgb(3,25,38);
+	--main-text-color: #000000;
+	--input-field-color: rgb(244,233,205);
+	--darker-messages-color: #cdcdcd;
+	--form-background-color: #b5b5b5;
+	--akcent-color: rgb(3,25,38);
+	--icon-background-color: rgb(244,233,205);
+	--schedule-table-header-color: rgb(70, 129, 137);
+	--schedule-table-time-color: rgb(70, 129, 137);
+	--schedule-lesson-color: rgb(157, 190, 187);
+	--actionbtn-text-color: rgb(244,233,205);
 }
 
 /* Use media tag not to break desktop version */
@@ -158,10 +184,12 @@
 								width: 100%;
 								justify-content: center;
 								text-align: center;
+								border-radius: 10px;
+
 								a {
 									max-width: 100%;
 									box-sizing: border-box;
-									color: white !important;
+									color: var(--actionbtn-text-color) !important;
 								}
 							}
 						}
@@ -195,6 +223,22 @@
 							thead th {
 								background-color: var(--schedule-table-header-color);
 							}
+
+							td{
+								background: var(--module-color);
+							}
+
+							b{
+								color: var(--module-color);
+							}
+
+							span{
+								color: var(--module-color);
+							}
+
+							div.callendar_event{
+								color: var(--module-color);
+							}
 						}
 					}
 				}
@@ -224,6 +268,7 @@
 					flex-grow: 1;
 					background-color: var(--input-field-color) !important;
 					border-color: var(--module-border-color);
+					border-width: 0 !important;
 				}
 
 				& .clear {
@@ -240,6 +285,17 @@
 			background-color: var(--background-color);
 			border-color: var(--module-border-color);
 		}
+	}
+
+	select {
+		width: 100%;
+		margin: 0;
+		flex-grow: 1;
+		background-color: var(--input-field-color) !important;
+		border-color: var(--module-border-color);
+		border-width: 0 !important;
+		border-radius: 10px;
+		box-shadow: 0 5px 10px var(--module-shadow-color);
 	}
 
 	span.toggle-switch{
@@ -270,8 +326,8 @@
 		color: var(--mc) !important;
 	}
 
-	.shorted-container-gradient a{
-		color: white; !important;
+	html body div.shorted-container-gradient a{
+		color: var(--gradient-text-color) !important;
 		transform: translateY(200%);
 		font-weight: bold;
 		font-size: 1.3rem;
@@ -293,6 +349,10 @@
 		border-color: var(--module-border-color);
 	}
 
+	schedule table tbody td{
+		background: var(--module-color) !important;
+	}
+
 	.even{
 		background-color: var(--darker-messages-color) !important;
 	}
@@ -307,12 +367,15 @@
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
-		width: 100%;
+		width: 90%;
 		display: grid;
 		place-items: center;
 		background-color: var(--module-color) !important;
 		border-color: var(--module-border-color) !important;
 		padding-bottom: 5%;
+		margin-left: 3%;
+		margin-right: 3%;
+		max-width: 94%;
 	}
 
 	#student-card {
@@ -346,7 +409,12 @@
 	.module{
 		background-color: var(--module-color) !important;
 		border-color: var(--module-border-color) !important;
-
+		box-shadow: 0 5px 10px var(--module-shadow-color);
+		border-width: 0px;
+		border-radius: 10px;
+		margin-left: 3%;
+		margin-right: 3%;
+		max-width: 94%;
 	}
 	.action-module{
 		background-color: var(--background-color) !important;
