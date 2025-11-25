@@ -1,7 +1,7 @@
 let themePresets = [
 	{bc: "rgb(256,256,256)", mc: "rgb(0,89,255)", name: "default"},
 	{bc: "rgb(157,190,187)", mc: "rgb(244,233,205)", name: "dzaga"},
-	{bc: "rgb(256,256,256)", mc: "rgb(0,89,255)", name: "default"},
+	{bc: "rgb(19, 35, 44)", mc: "rgb(42, 69, 75)", name: "deep-ocean"},
 	{bc: "rgb(256,256,256)", mc: "rgb(0,89,255)", name: "default"}
 ]
 const root = document.documentElement;
