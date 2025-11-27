@@ -85,32 +85,33 @@
 }
 
 :root[data-theme="Besties"] {
-	--mg: rgba(206, 66, 92);
+	--mg: rgba(255, 103, 141);
 	--gradient-text-color: rgb(147, 67, 81);
 	--mc: rgb(228, 72, 99);
-	--topmg: rgba(206, 66, 92);
-	--module-color: rgba(254, 222, 211);
-	--background-color: rgba(240, 86, 114);
-	--module-shadow-color: rgba(0, 0, 0, 0.3);
+	--topmg: rgba(255, 103, 141);
+	--module-color: rgb(255, 226, 223);
+	--background-color: rgba(255, 169, 185);
+	--module-shadow-color: rgba(115, 108, 81, 0.45);
 	--underline-color: rgba(252, 196, 183);
 	--module-border-color: rgba(252, 196, 183);
 	--main-text-color: rgb(147, 67, 81);
-	--input-field-color: rgba(252, 196, 183);
+	--input-field-color: rgb(255, 226, 223);
 	--darker-messages-color: rgba(252, 196, 183);
 	--form-background-color: rgba(253, 121, 145);
-	--akcent-color: rgb(172, 27, 56);
+	--akcent-color: rgb(147, 67, 81);
 	--icon-background-color: rgba(254, 222, 211);
 	--schedule-table-header-color: rgba(240, 86, 114);
 	--schedule-table-time-color: rgba(240, 86, 114);
 	--schedule-lesson-color: rgb(255, 158, 173);
 	--schedule-time-color: rgba(253, 237, 222);
 	--actionbtn-text-color:rgba(253, 237, 222);
-	--location-text-color: rgba(254, 222, 211);
+	--location-text-color: rgb(147, 67, 81);
 	--shorted-gradient-color: rgba(252, 196, 183);
-	--breadcrumbs-text: rgba(254, 222, 211);
+	--breadcrumbs-text: rgb(152, 53, 67);
 }
 
 /* Use media tag not to break desktop version */
+
 @media (max-width: 500px) {
 	* {
 		box-sizing: border-box;
@@ -230,6 +231,10 @@
 						width: 100%;
 						float: none;
 
+						h3{
+							font-size: 18px !important;
+						}
+
 						& .action-module {
 							height: auto;
 							max-width: 100%;
@@ -339,6 +344,7 @@
 					border-color: var(--module-border-color);
 					border-width: 0 !important;
 					color: var(--main-text-color);
+					border-radius: var(--padding-1);
 				}
 
 				& .clear {
@@ -435,6 +441,7 @@
 	.odd{
 		width: calc(100% - var(--padding-1));
 		overflow: hidden;
+		background-color: var(--schedule-lesson-color) !important;
 	}
 
 
@@ -444,6 +451,7 @@
 	}
 	#message-folders .current{
 		background-color: var(--akcent-color) !important;
+		color: var(--module-color) !important;
 	}
 	body[path="/users/sign_in"] .module{
 		position: absolute;
@@ -488,6 +496,10 @@
 		color: var(--main-text-color);
 	}
 
+	input.submit, input[type=submit]{
+		color: var(--main-text-color) !important;
+	}
+
 	.module{
 		background-color: var(--module-color) !important;
 		border-color: var(--module-border-color) !important;
@@ -526,6 +538,15 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+	#message_thread_search{
+		border-top-left-radius: var(--padding-1);
+		border-top-right-radius: var(--padding-1);
+	}
+
+	#delete_messages_form{
+		border-top-left-radius: var(--padding-1);
+		border-top-right-radius: var(--padding-1);
 	}
 	body[path="/users/sign_in"] form{
 		justify-content: center;
@@ -768,3 +789,4 @@
 	}
 
 }
+
