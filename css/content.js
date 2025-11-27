@@ -1,21 +1,111 @@
 let themePresets = [
-	{bc: "rgb(256,256,256)", mc: "rgb(0,89,255)", name: "default"},
-	{bc: "rgb(157,190,187)", mc: "rgb(244,233,205)", name: "dzaga"},
-	{bc: "rgb(19, 35, 44)", mc: "rgb(42, 69, 75)", name: "deep-ocean"},
+	{bc: "rgb(256,256,256)", mc: "rgb(0,89,255)", name: "Default"},
+	{bc: "rgb(157,190,187)", mc: "rgb(244,233,205)", name: "Dzaga"},
+	{bc: "rgb(19, 35, 44)", mc: "rgb(42, 69, 75)", name: "Ocean"},
 	{bc: "rgb(255, 169, 185)", mc: "rgb(255, 226, 223)", name: "Besties"}
 ]
 const root = document.documentElement;
 
-function loadWebsiteTheme(chooseTheme) {
+function Snowfall(canvas, options = {}) {
+	const ctx = canvas.getContext("2d");
+
+	// Adjustable settings
+	const amount = options.amount || 75;
+	const speed = options.speed || 1;
+	const size = options.size || [2, 4]; // min/max square size
+
+	let flakes = [];
+	let running = false;
+
+	function resize() {
+
+	}
+
+	resize();
+	window.addEventListener("resize", resize);
+
+	function makeFlakes() {
+		flakes = [];
+		for (let i = 0; i < amount; i++) {
+			flakes.push({
+				x: Math.random() * canvas.width,
+				y: Math.random() * canvas.height,
+				w: Math.random() * (size[1] - size[0]) + size[0],
+				h: Math.random() * (size[1] - size[0]) + size[0],
+				vy: Math.random() * speed + speed * 0.5,
+			});
+		}
+	}
+
+	function draw() {
+		if (!running) return;
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		for (let flake of flakes) {
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fillRect(flake.x, flake.y, flake.w, flake.h);
+
+			flake.y += flake.vy;
+
+			if (flake.y > canvas.height) {
+				flake.y = -flake.h;
+				flake.x = Math.random() * canvas.width;
+			}
+		}
+		requestAnimationFrame(draw);
+	}
+
+	function start() {
+		running = true;
+		makeFlakes();
+		draw();
+	}
+
+	function stop() {
+		running = false;
+	}
+
+	return { start, stop};
+}
+	function update(newOptions = {}) {
+		if (newOptions.amount !== undefined) options.amount = newOptions.amount;
+		if (newOptions.speed !== undefined) options.speed = newOptions.speed;
+		if (newOptions.size !== undefined) options.size = newOptions.size;
+		makeFlakes();
+	}
+
+	function xmasThemeLoader() {
+		const bgCanvasContainer = document.createElement("div");
+		bgCanvasContainer.className = "bg-canvas-container";
+		document.body.prepend(bgCanvasContainer);
+		const bgCanvas = document.createElement("canvas");
+		bgCanvas.className = "bg-canvas";
+		bgCanvas.width = window.innerWidth;
+		bgCanvas.height = document.documentElement.scrollHeight;
+		// bgCanvas.height = "300";
+		bgCanvasContainer.appendChild(bgCanvas);
+		const bgCanvasSnow = Snowfall(bgCanvas);
+		bgCanvasSnow.start();
+	}
+
+	function loadWebsiteTheme(chooseTheme) {
 		if (chooseTheme) {
 			document.documentElement.setAttribute("data-theme", chooseTheme);
 			localStorage.setItem("theme", chooseTheme);
 			changeIDULogo()
-
+			if (chooseTheme !== "Default" && document.querySelector("canvas.bg-canvas")) {
+				document.querySelector("canvas.bg-canvas").parentElement.removeChild(document.querySelector("canvas.bg-canvas"));
+			}
+			if (chooseTheme === "Default") {
+				xmasThemeLoader();
+			}
 		} else {
 			let theme = localStorage.getItem("theme");
-			if (theme === "default") {
-				theme = "";
+			if (theme !== "Default" && document.querySelector("canvas.bg-canvas")) {
+				document.querySelector("canvas.bg-canvas").parentElement.removeChild(document.querySelector("canvas.bg-canvas"))
+			}
+			if (theme === "Default") {
+				xmasThemeLoader();
 			}
 			document.documentElement.setAttribute("data-theme", theme);
 			changeIDULogo()
@@ -33,7 +123,7 @@ function loadWebsiteTheme(chooseTheme) {
 		mainElement.className = "main-theme-settings-element";
 		elemCont.appendChild(mainElement);
 		mainElement.addEventListener("click", () => {
-				mainElement.classList.toggle("big");
+			mainElement.classList.toggle("big");
 		});
 		let svgSize = parseInt(mainElement.offsetWidth) - 20 + "px";
 		let color = getComputedStyle(root).getPropertyValue('--main-text-color').trim();
@@ -46,7 +136,7 @@ function loadWebsiteTheme(chooseTheme) {
 		const themeElementsContainer = document.createElement("div");
 		themeElementsContainer.className = "theme-settings-grid-container";
 		mainElement.appendChild(themeElementsContainer);
-		for (let i=0; i<4; i++) {
+		for (let i = 0; i < 4; i++) {
 			const themeOptionContainer = document.createElement("div");
 			themeOptionContainer.className = "theme-option-container";
 			themeElementsContainer.appendChild(themeOptionContainer);
@@ -58,23 +148,29 @@ function loadWebsiteTheme(chooseTheme) {
 			themeOptionContainer.addEventListener("click", () => {
 				loadWebsiteTheme(themePresets[i].name);
 			})
+			const themeNameElement = document.createElement("p");
+			themeNameElement.className = "theme-name";
+			themeNameElement.innerHTML = themePresets[i].name;
+			themeNameElement.style.color = themePresets[i].mc;
+			themeOptionContainer.appendChild(themeNameElement);
 		}
 	}
 
-	function closeAllTabs () {
+	function closeAllTabs() {
 		localStorage.setItem("firstEnter", "1")
 		const switches = document.querySelectorAll("a.hide-me")
-		for (let i=0; i < switches.length; i++) {
+		for (let i = 0; i < switches.length; i++) {
 			switches[i].click();
 			console.log("clicked")
 		}
 	}
+
 	function changeIDULogo() {
 		const logoContainer = document.querySelector("#logo");
-		let color = getComputedStyle(root).getPropertyValue('--module-color').trim();
+		let color = getComputedStyle(root).getPropertyValue('--idu-logo').trim();
 		let svg;
 		let currentTheme = localStorage.getItem("theme");
-		if (currentTheme === "deep-ocean") {
+		if (currentTheme === "Ocean") {
 			color = "#91dba4"
 			svg = `
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="200" height="75">
@@ -84,7 +180,7 @@ function loadWebsiteTheme(chooseTheme) {
 <path d="M0 0 C3.63 0 7.26 0 11 0 C11 19.47 11 38.94 11 59 C7.04 59 3.08 59 -1 59 C-1.02255549 51.45501411 -1.04091769 43.91004069 -1.05181217 36.36502934 C-1.05703989 32.86191115 -1.0641355 29.35881715 -1.07543945 25.85571289 C-1.08834206 21.83219159 -1.09322912 17.80869586 -1.09765625 13.78515625 C-1.10539818 11.88987938 -1.10539818 11.88987938 -1.11329651 9.95631409 C-1.11337204 8.795186 -1.11344757 7.63405792 -1.11352539 6.43774414 C-1.11685631 4.8955294 -1.11685631 4.8955294 -1.12025452 3.32215881 C-1 1 -1 1 0 0 Z " fill=${color} transform="translate(21,7)"/>
 </svg>
 `;
-		} else if (currentTheme === "Besties"){
+		} else if (currentTheme === "Besties") {
 			color = "#ffe2df"
 			svg = `
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="200" height="75">
@@ -112,7 +208,7 @@ function loadWebsiteTheme(chooseTheme) {
 	}
 
 
-	function replaceWithIcon(elem, icon, num = null){
+	function replaceWithIcon(elem, icon, num = null) {
 		if (window.innerWidth < window.innerHeight) {
 
 			const cont = document.createElement("div");
@@ -158,7 +254,7 @@ function loadWebsiteTheme(chooseTheme) {
 	}
 
 
-	function makeModulesShorter(module){
+	function makeModulesShorter(module) {
 		const moduleMaxHeight = "500px";
 		module.style.maxHeight = moduleMaxHeight;
 		module.classList.add("shorted-container");
@@ -167,15 +263,16 @@ function loadWebsiteTheme(chooseTheme) {
 		module.lastElementChild.appendChild(gradientShadow);
 		const gradientTxt = document.createElement("a")
 		gradientShadow.appendChild(gradientTxt);
-		gradientTxt.innerText="Show All";
+		gradientTxt.innerText = "Show All";
 		gradientTxt.onclick = () => {
-			if(gradientShadow.style.display === "none"){
+			if (gradientShadow.style.display === "none") {
 				gradientShadow.style.display = "flex"
 				module.style.maxHeight = moduleMaxHeight;
 			} else {
 				gradientShadow.style.display = "none"
 				module.style.maxHeight = "none";
 				const hideEl = module.querySelector(".hide-me")
+
 				function hideHandler() {
 					gradientShadow.style.display = "flex";
 					module.style.maxHeight = moduleMaxHeight;
@@ -191,13 +288,13 @@ function loadWebsiteTheme(chooseTheme) {
 	}
 
 	loadWebsiteTheme()
-let svgSize = "60%";
-let intID = setInterval(function(){
+	let svgSize = "60%";
+	let intID = setInterval(function() {
 		let messagesEl = document.querySelector("#messages");
 		let newsEl = document.querySelector("#news");
 		let logOutEl = document.querySelector("#logout");
 		let profileEl = document.querySelector("#account");
-		if(messagesEl){
+		if (messagesEl) {
 			clearInterval(intID);
 			replaceWithIcon(messagesEl, `
 	<svg xmlns=http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
@@ -227,7 +324,7 @@ let intID = setInterval(function(){
 	}, 75);
 
 	window.addEventListener("load", function() {
-		if(localStorage.getItem(window.location.pathname) !== "1"){
+		if (localStorage.getItem(window.location.pathname) !== "1") {
 			closeAllTabs()
 			localStorage.setItem(window.location.pathname, "1")
 		}
@@ -243,7 +340,7 @@ let intID = setInterval(function(){
 			forumEl.parentElement.removeChild(forumEl);
 			templatesEl.parentElement.removeChild(templatesEl);
 		}
-		if(window.location.pathname === "/"){
+		if (window.location.pathname === "/") {
 			removeUnwantedLinks(firstSection);
 			makeModulesShorter(document.querySelector("#unique-id12").parentElement);
 			makeModulesShorter(document.querySelector("#unique-id14").parentElement);
@@ -257,9 +354,8 @@ let intID = setInterval(function(){
 		addThemeElement()
 
 
-
 		const tiptips = document.querySelectorAll("span.tiptip");
-		if(tiptips){
+		if (tiptips) {
 			tiptips.forEach(tiptip => {
 				if (tiptip.innerText[1] === "0") {
 					tiptip.innerText = "(0) 7:55-8:40"
@@ -292,6 +388,7 @@ let intID = setInterval(function(){
 			})
 		}
 	})
+
 
 
 
