@@ -709,7 +709,7 @@
 	#breadcrumbs{
 		font-size: 1rem;
 		color: var(--breadcrumbs-text);
-
+		background: none;
 		a{
 			color: var(--location-text-color) !important;
 			font-weight: bold;
@@ -725,6 +725,10 @@
 		transform: translate(-50%, -50%);
 		background-color: #ffc200;
 		z-index: -100;
+	}
+
+	body[path="/users/sign_in"] div.present-line {
+		display: none;
 	}
 
 	.notification-number{
