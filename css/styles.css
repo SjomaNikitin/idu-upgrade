@@ -11,17 +11,17 @@
 	--idu-logo: #ffffff;
 	--background-color: rgb(56, 102, 65);
 	--module-shadow-color: rgba(0, 0, 0, 0.3);
-	--underline: 5px solid #ffc200;
-	--module-border-color: #000000;
+	--underline: 5px solid #dba800;
+	--module-border-color: rgb(120, 40, 50);
 	--main-text-color: #ffdbdb;
-	--input-field-color: rgb(106, 153, 78);
+	--input-field-color: rgb(56, 102, 65);
 	--darker-messages-color: #cdcdcd;
 	--form-background-color: rgb(201, 24, 44);
 	--akcent-color: rgb(167, 201, 87);
 	--icon-background-color: rgb(201, 24, 44);
-	--schedule-table-header-color: #aaaaaa;
-	--schedule-table-time-color: #aaaaaa;
-	--schedule-lesson-color: #f1f1f1;
+	--schedule-table-header-color: rgb(120, 40, 50);
+	--schedule-table-time-color: rgb(120, 40, 50);
+	--schedule-lesson-color: rgb(211, 90, 103);
 	--chedule-time-color: black;
 	--actionbtn-text-color: white;
 	--location-text-color: rgb(255, 255, 255);
@@ -135,6 +135,7 @@
 		min-height: 0;
 		background: var(--background-color);
 		color: var(--main-text-color);
+		-webkit-text-size-adjust: 100%;
 		& .container {
 			width: 100vw; !important;
 			max-width: 100vw;
@@ -705,6 +706,7 @@
 		place-items: center;
 		align-items: center;
 		background-color: var(--icon-background-color);
+		position: relative;
 	}
 	#breadcrumbs{
 		font-size: 1rem;
@@ -720,15 +722,37 @@
 		width: 5px;
 		height: 100%;
 		position: absolute;
-		left: 50%;
+		right: 75px;
 		top: 50%;
-		transform: translate(-50%, -50%);
-		background-color: #ffc200;
+		transform: translate(0, -50%);
+		background-color: #dba800;
 		z-index: -100;
 	}
 
 	body[path="/users/sign_in"] div.present-line {
 		display: none;
+	}
+
+	.top-snow{
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translate(-50%, -75%);
+		width: 100%;
+		height: 15px;
+		pointer-events: none;
+		z-index: 200;
+	}
+
+	.top-icon-snow{
+		position: absolute;
+		bottom: 0;
+		left: 400px;
+		transform: translateX(-50%) scaleY(-1);
+		width: 100%;
+		height: 20px;
+		pointer-events: none;
+		z-index: 200;
 	}
 
 	.notification-number{

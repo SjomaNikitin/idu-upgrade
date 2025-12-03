@@ -13,6 +13,11 @@ function hideXmas(){
 	for (let i=0; i<presentLines.length; i++) {
 		presentLines[i].parentElement.removeChild(presentLines[i]);
 	}
+	const topSnowEls = document.querySelectorAll(".top-snow");
+	for (let i=0; i<topSnowEls.length; i++) {
+		topSnowEls[i].parentElement.removeChild(topSnowEls[i]);
+	}
+	docuement.querySelector(".footer-snow").parentElement.removeChild(document.querySelector(".footer-snow"));
 }
 
 function Snowfall(canvas, options = {}) {
@@ -96,7 +101,7 @@ function Snowfall(canvas, options = {}) {
 		const bgCanvas = document.createElement("canvas");
 		bgCanvas.className = "bg-canvas";
 		bgCanvas.width = window.innerWidth;
-		bgCanvas.height = document.documentElement.scrollHeight;
+		bgCanvas.height = "1400";
 		// bgCanvas.height = "300";
 		bgCanvasContainer.appendChild(bgCanvas);
 		const bgCanvasSnow = Snowfall(bgCanvas);
@@ -106,10 +111,25 @@ function Snowfall(canvas, options = {}) {
 		topImage.src = "https://i.ibb.co/spkNygwc/Untitled-Artwork5.png"
 		document.body.prepend(topImage);
 		const modules = document.querySelectorAll(".module");
+		const theme = localStorage.getItem("theme");
 		for (let i=0; i<modules.length; i++) {
 			addVerticalPresentLine(modules[i]);
+			if (theme === "Default") {
+				addSnow(modules[i]);
+			}
 		}
+		addFooterSnow()
 	}
+
+	function addFooterSnow () {
+		const snow = document.createElement("img");
+		snow.src = "https://i.ibb.co/spkNygwc/Untitled-Artwork6.png"
+		snow.className = "footer-snow"
+		const footer = document.querySelector("#footer");
+		if (footer) {
+			footer.appendChild(snow);
+		}
+}
 
 	function loadWebsiteTheme(chooseTheme) {
 		if (chooseTheme) {
@@ -148,7 +168,7 @@ function Snowfall(canvas, options = {}) {
 		mainElement.addEventListener("click", () => {
 			mainElement.classList.toggle("big");
 		});
-		let svgSize = parseInt(mainElement.offsetWidth) - 20 + "px";
+		let svgSize = (parseInt(mainElement.offsetWidth) - 20) + "px";
 		let color = getComputedStyle(root).getPropertyValue('--main-text-color').trim();
 		elemCont.insertAdjacentHTML("beforeend", `
 		<svg fill=${color} width=${svgSize} height=${svgSize} viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
@@ -223,6 +243,27 @@ function Snowfall(canvas, options = {}) {
 		}
 	}
 
+	function addSnow(el){
+		const snow = document.createElement("img");
+		snow.src = "https://i.ibb.co/HDBQqtVD/Untitled-Artwork7.png";
+		snow.className = "top-snow"
+		el.appendChild(snow);
+}
+
+
+
+	function moveScheduleHigher(){
+		const h3 = Array.from(document.querySelectorAll('h3'))
+			.find(el => el.textContent.trim().includes("Aktualny plan"));
+
+		if (h3) {
+			const schedule = h3.parentElement; // or .closest('.your-container-class')
+			const leftColumn = document.querySelector("div.left-column");
+			schedule.parentElement.removeChild(schedule);
+			leftColumn.appendChild(schedule);
+
+		}
+	}
 
 	function replaceWithIcon(elem, icon, num = null) {
 		if (window.innerWidth < window.innerHeight) {
@@ -305,41 +346,7 @@ function Snowfall(canvas, options = {}) {
 
 	loadWebsiteTheme()
 	let svgSize = "60%";
-	let intID = setInterval(function() {
-		let messagesEl = document.querySelector("#messages");
-		let newsEl = document.querySelector("#news");
-		let logOutEl = document.querySelector("#logout");
-		let profileEl = document.querySelector("#account");
-		if (messagesEl) {
-			clearInterval(intID);
-			replaceWithIcon(messagesEl, `
-	<svg xmlns=http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
-    <path fill="currentColor" d="m20.34 9.32l-14-7a3 3 0 0 0-4.08 3.9l2.4 5.37a1.06 1.06 0 0 1 0 .82l-2.4 5.37A3 3 0 0 0 5 22a3.14 3.14 0 0 0 1.35-.32l14-7a3 3 0 0 0 0-5.36Zm-.89 3.57l-14 7a1 1 0 0 1-1.35-1.3l2.39-5.37a2 2 0 0 0 .08-.22h6.89a1 1 0 0 0 0-2H6.57a2 2 0 0 0-.08-.22L4.1 5.41a1 1 0 0 1 1.35-1.3l14 7a1 1 0 0 1 0 1.78Z"/>
-</svg>
-	`, messagesEl.querySelector("strong").innerHTML);
-			replaceWithIcon(newsEl, `
-<svg xmlns="http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
-    <path fill="currentColor" d="M4 8a8 8 0 1 1 16 0v4.697l2 3V20h-5.611a4.502 4.502 0 0 1-8.777 0H2v-4.303l2-3V8Zm5.708 12a2.5 2.5 0 0 0 4.584 0H9.708ZM12 2a6 6 0 0 0-6 6v5.303l-2 3V18h16v-1.697l-2-3V8a6 6 0 0 0-6-6Z"/>
-</svg>
-	`, newsEl.querySelector("strong").innerHTML);
-			replaceWithIcon(profileEl, `
-<svg xmlns="http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
-    <g fill="none" stroke="currentColor" stroke-width="2">
-        <path stroke-linejoin="round" d="M4 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
-        <circle cx="12" cy="7" r="3"/>
-    </g>
-</svg>
-	`);
-			replaceWithIcon(logOutEl, `
-<svg xmlns="http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
-    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4.001H5v14a2 2 0 0 0 2 2h8m1-5l3-3m0 0l-3-3m3 3H9"/>
-</svg>
-	`);
-		}
-
-	}, 75);
-
-	window.addEventListener("load", function() {
+	window.addEventListener("DOMContentLoaded", function() {
 		if (window.innerWidth < window.innerHeight) {
 
 			if (localStorage.getItem(window.location.pathname) !== "1") {
@@ -350,8 +357,9 @@ function Snowfall(canvas, options = {}) {
 				changeIDULogo()
 			}
 
-			const firstSection = document.querySelector("#unique-id192");
+			moveScheduleHigher()
 
+			const firstSection = document.querySelector("#unique-id192");
 			let forumEl = document.querySelector("#forums_path");
 			let templatesEl = document.querySelector("#templates");
 			if (forumEl) {
@@ -366,6 +374,37 @@ function Snowfall(canvas, options = {}) {
 				document.querySelector("input#user_login").placeholder = "Login";
 				document.querySelector("input#user_password").placeholder = "Password";
 			}
+
+			let messagesEl = document.querySelector("#messages");
+			let newsEl = document.querySelector("#news");
+			let logOutEl = document.querySelector("#logout");
+			let profileEl = document.querySelector("#account");
+			if (messagesEl) {
+				replaceWithIcon(messagesEl, `
+	<svg xmlns=http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
+    <path fill="currentColor" d="m20.34 9.32l-14-7a3 3 0 0 0-4.08 3.9l2.4 5.37a1.06 1.06 0 0 1 0 .82l-2.4 5.37A3 3 0 0 0 5 22a3.14 3.14 0 0 0 1.35-.32l14-7a3 3 0 0 0 0-5.36Zm-.89 3.57l-14 7a1 1 0 0 1-1.35-1.3l2.39-5.37a2 2 0 0 0 .08-.22h6.89a1 1 0 0 0 0-2H6.57a2 2 0 0 0-.08-.22L4.1 5.41a1 1 0 0 1 1.35-1.3l14 7a1 1 0 0 1 0 1.78Z"/>
+</svg>
+	`, messagesEl.querySelector("strong").innerHTML);
+				replaceWithIcon(newsEl, `
+<svg xmlns="http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
+    <path fill="currentColor" d="M4 8a8 8 0 1 1 16 0v4.697l2 3V20h-5.611a4.502 4.502 0 0 1-8.777 0H2v-4.303l2-3V8Zm5.708 12a2.5 2.5 0 0 0 4.584 0H9.708ZM12 2a6 6 0 0 0-6 6v5.303l-2 3V18h16v-1.697l-2-3V8a6 6 0 0 0-6-6Z"/>
+</svg>
+	`, newsEl.querySelector("strong").innerHTML);
+				replaceWithIcon(profileEl, `
+<svg xmlns="http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linejoin="round" d="M4 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
+        <circle cx="12" cy="7" r="3"/>
+    </g>
+</svg>
+	`);
+				replaceWithIcon(logOutEl, `
+<svg xmlns="http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4.001H5v14a2 2 0 0 0 2 2h8m1-5l3-3m0 0l-3-3m3 3H9"/>
+</svg>
+	`);
+			}
+
 
 			addThemeElement()
 
