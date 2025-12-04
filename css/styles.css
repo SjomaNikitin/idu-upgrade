@@ -15,7 +15,7 @@
 	--module-border-color: rgb(120, 40, 50);
 	--main-text-color: #ffdbdb;
 	--input-field-color: rgb(56, 102, 65);
-	--darker-messages-color: #cdcdcd;
+	--darker-messages-color: rgb(201, 24, 44);
 	--form-background-color: rgb(201, 24, 44);
 	--akcent-color: rgb(167, 201, 87);
 	--icon-background-color: rgb(201, 24, 44);
@@ -29,6 +29,7 @@
 	--shorted-gradient-color: rgb(97, 19, 28);
 	--breadcrumbs-text: #ffffff;
 	--h3-margin: calc(0px - var(--padding-1));
+	--footer-text-color: rgb(120, 40, 50);
 }
 
 :root[data-theme="Ocean"] {
@@ -57,6 +58,7 @@
 	--breadcrumbs-text: rgb(145, 219, 164);
 	--underline: 1px solid rgba(145, 219, 164, 0.54);
 	--h3-margin: 0;
+	--footer-text-color: var(--main-text-color);
 
 }
 
@@ -86,6 +88,7 @@
 	--breadcrumbs-text: #000000;
 	--underline: 1px solid rgba(3, 25, 38, 0.55);
 	--h3-margin: 0;
+	--footer-text-color: var(--main-text-color);
 
 }
 
@@ -116,6 +119,7 @@
 	--breadcrumbs-text: rgb(152, 53, 67);
 	--underline: 1px solid rgba(255, 169, 185, 0.63);
 	--h3-margin: 0;
+	--footer-text-color: var(--main-text-color);
 
 }
 
@@ -372,6 +376,15 @@
 			background-color: var(--background-color);
 			border-color: var(--module-border-color);
 			border-width: 0;
+			position: relative;
+			z-index: 10;
+			color: var(--footer-text-color);
+			strong{
+				z-index: 10;
+			}
+			div{
+				z-index: 10;
+			}
 		}
 	}
 
@@ -394,7 +407,7 @@
 	}
 	.shorted-container{
 
-		overflow: hidden;
+		clip-path: inset(-50px 0 0 0);
 		position: relative;
 	}
 	.shorted-container-gradient{
@@ -509,7 +522,7 @@
 		color: var(--main-text-color);
 	}
 
-	h4,h5,h6{
+	h1,h4,h5,h6{
 		color: var(--main-text-color);
 	}
 
@@ -727,6 +740,11 @@
 		transform: translate(0, -50%);
 		background-color: #dba800;
 		z-index: -100;
+		transition: opacity 0.01s ease;
+	}
+
+	.present-line.hide-me{
+		opacity: 0;
 	}
 
 	body[path="/users/sign_in"] div.present-line {
@@ -753,6 +771,17 @@
 		height: 20px;
 		pointer-events: none;
 		z-index: 200;
+	}
+
+	.footer-snow{
+		width: 100%;
+		height: auto;
+		position: absolute;
+		bottom: 50%;
+		left: 50%;
+		pointer-events: none;
+		transform: translate(-50%, 50%);
+		z-index: -1;
 	}
 
 	.notification-number{

@@ -5,7 +5,8 @@ let themePresets = [
 	{bc: "rgb(255, 169, 185)", mc: "rgb(255, 226, 223)", name: "Besties"}
 ]
 const root = document.documentElement;
-
+let bgCanvas;
+let XmasTheme = true;
 function hideXmas(){
 	document.querySelector("canvas.bg-canvas").parentElement.removeChild(document.querySelector("canvas.bg-canvas"));
 	document.querySelector("img.xmas-top-image").parentElement.removeChild(document.querySelector("img.xmas-top-image"));
@@ -17,7 +18,7 @@ function hideXmas(){
 	for (let i=0; i<topSnowEls.length; i++) {
 		topSnowEls[i].parentElement.removeChild(topSnowEls[i]);
 	}
-	docuement.querySelector(".footer-snow").parentElement.removeChild(document.querySelector(".footer-snow"));
+	document.querySelector(".footer-snow").parentElement.removeChild(document.querySelector(".footer-snow"));
 }
 
 function Snowfall(canvas, options = {}) {
@@ -89,16 +90,26 @@ function Snowfall(canvas, options = {}) {
 	}
 
 	function addVerticalPresentLine (module) {
-	const line = document.createElement("div");
-	line.className = "present-line";
-	module.prepend(line);
+	const ignorePathsList = ["/informations"]
+		if (!ignorePathsList.includes(window.location.pathname)) {
+			const line = document.createElement("div");
+			line.className = "present-line";
+			module.prepend(line);
+			const button = module.querySelector(".hide-me");
+			if (button) {
+				button.addEventListener("click", () => {
+					line.classList.toggle("hide-me");
+				})
+			}
+		}
+
 	}
 
 	function xmasThemeLoader() {
 		const bgCanvasContainer = document.createElement("div");
 		bgCanvasContainer.className = "bg-canvas-container";
 		document.body.prepend(bgCanvasContainer);
-		const bgCanvas = document.createElement("canvas");
+		bgCanvas = document.createElement("canvas");
 		bgCanvas.className = "bg-canvas";
 		bgCanvas.width = window.innerWidth;
 		bgCanvas.height = "1400";
@@ -108,7 +119,7 @@ function Snowfall(canvas, options = {}) {
 		bgCanvasSnow.start();
 		const topImage = document.createElement("img");
 		topImage.className = "xmas-top-image";
-		topImage.src = "https://i.ibb.co/spkNygwc/Untitled-Artwork5.png"
+		topImage.src = "https://sajmik.b-cdn.net/TopImageXmas.PNG"
 		document.body.prepend(topImage);
 		const modules = document.querySelectorAll(".module");
 		const theme = localStorage.getItem("theme");
@@ -119,20 +130,28 @@ function Snowfall(canvas, options = {}) {
 			}
 		}
 		addFooterSnow()
+		bgCanvas.height = document.body.offsetHeight;
+		const observer = new ResizeObserver(() => {
+			console.log("Body height changed:", document.body.offsetHeight);
+			bgCanvas.height = document.body.offsetHeight;
+		});
+		observer.observe(document.body);
 	}
 
 	function addFooterSnow () {
 		const snow = document.createElement("img");
-		snow.src = "https://i.ibb.co/spkNygwc/Untitled-Artwork6.png"
+		snow.src = "https://sajmik.b-cdn.net/FooterSnow.PNG"
 		snow.className = "footer-snow"
 		const footer = document.querySelector("#footer");
 		if (footer) {
-			footer.appendChild(snow);
+			footer.prepend(snow);
 		}
+
 }
 
 	function loadWebsiteTheme(chooseTheme) {
 		if (chooseTheme) {
+
 			document.documentElement.setAttribute("data-theme", chooseTheme);
 			localStorage.setItem("theme", chooseTheme);
 			changeIDULogo()
@@ -140,7 +159,9 @@ function Snowfall(canvas, options = {}) {
 				hideXmas()
 			}
 			if (chooseTheme === "Default") {
-				xmasThemeLoader();
+				if (XmasTheme) {
+					xmasThemeLoader();
+				}
 			}
 		} else {
 			let theme = localStorage.getItem("theme");
@@ -148,7 +169,9 @@ function Snowfall(canvas, options = {}) {
 				hideXmas()
 			}
 			if (theme === "Default") {
-				xmasThemeLoader();
+				if (XmasTheme) {
+					xmasThemeLoader();
+				}
 			}
 			document.documentElement.setAttribute("data-theme", theme);
 			changeIDULogo()
@@ -200,11 +223,9 @@ function Snowfall(canvas, options = {}) {
 	}
 
 	function closeAllTabs() {
-		localStorage.setItem("firstEnter", "1")
 		const switches = document.querySelectorAll("a.hide-me")
 		for (let i = 0; i < switches.length; i++) {
 			switches[i].click();
-			console.log("clicked")
 		}
 	}
 
@@ -223,7 +244,7 @@ function Snowfall(canvas, options = {}) {
 			color = "#b82929"
 			const customLogo = document.createElement("img");
 			customLogo.className = "custom-logo-img";
-			customLogo.src = "https://i.ibb.co/qYTJ2h0P/Your-paragraph-text-removebg-preview.png";
+			customLogo.src = "https://sajmik.b-cdn.net/Your_paragraph_text-removebg-preview.png";
 			logoContainer.innerHTML = "";
 			logoContainer.appendChild(customLogo);
 		}
@@ -245,9 +266,9 @@ function Snowfall(canvas, options = {}) {
 
 	function addSnow(el){
 		const snow = document.createElement("img");
-		snow.src = "https://i.ibb.co/HDBQqtVD/Untitled-Artwork7.png";
+		snow.src = "https://sajmik.b-cdn.net/TopSnow.PNG";
 		snow.className = "top-snow"
-		el.appendChild(snow);
+		el.prepend(snow);
 }
 
 
@@ -348,17 +369,9 @@ function Snowfall(canvas, options = {}) {
 	let svgSize = "60%";
 	window.addEventListener("DOMContentLoaded", function() {
 		if (window.innerWidth < window.innerHeight) {
-
-			if (localStorage.getItem(window.location.pathname) !== "1") {
-				closeAllTabs()
-				localStorage.setItem(window.location.pathname, "1")
-			}
-			if (window.innerWidth < window.innerHeight) {
-				changeIDULogo()
-			}
-
+			closeAllTabs()
+			changeIDULogo()
 			moveScheduleHigher()
-
 			const firstSection = document.querySelector("#unique-id192");
 			let forumEl = document.querySelector("#forums_path");
 			let templatesEl = document.querySelector("#templates");
@@ -367,8 +380,13 @@ function Snowfall(canvas, options = {}) {
 				templatesEl.parentElement.removeChild(templatesEl);
 			}
 			if (window.location.pathname === "/") {
-				removeUnwantedLinks(firstSection);
-				makeModulesShorter(document.querySelector("#unique-id14").parentElement);
+				if (firstSection) {
+					removeUnwantedLinks(firstSection);
+				}
+				if (document.querySelector("#unique-id14")){
+					makeModulesShorter(document.querySelector("#unique-id14").parentElement);
+				}
+
 			}
 			if (document.querySelector("input#user_login")) {
 				document.querySelector("input#user_login").placeholder = "Login";
