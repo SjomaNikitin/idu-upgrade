@@ -132,7 +132,6 @@ function Snowfall(canvas, options = {}) {
 		addFooterSnow()
 		bgCanvas.height = document.body.offsetHeight;
 		const observer = new ResizeObserver(() => {
-			console.log("Body height changed:", document.body.offsetHeight);
 			bgCanvas.height = document.body.offsetHeight;
 		});
 		observer.observe(document.body);
@@ -269,6 +268,10 @@ function Snowfall(canvas, options = {}) {
 		snow.src = "https://sajmik.b-cdn.net/TopSnow.PNG";
 		snow.className = "top-snow"
 		el.prepend(snow);
+		const value = Math.random() < 0.5 ? 0 : 1;
+		if (value) {
+			snow.style.transform = "translate(-50%, -75%) scaleX(-1)";
+		}
 }
 
 
