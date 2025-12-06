@@ -507,6 +507,10 @@
 
 	}
 
+	body[path="/users/sign_in"]{
+		/*height: 100vh;*/
+	}
+
 	#student-card {
 		overflow-x: auto;
 		border-color: var(--module-border-color);
@@ -777,10 +781,10 @@
 		width: 100%;
 		height: auto;
 		position: absolute;
-		bottom: 50%;
+		bottom: 0;
 		left: 50%;
 		pointer-events: none;
-		transform: translate(-50%, 50%);
+		transform: translate(-50%, 0);
 		z-index: -1;
 	}
 

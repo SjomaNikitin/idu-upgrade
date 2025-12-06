@@ -7,6 +7,8 @@ let themePresets = [
 const root = document.documentElement;
 let bgCanvas;
 let XmasTheme = true;
+
+
 function hideXmas(){
 	document.querySelector("canvas.bg-canvas").parentElement.removeChild(document.querySelector("canvas.bg-canvas"));
 	document.querySelector("img.xmas-top-image").parentElement.removeChild(document.querySelector("img.xmas-top-image"));
@@ -19,6 +21,40 @@ function hideXmas(){
 		topSnowEls[i].parentElement.removeChild(topSnowEls[i]);
 	}
 	document.querySelector(".footer-snow").parentElement.removeChild(document.querySelector(".footer-snow"));
+}
+
+function loadWebsiteTheme(chooseTheme) {
+	if (chooseTheme) {
+
+		document.documentElement.setAttribute("data-theme", chooseTheme);
+		localStorage.setItem("theme", chooseTheme);
+		changeIDULogo()
+		if (chooseTheme !== "Default" && document.querySelector("canvas.bg-canvas")) {
+			hideXmas()
+		}
+		if (chooseTheme === "Default") {
+			if (XmasTheme) {
+				xmasThemeLoader();
+				loadModuleDecorations()
+			}
+		}
+	} else {
+		let theme = localStorage.getItem("theme");
+		if (theme === null) {
+			localStorage.setItem("theme", "Default");
+			theme = "Default";
+		}
+		if (theme !== "Default" && document.querySelector("canvas.bg-canvas")) {
+			hideXmas()
+		}
+		if (theme === "Default") {
+			if (XmasTheme) {
+				xmasThemeLoader();
+			}
+		}
+		document.documentElement.setAttribute("data-theme", theme);
+		changeIDULogo()
+	}
 }
 
 function Snowfall(canvas, options = {}) {
@@ -95,14 +131,30 @@ function Snowfall(canvas, options = {}) {
 			const line = document.createElement("div");
 			line.className = "present-line";
 			module.prepend(line);
-			const button = module.querySelector(".hide-me");
+			let button = module.querySelector(".hide-me");
+			if (!button) {
+				button = module.querySelector(".show-me");
+			}
 			if (button) {
 				button.addEventListener("click", () => {
 					line.classList.toggle("hide-me");
 				})
+			} else {
+				console.log("hide-me button for vertical present line not found");
 			}
 		}
 
+	}
+
+	function loadModuleDecorations(){
+		const modules = document.querySelectorAll(".module");
+		const theme = localStorage.getItem("theme");
+		for (let i=0; i<modules.length; i++) {
+			if (theme === "Default") {
+				addVerticalPresentLine(modules[i]);
+				addSnow(modules[i]);
+			}
+		}
 	}
 
 	function xmasThemeLoader() {
@@ -113,7 +165,6 @@ function Snowfall(canvas, options = {}) {
 		bgCanvas.className = "bg-canvas";
 		bgCanvas.width = window.innerWidth;
 		bgCanvas.height = "1400";
-		// bgCanvas.height = "300";
 		bgCanvasContainer.appendChild(bgCanvas);
 		const bgCanvasSnow = Snowfall(bgCanvas);
 		bgCanvasSnow.start();
@@ -121,20 +172,16 @@ function Snowfall(canvas, options = {}) {
 		topImage.className = "xmas-top-image";
 		topImage.src = "https://sajmik.b-cdn.net/TopImageXmas.PNG"
 		document.body.prepend(topImage);
-		const modules = document.querySelectorAll(".module");
-		const theme = localStorage.getItem("theme");
-		for (let i=0; i<modules.length; i++) {
-			addVerticalPresentLine(modules[i]);
-			if (theme === "Default") {
-				addSnow(modules[i]);
-			}
-		}
 		addFooterSnow()
-		bgCanvas.height = document.body.offsetHeight;
-		const observer = new ResizeObserver(() => {
+		if (window.location.pathname === "/users/sign_in") {
+			bgCanvas.height = document.querySelector("#container").offsetHeight;
+		} else {
 			bgCanvas.height = document.body.offsetHeight;
-		});
-		observer.observe(document.body);
+			const observer = new ResizeObserver(() => {
+				bgCanvas.height = document.body.offsetHeight;
+			});
+			observer.observe(document.body);
+		}
 	}
 
 	function addFooterSnow () {
@@ -147,35 +194,6 @@ function Snowfall(canvas, options = {}) {
 		}
 
 }
-
-	function loadWebsiteTheme(chooseTheme) {
-		if (chooseTheme) {
-
-			document.documentElement.setAttribute("data-theme", chooseTheme);
-			localStorage.setItem("theme", chooseTheme);
-			changeIDULogo()
-			if (chooseTheme !== "Default" && document.querySelector("canvas.bg-canvas")) {
-				hideXmas()
-			}
-			if (chooseTheme === "Default") {
-				if (XmasTheme) {
-					xmasThemeLoader();
-				}
-			}
-		} else {
-			let theme = localStorage.getItem("theme");
-			if (theme !== "Default" && document.querySelector("canvas.bg-canvas")) {
-				hideXmas()
-			}
-			if (theme === "Default") {
-				if (XmasTheme) {
-					xmasThemeLoader();
-				}
-			}
-			document.documentElement.setAttribute("data-theme", theme);
-			changeIDULogo()
-		}
-	}
 
 	function addThemeElement() {
 		const elemCont = document.createElement("div");
@@ -190,7 +208,7 @@ function Snowfall(canvas, options = {}) {
 		mainElement.addEventListener("click", () => {
 			mainElement.classList.toggle("big");
 		});
-		let svgSize = (parseInt(mainElement.offsetWidth) - 20) + "px";
+			let svgSize = "38px";
 		let color = getComputedStyle(root).getPropertyValue('--main-text-color').trim();
 		elemCont.insertAdjacentHTML("beforeend", `
 		<svg fill=${color} width=${svgSize} height=${svgSize} viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
@@ -382,6 +400,7 @@ function Snowfall(canvas, options = {}) {
 				forumEl.parentElement.removeChild(forumEl);
 				templatesEl.parentElement.removeChild(templatesEl);
 			}
+			loadModuleDecorations()
 			if (window.location.pathname === "/") {
 				if (firstSection) {
 					removeUnwantedLinks(firstSection);
