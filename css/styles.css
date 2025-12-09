@@ -429,6 +429,34 @@
 		color: var(--mc) !important;
 	}
 
+	.mark{
+		background-image: none;
+	}
+
+	.profile-event {
+		padding-left: 10px;
+	}
+
+	.announcement{
+		background-image: none;
+	}
+
+	.exam{
+		background-image: none;
+	}
+
+	.news{
+		background-image: none;
+	}
+
+	.callendar-event-on-dash{
+		background-image: none;
+	}
+
+	.presence{
+		background-image: none;
+	}
+
 	html body div.shorted-container-gradient a{
 		color: var(--gradient-text-color) !important;
 		transform: translateY(200%);
