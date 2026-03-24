@@ -347,6 +347,34 @@ function removeUnwantedLinks(container) {
 }
 
 
+function linkifyUrls(root = document.body) {
+	const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+	const urlRegex = /https?:\/\/[^\s<>"']+/g;
+	const nodes = [];
+	while (walker.nextNode()) nodes.push(walker.currentNode);
+	nodes.forEach(node => {
+		if (node.parentElement.tagName === "A") return;
+		const text = node.textContent;
+		if (!urlRegex.test(text)) return;
+		urlRegex.lastIndex = 0;
+		const frag = document.createDocumentFragment();
+		let last = 0, match;
+		while ((match = urlRegex.exec(text)) !== null) {
+			if (match.index > last) frag.appendChild(document.createTextNode(text.slice(last, match.index)));
+			const a = document.createElement("a");
+			a.href = match[0];
+			a.textContent = match[0];
+			a.target = "_blank";
+			a.rel = "noopener noreferrer";
+			a.style.cssText = "color:blue !important;text-decoration:underline;pointer-events:all;";
+			frag.appendChild(a);
+			last = match.index + match[0].length;
+		}
+		if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+		node.parentElement.replaceChild(frag, node);
+	});
+}
+
 function makeModulesShorter(module) {
 	const moduleMaxHeight = "500px";
 	module.style.maxHeight = moduleMaxHeight;
@@ -443,6 +471,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 
 		addThemeElement()
+		linkifyUrls()
 
 
 		const tiptips = document.querySelectorAll("span.tiptip");
