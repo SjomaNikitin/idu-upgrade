@@ -295,9 +295,19 @@ function moveScheduleHigher() {
 	if (h3) {
 		const schedule = h3.parentElement; // or .closest('.your-container-class')
 		const leftColumn = document.querySelector("div.left-column");
-		schedule.parentElement.removeChild(schedule);
-		leftColumn.appendChild(schedule);
+		if (!leftColumn) return;
+		leftColumn.insertBefore(schedule, leftColumn.children[1] ?? null);
+	}
+}
+function moveGradesHigher() {
+	const h3 = Array.from(document.querySelectorAll('h3'))
+		.find(el => el.textContent.trim().includes("Oceny"));
 
+	if (h3) {
+		const grades = h3.parentElement; // or .closest('.your-container-class')
+		const leftColumn = document.querySelector("div.left-column");
+		if (!leftColumn) return;
+		leftColumn.insertBefore(grades, leftColumn.children[1] ?? null);
 	}
 }
 
@@ -415,6 +425,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		closeAllTabs()
 		changeIDULogo()
 		moveScheduleHigher()
+		moveGradesHigher()
 		const firstSection = document.querySelector("#unique-id192");
 		let forumEl = document.querySelector("#forums_path");
 		let templatesEl = document.querySelector("#templates");
@@ -509,7 +520,6 @@ window.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 })
-
 
 
 
