@@ -4,18 +4,36 @@ import { dirname, resolve } from 'node:path';
 
 const entry = 'src/worker.js';
 const outfile = 'dist/worker.js';
+const contentAppEntry = 'src/content/app.jsx';
+const contentAppOutfile = 'css/content/generated/18-app.js';
 const contentScripts = [
   'css/content/00-globals.js',
   'css/content/10-theme.js',
   'css/content/15-visualloader.js',
+  'css/content/generated/18-app.js',
   'css/content/20-mobile.js',
   'css/content/25-login.js',
   'css/content/30-bootstrap.js',
 ];
 
 async function main() {
+  await mkdir(dirname(resolve(contentAppOutfile)), { recursive: true });
+
+  await build({
+    entryPoints: [contentAppEntry],
+    outfile: contentAppOutfile,
+    bundle: true,
+    format: 'iife',
+    platform: 'browser',
+    target: ['es2022'],
+    sourcemap: false,
+    minify: false,
+    legalComments: 'none',
+    jsxFactory: 'h',
+  });
+
   const css = await readFile('css/styles.css', 'utf8').catch(() => '');
-  const js = (await Promise.all(contentScripts.map((file) => readFile(file, 'utf8').catch(() => '')))).join('');
+  const js = (await Promise.all(contentScripts.map((file) => readFile(file, 'utf8').catch(() => '')))).join('\n;\n');
 
   await mkdir(dirname(resolve(outfile)), { recursive: true });
 

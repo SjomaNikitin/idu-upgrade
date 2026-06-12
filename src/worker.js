@@ -10,6 +10,7 @@ const contentScripts = [
 	'css/content/00-globals.js',
 	'css/content/10-theme.js',
 	'css/content/15-visualloader.js',
+	'css/content/generated/18-app.js',
 	'css/content/20-mobile.js',
 	'css/content/25-login.js',
 	'css/content/30-bootstrap.js',
@@ -39,7 +40,7 @@ async function getJsText() {
 			const scripts = await Promise.all(
 				contentScripts.map((file) => fs.readFile(path.resolve(process.cwd(), file), 'utf8'))
 			);
-			return scripts.join('');
+			return scripts.join('\n;\n');
 		} catch (e) {
 			return '/* failed to read css/content/*.js in dev */';
 		}

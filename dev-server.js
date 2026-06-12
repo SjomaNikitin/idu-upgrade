@@ -1,8 +1,30 @@
 import express from 'express';
+import { build } from 'esbuild';
+import { mkdir } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
 import worker from './src/worker.js';
 
 const app = express();
 const PORT = process.env.PORT || 8787;
+const contentAppEntry = 'src/content/app.jsx';
+const contentAppOutfile = 'css/content/generated/18-app.js';
+
+async function buildContentApp() {
+  await mkdir(dirname(resolve(contentAppOutfile)), { recursive: true });
+
+  await build({
+    entryPoints: [contentAppEntry],
+    outfile: contentAppOutfile,
+    bundle: true,
+    format: 'iife',
+    platform: 'browser',
+    target: ['es2022'],
+    sourcemap: false,
+    minify: false,
+    legalComments: 'none',
+    jsxFactory: 'h',
+  });
+}
 
 function toWebRequest(req) {
   const proto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
@@ -58,6 +80,9 @@ app.use(async (req, res) => {
   }
 });
 
+await buildContentApp();
+
 app.listen(PORT, () => {
+  console.log(`Built ${contentAppOutfile}`);
   console.log(`Dev server listening on http://localhost:${PORT}`);
 });

@@ -3,7 +3,7 @@
 	--padding-1: 8px;
 	--padding-2: calc(var(--padding-1) * 2);
 	--padding-4: calc(var(--padding-1) * 4);
-	--header-height: 90px;
+	--header-height: 130px;
 	--h3-margin: calc(0px - var(--padding-1));
 
 	/* The "White" Base - Using Apple-style neutrals */
@@ -183,13 +183,6 @@
 
 			table td {
 				border-color: var(--module-border-color);
-			}
-
-			& #top {
-				height: auto;
-				display: flex;
-				flex-direction: column;
-				align-items: stretch;
 			}
 
 			& #visual {
@@ -784,11 +777,6 @@
 		color: var(--mc)
 	}
 
-	body[path="/users/sign_in"] #top {
-		background: var(--topmg);
-		height: 80px;
-	}
-
 	#logo {
 		justify-content: center;
 		justify-items: center;
@@ -1082,4 +1070,121 @@
 		justify-content: center;  /* horizontal center */
 	}
 
+	.idu-custom-header {
+		height: var(--header-height) !important;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-areas:
+		"left center right";
+		align-items: center;
+		box-sizing: border-box;
+		background: var(--background-color);
+		overflow: visible;
+		position: relative;
+		padding: var(--padding-2);
+	}
+
+	.header-menu {
+		grid-area: left;
+		justify-self: start;
+		align-self: start;
+		position: relative;
+		z-index: 20;
+	}
+
+	.header-menu-button {
+		width: 48px;
+		height: 48px;
+
+		display: grid;
+		place-items: center;
+
+		padding: 0;
+		line-height: 0;
+	}
+
+	.header-menu-panel {
+		position: absolute;
+		top: calc(100% + var(--padding-1));
+		z-index: 30;
+
+		width: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		background: var(--module-color);
+		border-radius: var(--padding-1);
+		box-shadow: 0 8px 16px var(--module-shadow-color);
+
+		opacity: 0;
+		transform: translateY(-8px) scaleY(0.95);
+		pointer-events: none;
+
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	.header-menu-panel.open {
+		opacity: 1;
+		transform: translateY(0) scaleY(1);
+		pointer-events: auto;
+	}
+
+	.header-panel-link {
+		width: 48px;
+		height: 48px;
+		display: grid;
+		place-items: center;
+		color: var(--main-text-color);
+		text-decoration: none;
+	}
+
+	.header-logo-link {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		height: 48px;
+	}
+
+	.header-logo {
+		width: auto;
+		height: 48px;
+	}
+
+	.header-actions {
+		grid-area: right;
+		justify-self: end;
+		align-self: center;
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+
+	}
+
+	.header-icon-button {
+		width: 48px;
+		height: 48px;
+
+		display: grid;
+		place-items: center;
+
+		padding: 0;
+		line-height: 0;
+		text-decoration: none;
+	}
+
+	.header-menu-button,
+	.header-icon-button {
+		border: 0;
+		border-radius: var(--padding-1);
+		background-color: var(--module-color);
+		color: var(--main-text-color);
+		box-shadow: 0 4px 8px var(--module-shadow-color);
+	}
 }

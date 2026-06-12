@@ -12,6 +12,7 @@ const contentScripts = [
 	"content/00-globals.js",
 	"content/10-theme.js",
 	"content/15-visualloader.js",
+	"content/generated/18-app.js",
 	"content/20-mobile.js",
 	"content/25-login.js",
 	"content/30-bootstrap.js"
@@ -28,7 +29,7 @@ app.get("/content.js", async (req, res) => {
 	const scripts = await Promise.all(
 		contentScripts.map((file) => readFile(path.join(__dirname, file), "utf8"))
 	);
-	res.send(scripts.join(""));
+	res.send(scripts.join("\n;\n"));
 });
 
 app.listen(port, () => {

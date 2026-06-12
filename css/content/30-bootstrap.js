@@ -2,9 +2,13 @@ loadWebsiteTheme()
 let svgSize = "60%";
 window.addEventListener("DOMContentLoaded", function () {
 	if (window.innerWidth < window.innerHeight) {
+
 		addNextLessonBanner()
+		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader()
 		closeAllTabs()
-		changeIDULogo()
+		if (!customHeaderLoaded) {
+			changeIDULogo()
+		}
 		moveScheduleHigher()
 		moveGradesHigher()
 		const firstSection = document.querySelector("#unique-id192");
@@ -31,11 +35,12 @@ window.addEventListener("DOMContentLoaded", function () {
 			document.querySelector("input#user_password").placeholder = "Password";
 		}
 
+
 		let messagesEl = document.querySelector("#messages");
 		let newsEl = document.querySelector("#news");
 		let logOutEl = document.querySelector("#logout");
 		let profileEl = document.querySelector("#account");
-		if (messagesEl) {
+		if (!customHeaderLoaded && messagesEl) {
 			replaceWithIcon(messagesEl, `
 	<svg xmlns=http://www.w3.org/2000/svg" width=${svgSize} height=${svgSize} viewBox="0 0 24 24">
     <path fill="currentColor" d="m20.34 9.32l-14-7a3 3 0 0 0-4.08 3.9l2.4 5.37a1.06 1.06 0 0 1 0 .82l-2.4 5.37A3 3 0 0 0 5 22a3.14 3.14 0 0 0 1.35-.32l14-7a3 3 0 0 0 0-5.36Zm-.89 3.57l-14 7a1 1 0 0 1-1.35-1.3l2.39-5.37a2 2 0 0 0 .08-.22h6.89a1 1 0 0 0 0-2H6.57a2 2 0 0 0-.08-.22L4.1 5.41a1 1 0 0 1 1.35-1.3l14 7a1 1 0 0 1 0 1.78Z"/>
@@ -61,7 +66,9 @@ window.addEventListener("DOMContentLoaded", function () {
 	`);
 		}
 
-		addThemeElement()
+		if (!customHeaderLoaded) {
+			addThemeElement()
+		}
 		linkifyUrls()
 
 
@@ -100,8 +107,6 @@ window.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 })
-
-
 
 
 
