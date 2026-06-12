@@ -6,6 +6,14 @@
 const isWorkerRuntime = typeof WebSocketPair !== 'undefined' && typeof caches !== 'undefined';
 
 const iduHostS35 = 's35.idu.edu.pl';
+const contentScripts = [
+	'css/content/00-globals.js',
+	'css/content/10-theme.js',
+	'css/content/15-visualloader.js',
+	'css/content/20-mobile.js',
+	'css/content/25-login.js',
+	'css/content/30-bootstrap.js',
+];
 
 async function getCssText() {
 	if (typeof CSS_TEXT === 'string') return CSS_TEXT;
@@ -28,10 +36,12 @@ async function getJsText() {
 		try {
 			const fs = await import('node:fs/promises');
 			const path = await import('node:path');
-			const cssPath = path.resolve(process.cwd(), 'css/content.js');
-			return await fs.readFile(cssPath, 'utf8');
+			const scripts = await Promise.all(
+				contentScripts.map((file) => fs.readFile(path.resolve(process.cwd(), file), 'utf8'))
+			);
+			return scripts.join('');
 		} catch (e) {
-			return '/* failed to read css/content.js in dev */';
+			return '/* failed to read css/content/*.js in dev */';
 		}
 	}
 	return '';
@@ -39,6 +49,7 @@ async function getJsText() {
 
 function replaceHost(url, newHost) {
 	const urlObj = new URL(url);
+	urlObj.protocol = 'https:';
 	urlObj.hostname = newHost;
 	urlObj.port = '';
 	return urlObj.toString();
@@ -154,13 +165,12 @@ export default {
 				.on('head', {
 					element(el) {
 						el.append(metaViewport, { html: true });
+						el.append(cssJsLinksHtml, { html: true });
 					}
 				})
 				.on('body', {
 					element(el) {
 						el.setAttribute('path', htmlPath);
-						// noinspection HtmlUnknownTarget
-						el.append(cssJsLinksHtml, { html: true });
 					}
 				})
 				.transform(resp);
@@ -173,9 +183,9 @@ export default {
 			const { load } = await import('cheerio');
 			const $ = load(html);
 			$('head').append(metaViewport);
+			$('head').append(cssJsLinksHtml);
 			const $body = $('body');
 			$body.attr('path', htmlPath);
-			$body.append(cssJsLinksHtml);
 
 			const newHtml = $.html();
 			resp.headers.delete('content-length');

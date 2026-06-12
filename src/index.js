@@ -527,11 +527,6 @@ tiptips.forEach(tiptip => {
 						`<meta content="user-scalable=no">`,
 						{ html: true }
 					);
-				}
-			})
-			.on("body", {
-				element(el) {
-					el.setAttribute("path", path);
 					el.append(
 						`\n<link rel="stylesheet" href="/my-styles.css" />\n
 						<script type="module" src="/content.js"></script>
@@ -541,11 +536,15 @@ tiptips.forEach(tiptip => {
 					);
 				}
 			})
+			.on("body", {
+				element(el) {
+					el.setAttribute("path", path);
+				}
+			})
 			.transform(resp);
 		// return resp;
 	}
 };
-
 
 
 

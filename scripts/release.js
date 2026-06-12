@@ -4,10 +4,18 @@ import { dirname, resolve } from 'node:path';
 
 const entry = 'src/worker.js';
 const outfile = 'dist/worker.js';
+const contentScripts = [
+  'css/content/00-globals.js',
+  'css/content/10-theme.js',
+  'css/content/15-visualloader.js',
+  'css/content/20-mobile.js',
+  'css/content/25-login.js',
+  'css/content/30-bootstrap.js',
+];
 
 async function main() {
   const css = await readFile('css/styles.css', 'utf8').catch(() => '');
-  const js = await readFile('css/content.js', 'utf8').catch(() => '');
+  const js = (await Promise.all(contentScripts.map((file) => readFile(file, 'utf8').catch(() => '')))).join('');
 
   await mkdir(dirname(resolve(outfile)), { recursive: true });
 
