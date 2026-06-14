@@ -1,4 +1,4 @@
-loadWebsiteTheme()
+window.loadWebsiteTheme()
 let svgSize = "60%";
 window.addEventListener("DOMContentLoaded", function () {
 	if (window.innerWidth < window.innerHeight) {
@@ -6,9 +6,6 @@ window.addEventListener("DOMContentLoaded", function () {
 		addNextLessonBanner()
 		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader()
 		closeAllTabs()
-		if (!customHeaderLoaded) {
-			changeIDULogo()
-		}
 		moveScheduleHigher()
 		moveGradesHigher()
 		const firstSection = document.querySelector("#unique-id192");
@@ -104,6 +101,12 @@ window.addEventListener("DOMContentLoaded", function () {
 				}
 
 			})
+		}
+		if (localStorage.getItem("autoLogin") === "yes" && window.location.pathname === "/users/sign_in") {
+
+		} else {
+			document.getElementById("loader").remove();
+			console.log("Loaded");
 		}
 	}
 })

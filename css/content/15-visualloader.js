@@ -7,11 +7,3 @@ function addLoader(){
 }
 
 addLoader()
-document.addEventListener("DOMContentLoaded", function() {
-	if (localStorage.getItem("autoLogin") === "yes" && window.location.pathname === "/users/sign_in") {
-
-	} else {
-		document.getElementById("loader").remove();
-		console.log("Loaded");
-	}
-})

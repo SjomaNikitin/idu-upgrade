@@ -13,3 +13,4 @@ window.replaceHeader = function replaceHeader() {
 
 	return true;
 };
+
