@@ -5,6 +5,7 @@
 	--padding-4: calc(var(--padding-1) * 4);
 	--header-height: 130px;
 	--h3-margin: calc(0px - var(--padding-1));
+	--ios-safe-top: 0px;
 
 	/* The "White" Base - Using Apple-style neutrals */
 	--mc: #434343;
@@ -152,6 +153,10 @@
 @media (max-width: 500px) {
 	* {
 		box-sizing: border-box;
+	}
+
+	html[data-app-platform="ios"] body {
+		--header-offset: var(--ios-safe-top, 0px);
 	}
 
 	html,
@@ -1068,7 +1073,9 @@
 		align-items: center;      /* vertical center */
 		justify-content: center;  /* horizontal center */
 	}
-
+	html[data-app-platform="ios"] .idu-custom-header {
+		margin-top: var(--ios-safe-top, 0px) !important;
+	}
 	.idu-custom-header {
 		height: var(--header-height) !important;
 		display: grid;

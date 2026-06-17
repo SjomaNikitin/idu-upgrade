@@ -146,31 +146,6 @@ function addNextLessonBanner() {
 }
 
 
-function replaceWithIcon(elem, icon, num = null) {
-	if (window.innerWidth < window.innerHeight) {
-
-		const cont = document.createElement("div");
-		cont.classList.add("icon-container");
-		cont.innerHTML = icon;
-		const href = elem.querySelector("a").href;
-		if (num != null && num > 0) {
-			const number = document.createElement("div");
-			number.classList.add("notification-number");
-			number.innerHTML = num;
-			cont.appendChild(number);
-		}
-		elem.parentElement.appendChild(cont);
-		elem.parentElement.removeChild(elem);
-		cont.addEventListener("click", () => {
-			window.location.href = href;
-			if (href.includes("users/sign_out")) {
-				localStorage.setItem("autoLogin", "no");
-			}
-		})
-	}
-
-}
-
 function removeUnwantedLinks(container) {
 	// List of link texts to remove (case-insensitive)
 	const removeTexts = ["zadania domowe", "forum", "tematy lekcji", "oceny", "obecności"];
