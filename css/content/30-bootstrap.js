@@ -6,6 +6,18 @@ window.addEventListener("DOMContentLoaded", function () {
 		addNextLessonBanner()
 		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader()
 		console.log("Custom header loaded:", customHeaderLoaded)
+		if (window.location.pathname === "/") {
+			const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent()
+			console.log("Custom content loaded:", customContentLoaded)
+			if (document.getElementById("top-selection")) {
+				document.getElementById("top-selection").style.display = "none";
+			}
+			if (document.getElementById("breadcrumbs")) {
+				document.getElementById("breadcrumbs").style.display = "none";
+
+			}
+
+		}
 		closeAllTabs()
 		moveScheduleHigher()
 		moveGradesHigher()
