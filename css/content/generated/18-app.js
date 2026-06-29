@@ -464,15 +464,15 @@
       height: (cellSize - 20) * height + gap * (height - 1)
     };
   }
-  function useWidgetResize(possibleLayout, gap = 16) {
+  function useWidgetResize(possibleLayout, name, gap = 16) {
     function getCellSize() {
       const gridWidth = window.innerWidth;
       return gridWidth / 4;
     }
-    const [width, setWidth] = d2(2);
-    const [height, setHeight] = d2(2);
-    const [previewWidth, setPreviewWidth] = d2(getPreviewSize(2, 2, getCellSize(), gap).width);
-    const [previewHeight, setPreviewHeight] = d2(getPreviewSize(2, 2, getCellSize(), gap).height);
+    const [width, setWidth] = d2(loadWidgetSize(name)?.w || 2);
+    const [height, setHeight] = d2(loadWidgetSize(name)?.h || 2);
+    const [previewWidth, setPreviewWidth] = d2(getPreviewSize(loadWidgetSize(name)?.w || 2, loadWidgetSize(name)?.h || 2, getCellSize(), gap).width);
+    const [previewHeight, setPreviewHeight] = d2(getPreviewSize(loadWidgetSize(name)?.w || 2, loadWidgetSize(name)?.h || 2, getCellSize(), gap).height);
     const resizingRef = A2(false);
     const widgetRef = A2(null);
     const resizeZoneRef = A2(null);
@@ -514,6 +514,19 @@
       setHeight(nextLayout.h);
       setPreviewWidth(preview.width);
       setPreviewHeight(preview.height);
+      saveWidgetSize(nextLayout.w, nextLayout.h);
+    }
+    function saveWidgetSize(w3, h3) {
+      localStorage.setItem(name, JSON.stringify({ w: w3, h: h3 }));
+    }
+    function loadWidgetSize() {
+      const raw = localStorage.getItem(name);
+      if (!raw) return { w: 2, h: 2 };
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
     }
     y2(() => {
       const resizeZone = resizeZoneRef.current;
@@ -539,12 +552,114 @@
       previewWidth,
       previewHeight,
       widgetRef,
-      resizeZoneRef
+      resizeZoneRef,
+      resizingRef
     };
   }
 
+  // src/content/components/widgets/widgetDragging.js
+  function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZoneRef, moveWidget2, widgetID) {
+    let dragging = false;
+    let widgetClone = null;
+    const widthRef = A2(width);
+    const heightRef = A2(height);
+    widthRef.current = width;
+    heightRef.current = height;
+    let visualUpdateTimer;
+    function getCellSize() {
+      const gridWidth = window.innerWidth;
+      return gridWidth / 4;
+    }
+    function getPreviewSize2(width2, height2, cellSize, gap) {
+      return {
+        width: (cellSize - 20) * width2 + gap * (width2 - 1),
+        height: (cellSize - 20) * height2 + gap * (height2 - 1)
+      };
+    }
+    y2(() => {
+      const widget = widgetRef.current;
+      if (!widget) return;
+      function updateLayout() {
+        const widgets = document.querySelectorAll("div.widget");
+        let betWidgetIndex = -1;
+        let bestWidgetOverlap = 0;
+        const currentWidgetIndex = Array.from(widgets).findIndex(
+          (widget2) => widget2.dataset.widgetId === widgetID
+        );
+        for (let i3 = 0; i3 < widgets.length; i3++) {
+          const overlapArea = getOverlapArea(widgetClone, widgets[i3]);
+          if (overlapArea > bestWidgetOverlap) {
+            bestWidgetOverlap = overlapArea;
+            betWidgetIndex = i3;
+          }
+        }
+        if (currentWidgetIndex < betWidgetIndex && widthRef.current > getCellSize() * 2) {
+          if (!widgets[betWidgetIndex + 1]) {
+            return null;
+          }
+          moveWidget2(widgetID, widgets[betWidgetIndex + 1].dataset.widgetId);
+        } else if (currentWidgetIndex !== betWidgetIndex) {
+          moveWidget2(widgetID, widgets[betWidgetIndex].dataset.widgetId);
+        }
+      }
+      function getOverlapArea(el1, el2) {
+        const r1 = el1.getBoundingClientRect();
+        const r22 = el2.getBoundingClientRect();
+        let newRight = r1.left + getPreviewSize2(2, 2, getCellSize(), 16).width;
+        let newBottom = r1.top + getPreviewSize2(2, 2, getCellSize(), 16).height;
+        const overlapWidth = Math.max(
+          0,
+          Math.min(newRight, r22.right) - Math.max(r1.left, r22.left)
+        );
+        const overlapHeight = Math.max(
+          0,
+          Math.min(newBottom, r22.bottom) - Math.max(r1.top, r22.top)
+        );
+        return overlapWidth * overlapHeight;
+      }
+      function startDragging(e3) {
+        if (resizingZoneRef.current?.contains(e3.target)) return;
+        if (resizeRef.current) return;
+        dragging = true;
+        widgetClone = widgetRef.current.children[0].cloneNode(true);
+        widgetClone.className = "widget-clone inner-widget";
+        document.body.appendChild(widgetClone);
+        widgetRef.current.children[0].style.opacity = "0.3";
+      }
+      function stopDragging() {
+        dragging = false;
+        if (widgetClone) {
+          document.body.removeChild(widgetClone);
+          widgetClone = null;
+          widgetRef.current.children[0].style.opacity = "1";
+          clearTimeout(visualUpdateTimer);
+        }
+      }
+      function updatePos(e3) {
+        if (dragging) {
+          if (widthRef.current <= getCellSize() * 2) {
+            widgetClone.style.left = e3.clientX - widthRef.current / 2 + "px";
+          } else {
+            widgetClone.style.left = "16px";
+          }
+          widgetClone.style.top = e3.clientY - heightRef.current / 2 + "px";
+          clearTimeout(visualUpdateTimer);
+          visualUpdateTimer = setTimeout(() => {
+            updateLayout();
+          }, 200);
+        }
+      }
+      widget.addEventListener("pointerdown", startDragging);
+      document.addEventListener("pointermove", updatePos);
+      document.addEventListener("pointerup", stopDragging);
+      return () => {
+        widget.removeEventListener("pointerdown", startDragging);
+      };
+    }, []);
+  }
+
   // src/content/components/widgets/grades.jsx
-  function Grades() {
+  function Grades({ widgetId, moveWidget: moveWidget2 }) {
     const possibleLayout = [
       { w: 2, h: 2 },
       { w: 2, h: 4 },
@@ -559,9 +674,11 @@
       previewWidth,
       previewHeight,
       widgetRef,
-      resizeZoneRef
-    } = useWidgetResize(possibleLayout);
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "gradesWidget", className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+      resizeZoneRef,
+      resizingRef
+    } = useWidgetResize(possibleLayout, "grades");
+    useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "gradesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -571,8 +688,62 @@
   }
 
   // src/content/components/mainContent.jsx
+  var widgetRegistry = {
+    grades: Grades
+  };
+  var initialWidgets = [
+    { id: "grades", type: "grades" },
+    { id: "test-1", type: "test", width: 2, height: 2 },
+    { id: "test-2", type: "test", width: 2, height: 2 },
+    { id: "test-3", type: "test", width: 2, height: 2 },
+    { id: "test-4", type: "test", width: 2, height: 2 }
+  ];
+  function moveWidget(list, movedId, targetId) {
+    if (movedId === targetId) return list;
+    const updated = [...list];
+    const fromIndex = updated.findIndex((widget) => widget.id === movedId);
+    const toIndex = updated.findIndex((widget) => widget.id === targetId);
+    if (fromIndex === -1 || toIndex === -1) return list;
+    const [movedWidget] = updated.splice(fromIndex, 1);
+    const isLastTarget = toIndex === list.length - 1;
+    if (isLastTarget && fromIndex < toIndex) {
+      updated.push(movedWidget);
+    } else {
+      updated.splice(toIndex, 0, movedWidget);
+    }
+    return updated;
+  }
+  function PlaceholderWidget({ widgetId, width = 2, height = 2 }) {
+    return /* @__PURE__ */ k("div", { "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { width: "100%", height: "100%" } }));
+  }
   function MainContent() {
-    return /* @__PURE__ */ k("div", { className: "widgets-grid" }, /* @__PURE__ */ k(Grades, null), /* @__PURE__ */ k("div", { className: "widget w2 h2" }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { width: `100%`, height: `100%` } })), /* @__PURE__ */ k("div", { className: "widget w2 h2" }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { width: `100%`, height: `100%` } })), /* @__PURE__ */ k("div", { className: "widget w2 h2" }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { width: `100%`, height: `100%` } })), /* @__PURE__ */ k("div", { className: "widget w2 h2" }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { width: `100%`, height: `100%` } })));
+    const [widgets, setWidgets] = d2(initialWidgets);
+    function handleMoveWidget(movedId, targetId) {
+      setWidgets((currentWidgets) => moveWidget(currentWidgets, movedId, targetId));
+    }
+    function renderWidget(widget) {
+      const WidgetComponent = widgetRegistry[widget.type];
+      if (WidgetComponent) {
+        return /* @__PURE__ */ k(
+          WidgetComponent,
+          {
+            key: widget.id,
+            widgetId: widget.id,
+            moveWidget: handleMoveWidget
+          }
+        );
+      }
+      return /* @__PURE__ */ k(
+        PlaceholderWidget,
+        {
+          key: widget.id,
+          widgetId: widget.id,
+          width: widget.width,
+          height: widget.height
+        }
+      );
+    }
+    return /* @__PURE__ */ k("div", { className: "widgets-grid" }, widgets.map(renderWidget));
   }
 
   // src/content/app.jsx

@@ -1276,6 +1276,12 @@
 			height 0.2s ease;
 	}
 
+	.widget-clone{
+		position: absolute;
+		z-index: 999;
+		box-shadow: 0 4px 8px var(--module-shadow-color);
+	}
+
 	.widget.w2 { grid-column: span 2; }
 	.widget.w4 { grid-column: span 4; }
 
@@ -1288,9 +1294,9 @@
 		position: absolute;
 		bottom: 0;
 		right: 0;
-		width: 36px;
-		height: 36px;
-		background-color: rgb(128 128 128 / 0);
+		width: 48px;
+		height: 48px;
+		z-index: 3;
 		touch-action: none;
 		user-select: none;
 	}

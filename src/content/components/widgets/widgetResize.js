@@ -7,16 +7,16 @@ function getPreviewSize(width, height, cellSize, gap) {
 	};
 }
 
-export function useWidgetResize(possibleLayout, gap = 16) {
+export function useWidgetResize(possibleLayout, name, gap = 16) {
 	function getCellSize() {
 		const gridWidth = window.innerWidth;
 		return gridWidth / 4;
 	}
 
-	const [width, setWidth] = useState(2);
-	const [height, setHeight] = useState(2);
-	const [previewWidth, setPreviewWidth] = useState(getPreviewSize(2, 2, getCellSize(), gap).width);
-	const [previewHeight, setPreviewHeight] = useState(getPreviewSize(2, 2, getCellSize(), gap).height);
+	const [width, setWidth] = useState(loadWidgetSize(name)?.w || 2);
+	const [height, setHeight] = useState(loadWidgetSize(name)?.h || 2);
+	const [previewWidth, setPreviewWidth] = useState(getPreviewSize(loadWidgetSize(name)?.w || 2, loadWidgetSize(name)?.h || 2, getCellSize(), gap).width);
+	const [previewHeight, setPreviewHeight] = useState(getPreviewSize(loadWidgetSize(name)?.w || 2, loadWidgetSize(name)?.h || 2, getCellSize(), gap).height);
 	const resizingRef = useRef(false);
 	const widgetRef = useRef(null);
 	const resizeZoneRef = useRef(null);
@@ -69,6 +69,22 @@ export function useWidgetResize(possibleLayout, gap = 16) {
 		setHeight(nextLayout.h);
 		setPreviewWidth(preview.width);
 		setPreviewHeight(preview.height);
+		saveWidgetSize(nextLayout.w, nextLayout.h);
+	}
+
+	function saveWidgetSize(w, h) {
+		localStorage.setItem(name, JSON.stringify({ w, h }));
+	}
+
+	function loadWidgetSize() {
+		const raw = localStorage.getItem(name);
+		if (!raw) return {w: 2, h: 2};
+
+		try {
+			return JSON.parse(raw);
+		} catch {
+			return null;
+		}
 	}
 
 	useEffect(() => {
@@ -101,5 +117,6 @@ export function useWidgetResize(possibleLayout, gap = 16) {
 		previewHeight,
 		widgetRef,
 		resizeZoneRef,
+		resizingRef
 	};
 }
