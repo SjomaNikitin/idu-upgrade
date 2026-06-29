@@ -457,51 +457,49 @@
     )));
   }
 
-  // src/content/components/widgets/grades.jsx
-  function Grades() {
-    function getPreviewSize(width2, height2, cellSize, gap) {
-      return {
-        width: (cellSize - 20) * width2 + gap * (width2 - 1),
-        height: (cellSize - 20) * height2 + gap * (height2 - 1)
-      };
-    }
-    const [width, setWidth] = d2(2);
-    const [height, setHeight] = d2(2);
-    const [previewWidth, setPreviewWidth] = d2(getPreviewSize(width, height, getCellSize(), 16).width);
-    const [previewHeight, setPreviewHeight] = d2(getPreviewSize(width, height, getCellSize(), 16).height);
-    const possibleLayout = [{ w: 2, h: 2 }, { w: 2, h: 4 }, { w: 4, h: 2 }, { w: 2, h: 1 }, { w: 4, h: 1 }, { w: 4, h: 4 }];
-    const resizingRef = A2(false);
-    const gradesWidgetRef = A2(null);
-    const resizeZoneRef = A2(null);
+  // src/content/components/widgets/widgetResize.js
+  function getPreviewSize(width, height, cellSize, gap) {
+    return {
+      width: (cellSize - 20) * width + gap * (width - 1),
+      height: (cellSize - 20) * height + gap * (height - 1)
+    };
+  }
+  function useWidgetResize(possibleLayout, gap = 16) {
     function getCellSize() {
       const gridWidth = window.innerWidth;
       return gridWidth / 4;
     }
+    const [width, setWidth] = d2(2);
+    const [height, setHeight] = d2(2);
+    const [previewWidth, setPreviewWidth] = d2(getPreviewSize(2, 2, getCellSize(), gap).width);
+    const [previewHeight, setPreviewHeight] = d2(getPreviewSize(2, 2, getCellSize(), gap).height);
+    const resizingRef = A2(false);
+    const widgetRef = A2(null);
+    const resizeZoneRef = A2(null);
     function calcCornerPositions() {
-      const resizeZone = resizeZoneRef.current;
-      const gradesWidget = gradesWidgetRef.current;
-      if (!resizeZone || !gradesWidget) return [];
-      let cellSize = getCellSize();
-      let positions = [];
+      const widget = widgetRef.current;
+      if (!widget) return [];
+      const cellSize = getCellSize();
+      const positions = [];
       for (let i3 = 0; i3 < possibleLayout.length; i3++) {
-        let layout = possibleLayout[i3];
-        let x2 = (layout.w - 1) * cellSize;
-        let y3 = (layout.h - 1) * cellSize;
-        let realX = gradesWidgetRef.current.getBoundingClientRect().left + x2;
-        let realY = gradesWidgetRef.current.getBoundingClientRect().top + y3;
+        const layout = possibleLayout[i3];
+        const x2 = layout.w * cellSize;
+        const y3 = layout.h * cellSize;
+        const realX = widget.getBoundingClientRect().left + x2;
+        const realY = widget.getBoundingClientRect().top + y3;
         positions.push({ realX, realY });
       }
       return positions;
     }
     function dynamicSizeUpdate(e3) {
       if (!resizingRef.current) return;
-      let positions = calcCornerPositions();
+      const positions = calcCornerPositions();
       if (!positions.length) return;
-      let pointerPos = { x: e3.clientX, y: e3.clientY };
-      let bestOption = { index: -1, distance: 99999 };
+      const pointerPos = { x: e3.clientX, y: e3.clientY };
+      const bestOption = { index: -1, distance: 99999 };
       for (let i3 = 0; i3 < positions.length; i3++) {
-        let position = positions[i3];
-        let distance = Math.hypot(
+        const position = positions[i3];
+        const distance = Math.hypot(
           pointerPos.x - position.realX,
           pointerPos.y - position.realY
         );
@@ -510,10 +508,12 @@
           bestOption.distance = distance;
         }
       }
-      setWidth(possibleLayout[bestOption.index].w);
-      setHeight(possibleLayout[bestOption.index].h);
-      setPreviewWidth(getPreviewSize(possibleLayout[bestOption.index].w, possibleLayout[bestOption.index].h, getCellSize(), 16).width);
-      setPreviewHeight(getPreviewSize(possibleLayout[bestOption.index].w, possibleLayout[bestOption.index].h, getCellSize(), 16).height);
+      const nextLayout = possibleLayout[bestOption.index];
+      const preview = getPreviewSize(nextLayout.w, nextLayout.h, getCellSize(), gap);
+      setWidth(nextLayout.w);
+      setHeight(nextLayout.h);
+      setPreviewWidth(preview.width);
+      setPreviewHeight(preview.height);
     }
     y2(() => {
       const resizeZone = resizeZoneRef.current;
@@ -521,10 +521,8 @@
       function startResize() {
         resizingRef.current = true;
       }
-      function stopResize(e3) {
-        if (resizingRef.current) {
-          resizingRef.current = false;
-        }
+      function stopResize() {
+        resizingRef.current = false;
       }
       resizeZone.addEventListener("pointerdown", startResize);
       document.addEventListener("pointerup", stopResize);
@@ -535,7 +533,41 @@
         document.removeEventListener("pointermove", dynamicSizeUpdate);
       };
     }, []);
-    return /* @__PURE__ */ k("div", { ref: gradesWidgetRef, id: "gradesWidget", className: `widget w${width} h${height}` }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { width: `${previewWidth}px`, height: `${previewHeight}px` } }), /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" }));
+    return {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef
+    };
+  }
+
+  // src/content/components/widgets/grades.jsx
+  function Grades() {
+    const possibleLayout = [
+      { w: 2, h: 2 },
+      { w: 2, h: 4 },
+      { w: 4, h: 2 },
+      { w: 2, h: 1 },
+      { w: 4, h: 1 },
+      { w: 4, h: 4 }
+    ];
+    const {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef
+    } = useWidgetResize(possibleLayout);
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "gradesWidget", className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "inner-widget",
+        style: { width: `${previewWidth}px`, height: `${previewHeight}px` }
+      }
+    ), /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" }));
   }
 
   // src/content/components/mainContent.jsx
