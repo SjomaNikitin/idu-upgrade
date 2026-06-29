@@ -10,6 +10,7 @@ export function Header({accountHref}) {
 	let panelIconStrokeWidth = 2.5;
 	let panelIconColor = "currentColor";
 	let actionIconStrokeWidth = 2.2;
+	let [editMode, setEditMode] = useState(false);
 	if (currentTheme === "Ocean") {
 		color = "#91dba4"
 	} else if (currentTheme === "Besties") {
@@ -25,17 +26,21 @@ export function Header({accountHref}) {
 		setSettingsOpen(true);
 		setMenuOpen(false);
 	}
+	function switchEditMode () {
+		window.editMode = !editMode;
+		setEditMode(!editMode);
+	}
 	return (
 	<header id="top" className="idu-custom-header">
 		<div className="header-menu">
-			<button
+			<a
 				className="header-menu-button"
 				onClick={() => setMenuOpen(!menuOpen)}
 			>
 				<svg width={svgSize + 4} height={svgSize + 4} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path d="M4 12H20M4 8H20M4 16H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
 				</svg>
-			</button>
+			</a>
 
 			<div className={`header-menu-panel ${menuOpen ? "open" : ""}`}>
 				<a href={accountHref} className="header-panel-link">
@@ -70,14 +75,10 @@ export function Header({accountHref}) {
 
 
 		<div className="header-actions">
-			<a href="/internal_messages" className="header-icon-button">
-				<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} viewBox="0 0 24 24">
-					<path fill="currentColor" d="m20.34 9.32l-14-7a3 3 0 0 0-4.08 3.9l2.4 5.37a1.06 1.06 0 0 1 0 .82l-2.4 5.37A3 3 0 0 0 5 22a3.14 3.14 0 0 0 1.35-.32l14-7a3 3 0 0 0 0-5.36Zm-.89 3.57l-14 7a1 1 0 0 1-1.35-1.3l2.39-5.37a2 2 0 0 0 .08-.22h6.89a1 1 0 0 0 0-2H6.57a2 2 0 0 0-.08-.22L4.1 5.41a1 1 0 0 1 1.35-1.3l14 7a1 1 0 0 1 0 1.78Z"/>
-				</svg>
-			</a>
-			<a href="/informations" className="header-icon-button">
-				<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} viewBox="0 0 24 24">
-					<path fill="currentColor" d="M4 8a8 8 0 1 1 16 0v4.697l2 3V20h-5.611a4.502 4.502 0 0 1-8.777 0H2v-4.303l2-3V8Zm5.708 12a2.5 2.5 0 0 0 4.584 0H9.708ZM12 2a6 6 0 0 0-6 6v5.303l-2 3V18h16v-1.697l-2-3V8a6 6 0 0 0-6-6Z"/>
+			<a onClick={() => {switchEditMode()}} className={`header-icon-button ${editMode ? "active" : ""}`}>
+				<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 				</svg>
 			</a>
 		</div>

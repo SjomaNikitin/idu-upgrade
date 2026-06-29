@@ -69,12 +69,13 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			return overlapWidth * overlapHeight;
 		}
 
-		function startDragging(e) {
+		function startDragging(e){
+			if (!window.editMode) return;
 			if (resizingZoneRef.current?.contains(e.target)) return;
 			if (resizeRef.current) return;
 				dragging = true;
 				widgetClone = widgetRef.current.children[0].cloneNode(true);
-				widgetClone.className = "widget-clone inner-widget";
+				widgetClone.className = "widget-clone inner-widget wiggle";
 				document.body.appendChild(widgetClone);
 				widgetRef.current.children[0].style.opacity = "0.3";
 		}
@@ -94,7 +95,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 				} else {
 					widgetClone.style.left = 16 + "px";
 				}
-				widgetClone.style.top = e.clientY - heightRef.current / 2 + "px";
+				widgetClone.style.top = e.clientY + window.scrollY - heightRef.current / 2 + "px";
 				clearTimeout(visualUpdateTimer);
 				visualUpdateTimer = setTimeout(() => {
 					updateLayout()

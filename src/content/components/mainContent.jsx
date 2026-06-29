@@ -1,7 +1,9 @@
 import { h } from 'preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { Grades } from './widgets/grades.jsx';
+import { GradesPopup } from './widgets/grades.jsx';
 
+window.editMode = false;
 const widgetRegistry = {
 	grades: Grades,
 };
@@ -12,7 +14,14 @@ const initialWidgets = [
 	{ id: 'test-2', type: 'test', width: 2, height: 2 },
 	{ id: 'test-3', type: 'test', width: 2, height: 2 },
 	{ id: 'test-4', type: 'test', width: 2, height: 2 },
+	{ id: 'test-5', type: 'test', width: 4, height: 1 },
+	{ id: 'test-6', type: 'test', width: 2, height: 2 },
+	{ id: 'test-7', type: 'test', width: 2, height: 4 },
+	{ id: 'test-8', type: 'test', width: 2, height: 2 },
+
 ];
+
+const widgetLayoutStorageKey = 'mainContent.widgetOrder';
 
 function moveWidget(list, movedId, targetId) {
 	if (movedId === targetId) return list;
@@ -43,8 +52,57 @@ function PlaceholderWidget({ widgetId, width = 2, height = 2 }) {
 	);
 }
 
+function saveWidgetLayout(widgets) {
+	localStorage.setItem(
+		widgetLayoutStorageKey,
+		JSON.stringify(widgets.map((widget) => widget.id))
+	);
+}
+
+function loadWidgetLayout() {
+	const raw = localStorage.getItem(widgetLayoutStorageKey);
+	if (!raw) return initialWidgets;
+
+	try {
+		const savedIds = JSON.parse(raw);
+		if (!Array.isArray(savedIds)) return initialWidgets;
+
+		const widgetMap = new Map(initialWidgets.map((widget) => [widget.id, widget]));
+		const orderedWidgets = savedIds.map((id) => widgetMap.get(id)).filter(Boolean);
+		const missingWidgets = initialWidgets.filter((widget) => !savedIds.includes(widget.id));
+
+		return [...orderedWidgets, ...missingWidgets];
+	} catch {
+		return initialWidgets;
+	}
+}
+
 export function MainContent() {
-	const [widgets, setWidgets] = useState(initialWidgets);
+	const [widgets, setWidgets] = useState(loadWidgetLayout);
+	const [openPopupId, setOpenPopupId] = useState(null);
+	const popupContainerRef = useRef(null);
+
+	useEffect(() => {
+		saveWidgetLayout(widgets);
+	}, [widgets]);
+
+	useEffect(() => {
+		function handleOutsidePointerDown(e) {
+			if (!openPopupId) return;
+
+			const popupContainer = popupContainerRef.current;
+			if (!popupContainer) return;
+
+			if (e.target.closest('.widget-popup')) return;
+			setOpenPopupId(null);
+		}
+
+		document.addEventListener('pointerdown', handleOutsidePointerDown);
+
+		return () => {
+			document.removeEventListener('pointerdown', handleOutsidePointerDown);
+		};
+	}, [openPopupId]);
 
 	function handleMoveWidget(movedId, targetId) {
 		setWidgets((currentWidgets) => moveWidget(currentWidgets, movedId, targetId));
@@ -59,6 +117,7 @@ export function MainContent() {
 					key={widget.id}
 					widgetId={widget.id}
 					moveWidget={handleMoveWidget}
+					openPopup={setOpenPopupId}
 				/>
 			);
 		}
@@ -74,8 +133,14 @@ export function MainContent() {
 	}
 
 	return (
-		<div className="widgets-grid">
-			{widgets.map(renderWidget)}
+		<div>
+			<div className="widgets-grid">
+				{widgets.map(renderWidget)}
+			</div>
+			<div ref={popupContainerRef} className="popups-container">
+				<GradesPopup openPopup={setOpenPopupId} className={`widget-popup ${openPopupId === 'grades' ? 'open' : ''}`}></GradesPopup>
+			</div>
 		</div>
+
 	);
 }

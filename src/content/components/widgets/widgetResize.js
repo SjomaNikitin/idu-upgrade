@@ -92,6 +92,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16) {
 		if (!resizeZone) return undefined;
 
 		function startResize() {
+			if (!window.editMode) return;
 			resizingRef.current = true;
 		}
 
