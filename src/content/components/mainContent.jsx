@@ -1,7 +1,6 @@
 import { h } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Grades } from './widgets/grades.jsx';
-import { GradesPopup } from './widgets/grades.jsx';
 
 window.editMode = false;
 const widgetRegistry = {
@@ -14,9 +13,7 @@ const initialWidgets = [
 	{ id: 'test-2', type: 'test', width: 2, height: 2 },
 	{ id: 'test-3', type: 'test', width: 2, height: 2 },
 	{ id: 'test-4', type: 'test', width: 2, height: 2 },
-	{ id: 'test-5', type: 'test', width: 4, height: 1 },
 	{ id: 'test-6', type: 'test', width: 2, height: 2 },
-	{ id: 'test-7', type: 'test', width: 2, height: 4 },
 	{ id: 'test-8', type: 'test', width: 2, height: 2 },
 
 ];
@@ -136,9 +133,6 @@ export function MainContent() {
 		<div>
 			<div className="widgets-grid">
 				{widgets.map(renderWidget)}
-			</div>
-			<div ref={popupContainerRef} className="popups-container">
-				<GradesPopup openPopup={setOpenPopupId} className={`widget-popup ${openPopupId === 'grades' ? 'open' : ''}`}></GradesPopup>
 			</div>
 		</div>
 

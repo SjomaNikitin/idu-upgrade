@@ -7,19 +7,28 @@ function getPreviewSize(width, height, cellSize, gap) {
 	};
 }
 
-export function useWidgetResize(possibleLayout, name, gap = 16) {
+export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, defaultSize = {w: 2, h: 2}) {
 	function getCellSize() {
 		const gridWidth = window.innerWidth;
 		return gridWidth / 4;
 	}
 
-	const [width, setWidth] = useState(loadWidgetSize(name)?.w || 2);
-	const [height, setHeight] = useState(loadWidgetSize(name)?.h || 2);
-	const [previewWidth, setPreviewWidth] = useState(getPreviewSize(loadWidgetSize(name)?.w || 2, loadWidgetSize(name)?.h || 2, getCellSize(), gap).width);
-	const [previewHeight, setPreviewHeight] = useState(getPreviewSize(loadWidgetSize(name)?.w || 2, loadWidgetSize(name)?.h || 2, getCellSize(), gap).height);
+	const [width, setWidth] = useState(loadWidgetSize(name)?.w || defaultSize.w);
+	const [height, setHeight] = useState(loadWidgetSize(name)?.h || defaultSize.h);
+	const [previewWidth, setPreviewWidth] = useState(getPreviewSize(loadWidgetSize(name)?.w || defaultSize.w, loadWidgetSize(name)?.h || defaultSize.h, getCellSize(), gap).width);
+	const [previewHeight, setPreviewHeight] = useState(getPreviewSize(loadWidgetSize(name)?.w || defaultSize.w, loadWidgetSize(name)?.h || defaultSize.h, getCellSize(), gap).height);
+	const [openPopup, setOpenPopup] = useState(false);
 	const resizingRef = useRef(false);
 	const widgetRef = useRef(null);
 	const resizeZoneRef = useRef(null);
+	const widgetLastSizeRef = useRef(defaultSize);
+	const widthRef = useRef(width);
+	const heightRef = useRef(height);
+	const openPopupRef = useRef(openPopup);
+
+	widthRef.current = width;
+	heightRef.current = height;
+	openPopupRef.current = openPopup;
 
 	function calcCornerPositions() {
 		const widget = widgetRef.current;
@@ -78,7 +87,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16) {
 
 	function loadWidgetSize() {
 		const raw = localStorage.getItem(name);
-		if (!raw) return {w: 2, h: 2};
+		if (!raw) return defaultSize;
 
 		try {
 			return JSON.parse(raw);
@@ -100,14 +109,33 @@ export function useWidgetResize(possibleLayout, name, gap = 16) {
 			resizingRef.current = false;
 		}
 
+		function togglePopup () {
+			let finalSize;
+			if (openPopupRef.current) {
+				finalSize = widgetLastSizeRef.current;
+			} else {
+				finalSize = fullSize;
+				widgetLastSizeRef.current = { w: widthRef.current, h: heightRef.current };
+			}
+			const preview = getPreviewSize(finalSize.w, finalSize.h, getCellSize(), gap);
+			setWidth(finalSize.w);
+			setHeight(finalSize.h);
+			setPreviewWidth(preview.width);
+			setPreviewHeight(preview.height);
+			setOpenPopup(!openPopupRef.current);
+		}
+
 		resizeZone.addEventListener('pointerdown', startResize);
 		document.addEventListener('pointerup', stopResize);
 		document.addEventListener('pointermove', dynamicSizeUpdate);
+
+		widgetRef.current.addEventListener('click', togglePopup);
 
 		return () => {
 			resizeZone.removeEventListener('pointerdown', startResize);
 			document.removeEventListener('pointerup', stopResize);
 			document.removeEventListener('pointermove', dynamicSizeUpdate);
+			widgetRef.current.removeEventListener('click', togglePopup);
 		};
 	}, []);
 

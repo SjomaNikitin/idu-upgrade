@@ -28,6 +28,11 @@ export function Header({accountHref}) {
 	}
 	function switchEditMode () {
 		window.editMode = !editMode;
+		if (editMode) {
+			document.body.classList.remove('edit-mode');
+		} else {
+			document.body.classList.add('edit-mode');
+		}
 		setEditMode(!editMode);
 	}
 	return (

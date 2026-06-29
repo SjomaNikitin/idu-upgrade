@@ -1276,7 +1276,7 @@
 	}
 
 	.widget-clone{
-		position: absolute;
+		position: absolute !important;
 		z-index: 999;
 		box-shadow: 0 4px 8px var(--module-shadow-color);
 	}
@@ -1288,6 +1288,8 @@
 	.widget.h2 { grid-row: span 2; }
 	.widget.h3 { grid-row: span 3; }
 	.widget.h4 { grid-row: span 4; }
+	.widget.h5 { grid-row: span 5; }
+	.widget.h6 { grid-row: span 6; }
 
 	.resize-zone{
 		position: absolute;
@@ -1298,6 +1300,19 @@
 		z-index: 3;
 		touch-action: none;
 		user-select: none;
+	}
+
+	body.edit-mode .resize-zone::before {
+		content: "";
+		position: absolute;
+		right: 8px;
+		bottom: 8px;
+		width: 16px;
+		height: 16px;
+		border-right: 6px solid var(--mc);
+		border-bottom: 6px solid var(--mc);
+		border-bottom-right-radius: 12px;
+		opacity: 0.5;
 	}
 
 	.widget-popup{

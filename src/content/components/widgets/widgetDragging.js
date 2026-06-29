@@ -74,10 +74,13 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			if (resizingZoneRef.current?.contains(e.target)) return;
 			if (resizeRef.current) return;
 				dragging = true;
-				widgetClone = widgetRef.current.children[0].cloneNode(true);
+				widgetClone = widgetRef.current.children[0].cloneNode(false);
 				widgetClone.className = "widget-clone inner-widget wiggle";
 				document.body.appendChild(widgetClone);
 				widgetRef.current.children[0].style.opacity = "0.3";
+				widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
+				child.style.opacity = '0';
+			});
 		}
 		function stopDragging () {
 			dragging = false;
@@ -85,6 +88,9 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 				document.body.removeChild(widgetClone);
 				widgetClone = null;
 				widgetRef.current.children[0].style.opacity = "1";
+				widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
+					child.style.opacity = '1';
+				});
 				clearTimeout(visualUpdateTimer);
 			}
 		}
