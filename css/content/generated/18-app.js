@@ -745,7 +745,7 @@
       }
       return "...";
     }
-    const preparedGrades2 = gradesData.map((item) => ({
+    const preparedGrades = gradesData.map((item) => ({
       value: normalizeGrade(item.grade),
       subject: item.subject.split(" ")[0],
       subjectUrl: item.subjectUrl,
@@ -754,8 +754,8 @@
     function GradeRow({ item, isLast = false, showDescription = false }) {
       return /* @__PURE__ */ k("div", { className: `widget-grade-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("p", null, item.value), /* @__PURE__ */ k("a", { href: item.subjectUrl }, " | ", item.subject), showDescription && /* @__PURE__ */ k("a", { className: "grade-description" }, item.description));
     }
-    function GradesList({ limit, lastLine = 1, showDescription = false }) {
-      const visibleGrades = preparedGrades2.slice(0, limit);
+    function GradesList({ limit, lastLine = 1, showDescription = false, allHref = false }) {
+      const visibleGrades = preparedGrades.slice(0, limit);
       return /* @__PURE__ */ k(
         "div",
         {
@@ -771,7 +771,8 @@
             isLast: index === visibleGrades.length - lastLine || index === visibleGrades.length - 1,
             showDescription
           }
-        ))
+        )),
+        allHref && /* @__PURE__ */ k("a", { className: "grades-all-link", href: gradesData[0].seeMoreUrl }, "Wszystkie oceny")
       );
     }
     function Grades22() {
@@ -790,7 +791,7 @@
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OCENY"));
     }
     function Grades46() {
-      return /* @__PURE__ */ k(GradesList, { limit: 6, lastLine: 2, showDescription: true });
+      return /* @__PURE__ */ k(GradesList, { limit: 6, lastLine: 2, showDescription: true, allHref: true });
     }
     const gradeVariants = {
       "22": Grades22,
@@ -982,7 +983,7 @@
       { w: 2, h: 1 },
       { w: 4, h: 1 }
     ];
-    const fullSize = { w: 4, h: 4 };
+    const fullSize = { w: 4, h: 5 };
     const {
       width,
       height,
@@ -993,34 +994,33 @@
       resizingRef
     } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
-    function GradeRow({ item, isLast = false, showDescription = false }) {
-      return /* @__PURE__ */ k("div", { className: `widget-grade-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("p", null, item.value), /* @__PURE__ */ k("a", { href: item.subjectUrl }, " | ", item.subject), showDescription && /* @__PURE__ */ k("a", { className: "grade-description" }, item.description));
+    function NewsRow({ item, isLast = false }) {
+      return /* @__PURE__ */ k("div", { className: `widget-news-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("a", { href: item.titleUrl }, item.title));
     }
-    function GradesList({ limit, lastLine = 1, showDescription = false }) {
-      const visibleGrades = preparedGrades.slice(0, limit);
+    function NewsList({ limit, lastLine = 1 }) {
+      const visibleNews = subjectNews.slice(0, limit);
       return /* @__PURE__ */ k(
         "div",
         {
           style: { width: `${previewWidth}px`, height: `${previewHeight}px` },
           className: "widget-content-container"
         },
-        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OCENY")),
-        visibleGrades.map((item, index) => /* @__PURE__ */ k(
-          GradeRow,
+        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OG\u0142OSZENIA PRZEDMIOTOWE")),
+        visibleNews.map((item, index) => /* @__PURE__ */ k(
+          NewsRow,
           {
             key: `${item.subjectUrl}-${index}`,
             item,
-            isLast: index === visibleGrades.length - lastLine || index === visibleGrades.length - 1,
-            showDescription
+            isLast: index === visibleNews.length - lastLine || index === visibleNews.length - 1
           }
         ))
       );
     }
     function Announcements22() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE")));
+      return /* @__PURE__ */ k(NewsList, { limit: 2 });
     }
     function Announcements42() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE")));
+      return /* @__PURE__ */ k(NewsList, { limit: 4, lastLine: 2 });
     }
     function Announcements21() {
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE"));
@@ -1028,18 +1028,106 @@
     function Announcements41() {
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE"));
     }
-    function Announcements44() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE")));
+    function Announcements45() {
+      return /* @__PURE__ */ k(NewsList, { limit: 8, lastLine: 2 });
     }
     const gradeVariants = {
       "22": Announcements22,
       "42": Announcements42,
       "21": Announcements21,
       "41": Announcements41,
-      "46": Announcements44
+      "45": Announcements45
     };
     const Variant = gradeVariants[`${width}${height}`] || Announcements22;
     return /* @__PURE__ */ k("div", { ref: widgetRef, id: "announcementsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "inner-widget",
+        style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
+      },
+      /* @__PURE__ */ k(Variant, null),
+      /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" })
+    ));
+  }
+
+  // src/content/components/widgets/news.jsx
+  function News({ widgetId, moveWidget: moveWidget2, data }) {
+    const news = data.news;
+    const possibleLayout = [
+      { w: 2, h: 2 },
+      { w: 4, h: 2 },
+      { w: 2, h: 4 },
+      { w: 4, h: 4 },
+      { w: 2, h: 1 },
+      { w: 4, h: 1 }
+    ];
+    const fullSize = { w: 4, h: 6 };
+    const {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef,
+      resizingRef
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+    useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function NewsRow({ item, isLast = false }) {
+      return /* @__PURE__ */ k("div", { className: `widget-news-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("a", { href: item.titleUrl }, item.title));
+    }
+    function NewsList({ limit, lastLine = 1, gradient = false, allHref = true }) {
+      const visibleNews = news.slice(0, limit);
+      return /* @__PURE__ */ k(
+        "div",
+        {
+          style: { width: `${previewWidth}px`, height: `${previewHeight}px` },
+          className: "widget-content-container"
+        },
+        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "AKTUALNO\u015ACI")),
+        visibleNews.map((item, index) => /* @__PURE__ */ k(
+          NewsRow,
+          {
+            key: `${item.subjectUrl}-${index}`,
+            item,
+            isLast: index === visibleNews.length - lastLine || index === visibleNews.length - 1
+          }
+        )),
+        gradient && /* @__PURE__ */ k("div", { className: "widget-news-gradient" }),
+        allHref && /* @__PURE__ */ k("a", { className: "grades-all-link", href: "/informations" }, "Zobacz Wszystkie")
+      );
+    }
+    function Announcements22() {
+      return /* @__PURE__ */ k(NewsList, { limit: 2, gradient: true });
+    }
+    function Announcements42() {
+      return /* @__PURE__ */ k(NewsList, { limit: 4, lastLine: 2, gradient: true });
+    }
+    function Announcements24() {
+      return /* @__PURE__ */ k(NewsList, { limit: 6, gradient: true });
+    }
+    function Announcements44() {
+      return /* @__PURE__ */ k(NewsList, { limit: 8, lastLine: 2, gradient: true });
+    }
+    function Announcements21() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "AKTUALNO\u015ACI"));
+    }
+    function Announcements41() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "AKTUALNO\u015ACI"));
+    }
+    function Announcements46() {
+      return /* @__PURE__ */ k(NewsList, { limit: 12, lastLine: 2, gradient: true });
+    }
+    const gradeVariants = {
+      "22": Announcements22,
+      "42": Announcements42,
+      "21": Announcements21,
+      "41": Announcements41,
+      "44": Announcements44,
+      "24": Announcements24,
+      "46": Announcements46
+    };
+    const Variant = gradeVariants[`${width}${height}`] || Announcements22;
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "newsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1056,13 +1144,15 @@
     grades: Grades,
     subjects: Subjects,
     schedule: Schedule,
-    subjectNews: SubjectNews
+    subjectNews: SubjectNews,
+    news: News
   };
   var initialWidgets = [
     { id: "grades", type: "grades" },
     { id: "subjects", type: "subjects" },
     { id: "schedule", type: "schedule" },
-    { id: "subjectNews", type: "subjectNews" }
+    { id: "subjectNews", type: "subjectNews" },
+    { id: "news", type: "news" }
   ];
   var widgetLayoutStorageKey = "mainContent.widgetOrder";
   function moveWidget(list, movedId, targetId) {

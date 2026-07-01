@@ -4,15 +4,17 @@ import { useWidgetResize } from './widgetResize.js';
 import { useWidgetDragging } from './widgetDragging.js';
 
 
-export function SubjectNews({ widgetId, moveWidget, data }) {
-	const subjectNews = data.subjectAnnouncements;
+export function News({ widgetId, moveWidget, data }) {
+	const news = data.news;
 	const possibleLayout = [
 		{ w: 2, h: 2 },
 		{ w: 4, h: 2 },
+		{ w: 2, h: 4},
+		{ w: 4, h: 4},
 		{ w: 2, h: 1 },
 		{ w: 4, h: 1 },
 	];
-	const fullSize = {w: 4, h: 5}
+	const fullSize = {w: 4, h: 6}
 	const {
 		width,
 		height,
@@ -33,8 +35,8 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 		);
 	}
 
-	function NewsList({ limit, lastLine = 1}) {
-		const visibleNews = subjectNews.slice(0, limit);
+	function NewsList({ limit, lastLine = 1, gradient = false, allHref = true}) {
+		const visibleNews = news.slice(0, limit);
 
 		return (
 			<div
@@ -42,7 +44,7 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 				className="widget-content-container"
 			>
 				<div className="widget-title-box">
-					<h1>OGłOSZENIA PRZEDMIOTOWE</h1>
+					<h1>AKTUALNOŚCI</h1>
 				</div>
 
 				{visibleNews.map((item, index) => (
@@ -52,32 +54,41 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 						isLast={index === visibleNews.length - lastLine || index === visibleNews.length - 1}
 					/>
 				))}
+				{gradient && <div className="widget-news-gradient"></div>}
+				{allHref && <a className="grades-all-link" href={"/informations"}>Zobacz Wszystkie</a>}
 			</div>
 		);
 	}
 
 	function Announcements22 () {
-		return(<NewsList limit={2}/>)
+		return(<NewsList limit={2} gradient={true}/>)
 	}
 
 	function Announcements42 () {
-		return(<NewsList limit={4} lastLine={2}/>)
+		return(<NewsList limit={4} lastLine={2} gradient={true}/>)
+	}
+	function Announcements24 () {
+		return(<NewsList limit={6} gradient={true}/>)
+	}
+
+	function Announcements44 () {
+		return(<NewsList limit={8} lastLine={2} gradient={true}/>)
 	}
 
 	function Announcements21 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OGŁOSZENIA PRZEDMIOTOWE</h1>
+			<h1>AKTUALNOŚCI</h1>
 		</div>)
 	}
 
 	function Announcements41 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OGŁOSZENIA PRZEDMIOTOWE</h1>
+			<h1>AKTUALNOŚCI</h1>
 		</div>)
 	}
 
-	function Announcements45 () {
-		return(<NewsList limit={8} lastLine={2}/>)
+	function Announcements46 () {
+		return(<NewsList limit={12} lastLine={2} gradient={true}/>)
 	}
 
 	const gradeVariants = {
@@ -85,13 +96,15 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 		'42': Announcements42,
 		'21': Announcements21,
 		'41': Announcements41,
-		'45': Announcements45,
+		'44': Announcements44,
+		'24': Announcements24,
+		'46': Announcements46,
 	};
 
 	const Variant = gradeVariants[`${width}${height}`] || Announcements22;
 
 	return (
-		<div ref={widgetRef} id="announcementsWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
+		<div ref={widgetRef} id="newsWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
 			<div
 				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}

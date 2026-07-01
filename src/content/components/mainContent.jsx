@@ -4,6 +4,7 @@ import { Grades } from './widgets/grades.jsx';
 import { Subjects } from './widgets/subjects.jsx';
 import { Schedule } from './widgets/schedule.jsx';
 import { SubjectNews } from './widgets/subjectNews.jsx';
+import { News } from './widgets/news.jsx';
 
 window.editMode = false;
 const widgetRegistry = {
@@ -11,6 +12,7 @@ const widgetRegistry = {
 	subjects: Subjects,
 	schedule: Schedule,
 	subjectNews: SubjectNews,
+	news: News,
 };
 
 const initialWidgets = [
@@ -18,7 +20,7 @@ const initialWidgets = [
 	{ id: 'subjects', type: 'subjects'},
 	{ id: 'schedule', type: 'schedule'},
 	{ id: 'subjectNews', type: 'subjectNews'},
-
+	{ id: 'news', type: 'news'},
 ];
 
 const widgetLayoutStorageKey = 'mainContent.widgetOrder';

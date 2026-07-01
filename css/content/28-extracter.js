@@ -9,7 +9,7 @@ function extractGrades(container) {
 		const nameSpan = gradeEl.querySelector('.name');
 		const descriptionSpan = gradeEl.querySelector('.description');
 		const dateSpan = gradeEl.querySelector('.date');
-
+		const seeMoreLink = container.querySelector('div.see-more a');
 		return {
 			subject: subjectLink?.textContent.trim() || '',
 			subjectUrl: subjectLink?.getAttribute('href') || '',
@@ -18,6 +18,7 @@ function extractGrades(container) {
 			gradeDescriptionUrl: nameLink?.getAttribute('href') || '',
 			description: descriptionSpan?.textContent.trim() || '',
 			date: dateSpan?.textContent.trim() || '',
+			seeMoreUrl: seeMoreLink?.getAttribute('href') || '',
 		};
 	});
 }
@@ -139,6 +140,33 @@ function extractSubjectAnnouncements(container) {
 			titleUrl: nameLink?.getAttribute('href') || '',
 			date: dateSpan?.textContent.trim() || '',
 			read: announcementEl.classList.contains('read'),
+		};
+	});
+}
+
+function extractNews(container) {
+	if (!container) return [];
+
+	const newsElements = container.querySelectorAll('.profile-event.news');
+
+	return Array.from(newsElements).map((newsEl) => {
+		const nameSpan = newsEl.querySelector('.name');
+		const titleLink = newsEl.querySelector('.name a');
+		const dateSpan = newsEl.querySelector('.date');
+		const commentsSpan = Array.from(newsEl.querySelectorAll('span'))
+			.find((span) => span.textContent.trim().startsWith('komentarze:'));
+
+		return {
+			title: titleLink?.textContent.trim() || '',
+			titleUrl: titleLink?.getAttribute('href') || '',
+			date: dateSpan?.textContent.trim() || '',
+			updatedAt: nameSpan?.childNodes[0]?.textContent.replace('Aktualizacja:', '').trim() || '',
+			comments: commentsSpan?.textContent.replace('komentarze:', '').trim() || '',
+			sticky: newsEl.classList.contains('sticky'),
+			read: newsEl.classList.contains('read'),
+			priority: Array.from(newsEl.classList)
+				.find((className) => className.startsWith('priority_'))
+				?.replace('priority_', '') || '',
 		};
 	});
 }

@@ -64,7 +64,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 		);
 	}
 
-	function GradesList({ limit, lastLine = 1,showDescription = false}) {
+	function GradesList({ limit, lastLine = 1,showDescription = false,allHref=false}) {
 		const visibleGrades = preparedGrades.slice(0, limit);
 
 		return (
@@ -84,6 +84,8 @@ export function Grades({ widgetId, moveWidget, data }) {
 						showDescription={showDescription}
 					/>
 				))}
+
+				{allHref && <a className="grades-all-link" href={gradesData[0].seeMoreUrl}>Wszystkie oceny</a>}
 			</div>
 		);
 	}
@@ -113,7 +115,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 	}
 
 	function Grades46 () {
-		return <GradesList limit={6} lastLine={2} showDescription={true}/>;
+		return <GradesList limit={6} lastLine={2} showDescription={true} allHref={true}/>;
 	}
 
 	const gradeVariants = {
