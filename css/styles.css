@@ -1645,7 +1645,7 @@
 	.donut-3::before {
 		content: "";
 		position: absolute;
-		inset: 22%;
+		inset: 12%;
 		background: var(--module-color);
 		border-radius: 50%;
 	}
