@@ -42,7 +42,7 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 				className="widget-content-container"
 			>
 				<div className="widget-title-box">
-					<h1>OGłOSZENIA PRZEDMIOTOWE</h1>
+					<h1>Ogłoszenia Przedmiotowe</h1>
 				</div>
 
 				{visibleNews.map((item, index) => (
@@ -66,13 +66,13 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 
 	function Announcements21 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OGŁOSZENIA PRZEDMIOTOWE</h1>
+			<h1>Ogłoszenia Przedmiotowe</h1>
 		</div>)
 	}
 
 	function Announcements41 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OGŁOSZENIA PRZEDMIOTOWE</h1>
+			<h1>Ogłoszenia Przedmiotowe</h1>
 		</div>)
 	}
 

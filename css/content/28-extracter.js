@@ -170,3 +170,28 @@ function extractNews(container) {
 		};
 	});
 }
+
+function extractAttendance(container) {
+	if (!container) return [];
+
+	const attendanceElements = container.querySelectorAll('.profile-event.absence, .profile-event.presence, .profile-event.lateness');
+	const seeMoreLink = container.querySelector('.see-more a');
+
+	return Array.from(attendanceElements).map((attendanceEl) => {
+		const subjectLink = attendanceEl.querySelector('.subject a');
+		const nameSpan = attendanceEl.querySelector('.name');
+		const dateSpan = attendanceEl.querySelector('.date');
+
+		return {
+			subject: subjectLink?.textContent.trim() || '',
+			subjectUrl: subjectLink?.getAttribute('href') || '',
+			type: nameSpan?.textContent.trim() || '',
+			date: dateSpan?.textContent.trim() || '',
+			issuedAt: attendanceEl.getAttribute('title')?.replace('wystawiono:', '').trim() || '',
+			absence: attendanceEl.classList.contains('absence'),
+			presence: attendanceEl.classList.contains('presence'),
+			lateness: attendanceEl.classList.contains('lateness'),
+			seeMoreUrl: seeMoreLink?.getAttribute('href') || '',
+		};
+	});
+}

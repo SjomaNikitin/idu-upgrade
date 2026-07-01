@@ -5,6 +5,8 @@ import { Subjects } from './widgets/subjects.jsx';
 import { Schedule } from './widgets/schedule.jsx';
 import { SubjectNews } from './widgets/subjectNews.jsx';
 import { News } from './widgets/news.jsx';
+import { Attendance } from './widgets/attendance.jsx';
+import { Messages } from './widgets/messages.jsx';
 
 window.editMode = false;
 const widgetRegistry = {
@@ -13,6 +15,8 @@ const widgetRegistry = {
 	schedule: Schedule,
 	subjectNews: SubjectNews,
 	news: News,
+	attendance: Attendance,
+	messages: Messages,
 };
 
 const initialWidgets = [
@@ -21,6 +25,8 @@ const initialWidgets = [
 	{ id: 'schedule', type: 'schedule'},
 	{ id: 'subjectNews', type: 'subjectNews'},
 	{ id: 'news', type: 'news'},
+	{ id: 'attendance', type: 'attendance'},
+	{ id: 'messages', type: 'messages'},
 ];
 
 const widgetLayoutStorageKey = 'mainContent.widgetOrder';

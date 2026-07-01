@@ -44,7 +44,7 @@ export function News({ widgetId, moveWidget, data }) {
 				className="widget-content-container"
 			>
 				<div className="widget-title-box">
-					<h1>AKTUALNOŚCI</h1>
+					<h1>Aktualności</h1>
 				</div>
 
 				{visibleNews.map((item, index) => (
@@ -77,13 +77,13 @@ export function News({ widgetId, moveWidget, data }) {
 
 	function Announcements21 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>AKTUALNOŚCI</h1>
+			<h1>Aktualności</h1>
 		</div>)
 	}
 
 	function Announcements41 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>AKTUALNOŚCI</h1>
+			<h1>Aktualności</h1>
 		</div>)
 	}
 

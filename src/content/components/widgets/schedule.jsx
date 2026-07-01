@@ -100,7 +100,7 @@ export function Schedule({ widgetId, moveWidget, data }) {
 	function Schedule44 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
 			<div className="widget-title-box">
-				<h1>PLAN LEKCJI</h1>
+				<h1>Plan Lekcji</h1>
 			</div>
 		</div>)
 	}
@@ -108,20 +108,20 @@ export function Schedule({ widgetId, moveWidget, data }) {
 
 	function Schedule21 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>PLAN LEKCJI</h1>
+			<h1>Plan Lekcji</h1>
 		</div>)
 	}
 
 	function Schedule41 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>PLAN LEKCJI</h1>
+			<h1>Plan Lekcji</h1>
 		</div>)
 	}
 
 	function Schedule24 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
 			<div className="widget-title-box">
-				<h1>PLAN LEKCJI</h1>
+				<h1>Plan Lekcji</h1>
 			</div>
 			<ScheduleGrid scheduleData={schedule} mode="today" />
 		</div>)
@@ -129,7 +129,7 @@ export function Schedule({ widgetId, moveWidget, data }) {
 
 	function Schedule46 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>PLAN LEKCJI</h1>
+			<h1>Plan Lekcji</h1>
 		</div>)
 	}
 

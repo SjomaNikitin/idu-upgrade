@@ -7,10 +7,11 @@ window.addEventListener("DOMContentLoaded", function () {
 		const scheduleData = getScheduleLessons();
 		const subjectAnnouncements = extractSubjectAnnouncements(document.querySelector("#unique-id11"));
 		const news = extractNews(document.querySelector("#unique-id14"));
+		const attendance = extractAttendance(document.querySelector("#unique-id15"));
 		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader()
 		console.log("Custom header loaded:", customHeaderLoaded)
 		if (window.location.pathname === "/") {
-			const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent({news: news, grades: gradesData, subjects: subjectsData, schedule: scheduleData, subjectAnnouncements: subjectAnnouncements})
+			const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent({attendance: attendance, news: news, grades: gradesData, subjects: subjectsData, schedule: scheduleData, subjectAnnouncements: subjectAnnouncements})
 			console.log("Custom content loaded:", customContentLoaded)
 
 		}

@@ -3,7 +3,8 @@
 	--padding-1: 8px;
 	--padding-2: calc(var(--padding-1) * 2);
 	--padding-4: calc(var(--padding-1) * 4);
-	--header-height: 130px;
+	--header-height: 100px;
+	--small-header-height: auto;
 	--h3-margin: calc(0px - var(--padding-1));
 	--ios-safe-top: 0px;
 
@@ -54,7 +55,10 @@
 	--chedule-time-color: #000000;
 	--shorted-gradient-color: #333333;
 	--darker-messages-color: #f5f5f7;
-	/* Light grey for message list items */
+	--attendance-wheel-color: #555555;
+	--upsent-wheel-color: #2f2f2f;
+	--latency-wheel-color: #5e5e5e;
+
 }
 
 :root[data-theme="Ocean"] {
@@ -84,6 +88,9 @@
 	--underline: 2px solid rgb(145 219 164);
 	--h3-margin: 0;
 	--footer-text-color: var(--main-text-color);
+	--attendance-wheel-color: rgb(145, 219, 164);
+	--upsent-wheel-color: rgb(14, 28, 38);
+	--latency-wheel-color: rgb(53 90 97);
 
 }
 
@@ -114,7 +121,9 @@
 	--underline: 2px solid rgb(3 25 38);
 	--h3-margin: 0;
 	--footer-text-color: var(--main-text-color);
-
+	--attendance-wheel-color: rgb(70, 129, 137);
+	--upsent-wheel-color: rgb(3, 25, 38);
+	--latency-wheel-color: rgb(157, 190, 187);
 }
 
 :root[data-theme="Besties"] {
@@ -145,7 +154,9 @@
 	--underline: 2px solid rgb(147 67 81 / 0.8);
 	--h3-margin: 0;
 	--footer-text-color: var(--main-text-color);
-
+	--attendance-wheel-color: rgb(228, 72, 99);
+	--upsent-wheel-color: rgb(147, 67, 81);
+	--latency-wheel-color: rgba(255, 169, 185);
 }
 
 
@@ -1100,11 +1111,26 @@
 		padding: var(--padding-2);
 	}
 
+	.idu-custom-header.mini{
+		height: var(--small-header-height) !important;
+	}
+
+	.header-home {
+		justify-self: start;
+		align-self: start;
+		position: relative;
+		z-index: 20;
+		grid-column: 1;
+	}
+
 	.header-menu {
 		justify-self: start;
 		align-self: start;
 		position: relative;
 		z-index: 20;
+		grid-column: 1;
+		display: flex;
+		flex-direction: row;
 	}
 
 	.header-menu-button {
@@ -1118,6 +1144,7 @@
 		padding: 0;
 		line-height: 0;
 	}
+
 
 	.header-menu-button svg path {
 		fill: currentColor !important;
@@ -1178,6 +1205,21 @@
 		grid-area: right;
 		justify-self: end;
 		align-self: start;
+	}
+
+	.header-home-icon-button {
+		width: 48px;
+		height: 48px;
+
+		display: grid;
+		place-items: center;
+
+		padding: 0;
+		line-height: 0;
+		text-decoration: none;
+		border-radius: var(--padding-1);
+		background-color: var(--module-color);
+		margin-left: var(--padding-2);
 	}
 
 	.header-icon-button {
@@ -1268,6 +1310,7 @@
 		gap: var(--gap);
 		padding: 16px;
 		box-sizing: border-box;
+		padding-top: 0;
 	}
 
 	.widget{
@@ -1394,28 +1437,30 @@
 
 	#announcementsWidget.w4{
 		h1{
-			font-size: 1.1rem;
+			font-size: 1.4rem;
 		}
 	}
 
 	.widget-title-box{
 		width: calc(100% + var(--padding-2) * 2);
-		padding-bottom: var(--padding-2);
 		margin-left: calc(var(--padding-2) * -1);
 		margin-right: calc(var(--padding-2) * -1);
 		padding-left: var(--padding-2);
 		padding-right: var(--padding-2);
-		border-bottom: 4px solid var(--main-text-color);
 		box-sizing: border-box;
+		align-items: center;
+		display: flex;
+	}
+
+	#subjectsWidget .widget-title-box{
+		padding-bottom: var(--padding-1);
 	}
 
 	.widget-grade-box{
 		display: flex;
 		align-items: center;
 		width: 100%;
-		padding-bottom: var(--padding-1);
 		padding-top: var(--padding-1);
-		border-bottom: var(--underline);
 		gap: 8px;
 		box-sizing: border-box;
 		flex-wrap: wrap;
@@ -1438,9 +1483,7 @@
 		align-items: center;
 		width: 100%;
 		box-sizing: border-box;
-		padding-bottom: var(--padding-1);
 		padding-top: var(--padding-1);
-		border-bottom: var(--underline);
 		a {
 			font-size: 1rem;
 			white-space: wrap;
@@ -1486,8 +1529,8 @@
 
 	.grades-all-link{
 		position: absolute;
-		bottom: var(--padding-2);
 		right: var(--padding-2);
+		bottom: var(--padding-2);
 		font-size: 1rem !important;
 	}
 
@@ -1575,5 +1618,42 @@
 		0% { transform: rotate(-2deg); }
 		50% { transform: rotate(2deg); }
 		100% { transform: rotate(-2deg); }
+	}
+
+	.donut-3 {
+		--part1: 45%;
+		--part2: 35%;
+		--part3: 20%;
+		--c1: var(--attendance-wheel-color);
+		--c2: var(--latency-wheel-color);
+		--c3: var(--upsent-wheel-color);
+
+		width: 180px;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		position: relative;
+		display: grid;
+		place-items: center;
+
+		background: conic-gradient(
+			var(--c1) 0 var(--part1),
+			var(--c2) var(--part1) calc(var(--part1) + var(--part2)),
+			var(--c3) calc(var(--part1) + var(--part2)) 100%
+		);
+	}
+
+	.donut-3::before {
+		content: "";
+		position: absolute;
+		inset: 22%;
+		background: var(--module-color);
+		border-radius: 50%;
+	}
+
+	.donut-inner {
+		position: relative;
+		z-index: 1;
+		font-size: 2rem;
+		font-weight: 700;
 	}
 }

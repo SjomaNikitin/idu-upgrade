@@ -35,7 +35,7 @@ export function Subjects({ widgetId, moveWidget, data }) {
 		return (
 			<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
 				<div className="widget-title-box">
-					<h1>PRZEDMIOTY</h1>
+					<h1>Przedmioty</h1>
 				</div>
 				{classInfo ? <a href={subjects.classInfo.url} className="widget-subjects-class">{subjects.classInfo.name}</a> : null}
 				<div className="widget-subjects-list">
@@ -59,13 +59,13 @@ export function Subjects({ widgetId, moveWidget, data }) {
 
 	function Subjects21 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>PRZEDMIOTY</h1>
+			<h1>Przedmiot</h1>
 		</div>)
 	}
 
 	function Subjects41 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>PRZEDMIOTY</h1>
+			<h1>Przedmioty</h1>
 		</div>)
 	}
 

@@ -7,7 +7,7 @@ function getPreviewSize(width, height, cellSize, gap) {
 	};
 }
 
-export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, defaultSize = {w: 2, h: 2}) {
+export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup = true,defaultSize = {w: 2, h: 2}) {
 	function getCellSize() {
 		const gridWidth = window.innerWidth;
 		return gridWidth / 4;
@@ -112,6 +112,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, defaul
 		function togglePopup (e) {
 			if (window.editMode) return;
 			if (e.target.closest('a[href]')) return;
+			if (!popup) return;
 			let finalSize;
 			if (openPopupRef.current) {
 				finalSize = widgetLastSizeRef.current;

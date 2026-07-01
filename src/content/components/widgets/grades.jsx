@@ -52,14 +52,62 @@ export function Grades({ widgetId, moveWidget, data }) {
 		subject: item.subject.split(' ')[0],
 		subjectUrl: item.subjectUrl,
 		description: item.description,
+		gradeDescriptionUrl: item.gradeDescriptionUrl,
 	}));
 
 	function GradeRow({ item, isLast = false, showDescription = false }) {
+		const descriptionLinkRef = useRef(null);
+
+		useEffect(() => {
+			if (!showDescription) return;
+			if (!descriptionLinkRef.current) return;
+			if (!window.jQuery?.fn?.fancybox) return;
+
+			const options = {
+				onComplete: function() {
+					if (window.CKEDITOR) {
+						window.ckeditorsInFancybox = window.ckeditorsInFancybox || [];
+						window.jQuery('textarea.ckeditor').each(function(index, element) {
+							const $element = window.jQuery(element);
+							if (!$element.data('ckeditorInstance')) {
+								$element.ckeditor();
+								window.ckeditorsInFancybox.push($element.attr('id'));
+							}
+						});
+					}
+					if (window.jQuery.datepicker && typeof attachDatepickers === 'function') {
+						attachDatepickers();
+					}
+				},
+				onClosed: function() {
+					if (window.CKEDITOR && Array.isArray(window.ckeditorsInFancybox)) {
+						let id;
+						while ((id = window.ckeditorsInFancybox.pop())) {
+							const instance = CKEDITOR.instances[id];
+							if (instance) {
+								CKEDITOR.remove(instance);
+							}
+						}
+					}
+				}
+			};
+
+			window.jQuery(descriptionLinkRef.current).fancybox(options);
+		}, [showDescription, item.gradeDescriptionUrl]);
+
 		return (
 			<div className={`widget-grade-box ${isLast ? 'last' : ''}`}>
 				<p>{item.value}</p>
 				<a href={item.subjectUrl}> | {item.subject}</a>
-				{showDescription && <a className="grade-description">{item.description}</a>}
+				{showDescription && (
+					<a
+						ref={descriptionLinkRef}
+						href={item.gradeDescriptionUrl}
+						className="grade-description fancybox"
+					>
+						{item.description}
+					</a>
+				)}
 			</div>
 		);
 	}
@@ -73,7 +121,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 				className="widget-content-container"
 			>
 				<div className="widget-title-box">
-					<h1>OCENY</h1>
+					<h1>Oceny</h1>
 				</div>
 
 				{visibleGrades.map((item, index) => (
