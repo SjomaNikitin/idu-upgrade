@@ -13,6 +13,7 @@ const contentScripts = [
   'css/content/generated/18-app.js',
   'css/content/20-mobile.js',
   'css/content/25-login.js',
+  'css/content/28-extracter.js',
   'css/content/30-bootstrap.js',
 ];
 

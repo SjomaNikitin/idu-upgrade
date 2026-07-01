@@ -558,7 +558,9 @@
       function stopResize() {
         resizingRef.current = false;
       }
-      function togglePopup() {
+      function togglePopup(e3) {
+        if (window.editMode) return;
+        if (e3.target.closest("a[href]")) return;
         let finalSize;
         if (openPopupRef.current) {
           finalSize = widgetLastSizeRef.current;
@@ -639,6 +641,9 @@
         } else if (currentWidgetIndex !== betWidgetIndex) {
           moveWidget2(widgetID, widgets[betWidgetIndex].dataset.widgetId);
         }
+        widgetRef.current.children[0].querySelectorAll("*").forEach((child) => {
+          child.style.opacity = "0";
+        });
       }
       function getOverlapArea(el1, el2) {
         const r1 = el1.getBoundingClientRect();
@@ -704,22 +709,8 @@
   }
 
   // src/content/components/widgets/grades.jsx
-  function Grades22() {
-    return /* @__PURE__ */ k("div", null, "22");
-  }
-  function Grades24() {
-    return /* @__PURE__ */ k("div", null, "24");
-  }
-  function Grades42() {
-    return /* @__PURE__ */ k("div", null, "42");
-  }
-  function Grades21() {
-    return /* @__PURE__ */ k("div", null, "21");
-  }
-  function Grades41() {
-    return /* @__PURE__ */ k("div", null, "41");
-  }
-  function Grades({ widgetId, moveWidget: moveWidget2 }) {
+  function Grades({ widgetId, moveWidget: moveWidget2, data }) {
+    const gradesData = data.grades;
     const possibleLayout = [
       { w: 2, h: 2 },
       { w: 2, h: 4 },
@@ -736,14 +727,78 @@
       widgetRef,
       resizeZoneRef,
       resizingRef
-    } = useWidgetResize(possibleLayout, "grades", 16, fullSize);
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function normalizeGrade(grade) {
+      const value = grade.trim().toLowerCase();
+      if (/^[0-9]+[+-]?$/.test(value) || value === "+" || value === "-") {
+        return value;
+      }
+      if (["zal", "zaliczone"].includes(value)) {
+        return "zal";
+      }
+      if (["brak pracy"].includes(value)) {
+        return "BP";
+      }
+      if (["nzal", "niezal", "niezaliczone"].includes(value)) {
+        return "nzal";
+      }
+      return "...";
+    }
+    const preparedGrades2 = gradesData.map((item) => ({
+      value: normalizeGrade(item.grade),
+      subject: item.subject.split(" ")[0],
+      subjectUrl: item.subjectUrl,
+      description: item.description
+    }));
+    function GradeRow({ item, isLast = false, showDescription = false }) {
+      return /* @__PURE__ */ k("div", { className: `widget-grade-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("p", null, item.value), /* @__PURE__ */ k("a", { href: item.subjectUrl }, " | ", item.subject), showDescription && /* @__PURE__ */ k("a", { className: "grade-description" }, item.description));
+    }
+    function GradesList({ limit, lastLine = 1, showDescription = false }) {
+      const visibleGrades = preparedGrades2.slice(0, limit);
+      return /* @__PURE__ */ k(
+        "div",
+        {
+          style: { width: `${previewWidth}px`, height: `${previewHeight}px` },
+          className: "widget-content-container"
+        },
+        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OCENY")),
+        visibleGrades.map((item, index) => /* @__PURE__ */ k(
+          GradeRow,
+          {
+            key: `${item.subjectUrl}-${index}`,
+            item,
+            isLast: index === visibleGrades.length - lastLine || index === visibleGrades.length - 1,
+            showDescription
+          }
+        ))
+      );
+    }
+    function Grades22() {
+      return /* @__PURE__ */ k(GradesList, { limit: 2 });
+    }
+    function Grades24() {
+      return /* @__PURE__ */ k(GradesList, { limit: 5 });
+    }
+    function Grades42() {
+      return /* @__PURE__ */ k(GradesList, { limit: 4, lastLine: 2 });
+    }
+    function Grades21() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OCENY"));
+    }
+    function Grades41() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OCENY"));
+    }
+    function Grades46() {
+      return /* @__PURE__ */ k(GradesList, { limit: 6, lastLine: 2, showDescription: true });
+    }
     const gradeVariants = {
       "22": Grades22,
       "24": Grades24,
       "42": Grades42,
       "21": Grades21,
-      "41": Grades41
+      "41": Grades41,
+      "46": Grades46
     };
     const Variant = gradeVariants[`${width}${height}`] || Grades22;
     return /* @__PURE__ */ k("div", { ref: widgetRef, id: "gradesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
@@ -757,19 +812,257 @@
     ));
   }
 
+  // src/content/components/widgets/subjects.jsx
+  function Subjects({ widgetId, moveWidget: moveWidget2, data }) {
+    const subjects = data.subjects;
+    const possibleLayout = [
+      { w: 4, h: 4 },
+      { w: 2, h: 1 },
+      { w: 4, h: 1 }
+    ];
+    const fullSize = { w: 4, h: 5 };
+    const {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef,
+      resizingRef
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+    useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function SubjectRow({ item, isLast = false, showDescription = false }) {
+      return /* @__PURE__ */ k("div", { className: `widget-subject-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("a", { href: item.url }, item.name));
+    }
+    function SubjectsList({ lastLine = 1, classInfo = false }) {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "PRZEDMIOTY")), classInfo ? /* @__PURE__ */ k("a", { href: subjects.classInfo.url, className: "widget-subjects-class" }, subjects.classInfo.name) : null, /* @__PURE__ */ k("div", { className: "widget-subjects-list" }, subjects.subjects.map((item, index) => /* @__PURE__ */ k(
+        SubjectRow,
+        {
+          key: `${item.name}-${index}`,
+          item,
+          isLast: index === subjects.subjects.length - lastLine || index === subjects.subjects.length - 1
+        }
+      ))));
+    }
+    function Subjects44() {
+      return /* @__PURE__ */ k(SubjectsList, { lastLine: 2 });
+    }
+    function Subjects21() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "PRZEDMIOTY"));
+    }
+    function Subjects41() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "PRZEDMIOTY"));
+    }
+    function Subjects45() {
+      return /* @__PURE__ */ k(SubjectsList, { lastLine: 2, classInfo: true });
+    }
+    const gradeVariants = {
+      "44": Subjects44,
+      "21": Subjects21,
+      "41": Subjects41,
+      "45": Subjects45
+    };
+    const Variant = gradeVariants[`${width}${height}`] || Subjects21;
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "subjectsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "inner-widget",
+        style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
+      },
+      /* @__PURE__ */ k(Variant, null),
+      /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" })
+    ));
+  }
+
+  // src/content/components/widgets/schedule.jsx
+  function Schedule({ widgetId, moveWidget: moveWidget2, data }) {
+    const schedule = data.schedule;
+    const possibleLayout = [
+      { w: 4, h: 4 },
+      { w: 2, h: 1 },
+      { w: 4, h: 1 },
+      { w: 2, h: 4 }
+    ];
+    const fullSize = { w: 4, h: 6 };
+    const {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef,
+      resizingRef
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+    useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function formatTodayKey() {
+      const today = /* @__PURE__ */ new Date();
+      return `${String(today.getDate()).padStart(2, "0")}.${String(today.getMonth() + 1).padStart(2, "0")}`;
+    }
+    function compareTimes(left, right) {
+      const leftStart = left.split("-")[0];
+      const rightStart = right.split("-")[0];
+      const [leftHour, leftMinute] = leftStart.split(":").map(Number);
+      const [rightHour, rightMinute] = rightStart.split(":").map(Number);
+      return leftHour * 60 + leftMinute - (rightHour * 60 + rightMinute);
+    }
+    function ScheduleGrid({ scheduleData, mode = "today" }) {
+      const allDays = Object.keys(scheduleData || {});
+      const todayKey = formatTodayKey();
+      const visibleDays = mode === "today" ? allDays.filter((day) => day === todayKey) : allDays;
+      const fallbackDays = mode === "today" && visibleDays.length === 0 && allDays.length > 0 ? [allDays[0]] : visibleDays;
+      const scheduleDays = fallbackDays;
+      const visibleTimes = Array.from(
+        new Set(
+          scheduleDays.flatMap((day) => Object.keys(scheduleData?.[day] || {}))
+        )
+      ).sort(compareTimes);
+      if (scheduleDays.length === 0 || visibleTimes.length === 0) {
+        return null;
+      }
+      return /* @__PURE__ */ k(
+        "div",
+        {
+          className: "schedule-grid",
+          style: {
+            gridTemplateColumns: `72px repeat(${scheduleDays.length}, 1fr)`
+          }
+        },
+        /* @__PURE__ */ k("div", { className: "schedule-head" }),
+        scheduleDays.map((day) => {
+          const firstLesson = Object.values(scheduleData?.[day] || {})[0];
+          const label = firstLesson?.day || day;
+          return /* @__PURE__ */ k("div", { key: day, className: "schedule-head" }, label);
+        }),
+        visibleTimes.map((time) => /* @__PURE__ */ k(S, { key: time }, /* @__PURE__ */ k("div", { className: "time-cell" }, time), scheduleDays.map((day) => {
+          const lesson = scheduleData?.[day]?.[time];
+          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell" }, lesson?.subject || "");
+        })))
+      );
+    }
+    function Schedule44() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "PLAN LEKCJI")));
+    }
+    function Schedule21() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "PLAN LEKCJI"));
+    }
+    function Schedule41() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "PLAN LEKCJI"));
+    }
+    function Schedule24() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "PLAN LEKCJI")), /* @__PURE__ */ k(ScheduleGrid, { scheduleData: schedule, mode: "today" }));
+    }
+    function Schedule46() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "PLAN LEKCJI"));
+    }
+    const gradeVariants = {
+      "44": Schedule44,
+      "21": Schedule21,
+      "41": Schedule41,
+      "46": Schedule46,
+      "24": Schedule24
+    };
+    const Variant = gradeVariants[`${width}${height}`] || Schedule21;
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "scheduleWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "inner-widget",
+        style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
+      },
+      /* @__PURE__ */ k(Variant, null),
+      /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" })
+    ));
+  }
+
+  // src/content/components/widgets/subjectNews.jsx
+  function SubjectNews({ widgetId, moveWidget: moveWidget2, data }) {
+    const subjectNews = data.subjectAnnouncements;
+    const possibleLayout = [
+      { w: 2, h: 2 },
+      { w: 4, h: 2 },
+      { w: 2, h: 1 },
+      { w: 4, h: 1 }
+    ];
+    const fullSize = { w: 4, h: 4 };
+    const {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef,
+      resizingRef
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+    useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function GradeRow({ item, isLast = false, showDescription = false }) {
+      return /* @__PURE__ */ k("div", { className: `widget-grade-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("p", null, item.value), /* @__PURE__ */ k("a", { href: item.subjectUrl }, " | ", item.subject), showDescription && /* @__PURE__ */ k("a", { className: "grade-description" }, item.description));
+    }
+    function GradesList({ limit, lastLine = 1, showDescription = false }) {
+      const visibleGrades = preparedGrades.slice(0, limit);
+      return /* @__PURE__ */ k(
+        "div",
+        {
+          style: { width: `${previewWidth}px`, height: `${previewHeight}px` },
+          className: "widget-content-container"
+        },
+        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OCENY")),
+        visibleGrades.map((item, index) => /* @__PURE__ */ k(
+          GradeRow,
+          {
+            key: `${item.subjectUrl}-${index}`,
+            item,
+            isLast: index === visibleGrades.length - lastLine || index === visibleGrades.length - 1,
+            showDescription
+          }
+        ))
+      );
+    }
+    function Announcements22() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE")));
+    }
+    function Announcements42() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE")));
+    }
+    function Announcements21() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE"));
+    }
+    function Announcements41() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE"));
+    }
+    function Announcements44() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OG\u0141OSZENIA PRZEDMIOTOWE")));
+    }
+    const gradeVariants = {
+      "22": Announcements22,
+      "42": Announcements42,
+      "21": Announcements21,
+      "41": Announcements41,
+      "46": Announcements44
+    };
+    const Variant = gradeVariants[`${width}${height}`] || Announcements22;
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "announcementsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "inner-widget",
+        style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
+      },
+      /* @__PURE__ */ k(Variant, null),
+      /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" })
+    ));
+  }
+
   // src/content/components/mainContent.jsx
   window.editMode = false;
   var widgetRegistry = {
-    grades: Grades
+    grades: Grades,
+    subjects: Subjects,
+    schedule: Schedule,
+    subjectNews: SubjectNews
   };
   var initialWidgets = [
     { id: "grades", type: "grades" },
-    { id: "test-1", type: "test", width: 2, height: 2 },
-    { id: "test-2", type: "test", width: 2, height: 2 },
-    { id: "test-3", type: "test", width: 2, height: 2 },
-    { id: "test-4", type: "test", width: 2, height: 2 },
-    { id: "test-6", type: "test", width: 2, height: 2 },
-    { id: "test-8", type: "test", width: 2, height: 2 }
+    { id: "subjects", type: "subjects" },
+    { id: "schedule", type: "schedule" },
+    { id: "subjectNews", type: "subjectNews" }
   ];
   var widgetLayoutStorageKey = "mainContent.widgetOrder";
   function moveWidget(list, movedId, targetId) {
@@ -810,7 +1103,7 @@
       return initialWidgets;
     }
   }
-  function MainContent() {
+  function MainContent({ data }) {
     const [widgets, setWidgets] = d2(loadWidgetLayout);
     const [openPopupId, setOpenPopupId] = d2(null);
     const popupContainerRef = A2(null);
@@ -842,7 +1135,7 @@
             key: widget.id,
             widgetId: widget.id,
             moveWidget: handleMoveWidget,
-            openPopup: setOpenPopupId
+            data
           }
         );
       }
@@ -875,11 +1168,11 @@
     R(/* @__PURE__ */ k(Header, { accountHref }), mountPoint);
     return true;
   };
-  window.replaceMainContent = function replaceMainContent() {
+  window.replaceMainContent = function replaceMainContent(data) {
     const oldMainContent = document.getElementById("content");
     if (!oldMainContent) return false;
     oldMainContent.innerHTML = "";
-    R(/* @__PURE__ */ k(MainContent, null), oldMainContent);
+    R(/* @__PURE__ */ k(MainContent, { data }), oldMainContent);
     return true;
   };
 })();

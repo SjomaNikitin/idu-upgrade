@@ -41,69 +41,7 @@ function moveGradesHigher() {
 	}
 }
 
-function getScheduleLessons(schedule = document.querySelector(".schedule")) {
-	const lessons = {};
-	const table = schedule?.querySelector("table");
-	if (!table) return lessons;
 
-	const dateText = schedule.childNodes[0]?.textContent.trim();
-	const dateMatch = dateText?.match(/(\d{4})-(\d{2})-(\d{2})/);
-	if (!dateMatch) return lessons;
-
-	const firstDate = new Date(Number(dateMatch[1]), Number(dateMatch[2]) - 1, Number(dateMatch[3]));
-	const dayHeaders = Array.from(table.querySelectorAll("thead tr:nth-child(2) th"))
-		.slice(1)
-		.map(th => th.textContent.trim());
-	const dates = dayHeaders.map((day, index) => {
-		const date = new Date(firstDate);
-		date.setDate(firstDate.getDate() + index);
-		return `${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}`;
-	});
-
-	for (let i = 0; i < dates.length; i++) {
-		lessons[dates[i]] = {};
-	}
-
-	const rows = table.querySelectorAll("tbody tr");
-	for (let i = 0; i < rows.length; i++) {
-		const cells = Array.from(rows[i].children);
-		const timeText = cells[0]?.textContent.trim();
-		const timeMatch = timeText?.match(/\(([^)]+)\)\s*(.+)/);
-		if (!timeMatch) continue;
-
-		const lessonNumber = timeMatch[1];
-		const time = timeMatch[2];
-		const [start, end] = time.split("-");
-
-		for (let j = 1; j < cells.length; j++) {
-			const lessonCell = cells[j].querySelector(".lesson-cell");
-			if (!lessonCell) continue;
-
-			const date = dates[j - 1];
-			const subjectLink = lessonCell.querySelector(".subject a");
-			const locationLink = lessonCell.querySelector(".location a[href^='/rooms/']");
-			const note = Array.from(lessonCell.children)
-				.find(child => child.tagName === "DIV" && !child.classList.contains("lesson-cell"))?.textContent.trim() || "";
-
-			lessons[date][time] = {
-				lessonNumber,
-				time,
-				start,
-				end,
-				day: dayHeaders[j - 1],
-				subject: subjectLink?.textContent.trim() || "",
-				subjectHref: subjectLink?.href || "",
-				location: locationLink?.textContent.trim() || "",
-				locationHref: locationLink?.href || "",
-				note,
-				absence: lessonCell.classList.contains("absence-in-plan"),
-				lateness: lessonCell.classList.contains("lateness-in-plan"),
-			};
-		}
-	}
-
-	return lessons;
-}
 
 function timeToMinutes(time) {
 	const [hours, minutes] = time.split(":").map(Number);

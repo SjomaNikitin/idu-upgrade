@@ -20,12 +20,12 @@ window.replaceHeader = function replaceHeader() {
 	return true;
 };
 
-window.replaceMainContent = function replaceMainContent() {
+window.replaceMainContent = function replaceMainContent(data) {
 	const oldMainContent = document.getElementById("content");
 	if (!oldMainContent) return false;
 
 	oldMainContent.innerHTML = "";
-	render(<MainContent />, oldMainContent);
+	render(<MainContent data={data}/>, oldMainContent);
 
 	return true;
 };

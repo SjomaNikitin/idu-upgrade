@@ -109,7 +109,9 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, defaul
 			resizingRef.current = false;
 		}
 
-		function togglePopup () {
+		function togglePopup (e) {
+			if (window.editMode) return;
+			if (e.target.closest('a[href]')) return;
 			let finalSize;
 			if (openPopupRef.current) {
 				finalSize = widgetLastSizeRef.current;

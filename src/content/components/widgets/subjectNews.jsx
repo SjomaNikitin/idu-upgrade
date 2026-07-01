@@ -4,16 +4,15 @@ import { useWidgetResize } from './widgetResize.js';
 import { useWidgetDragging } from './widgetDragging.js';
 
 
-export function Grades({ widgetId, moveWidget, data }) {
-	const gradesData = data.grades;
+export function SubjectNews({ widgetId, moveWidget, data }) {
+	const subjectNews = data.subjectAnnouncements;
 	const possibleLayout = [
 		{ w: 2, h: 2 },
-		{ w: 2, h: 4 },
 		{ w: 4, h: 2 },
 		{ w: 2, h: 1 },
 		{ w: 4, h: 1 },
 	];
-	const fullSize = {w: 4, h: 6}
+	const fullSize = {w: 4, h: 4}
 	const {
 		width,
 		height,
@@ -25,34 +24,6 @@ export function Grades({ widgetId, moveWidget, data }) {
 	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
 
-	function normalizeGrade(grade) {
-		const value = grade.trim().toLowerCase();
-
-		if (/^[0-9]+[+-]?$/.test(value) || value === '+' || value === '-') {
-			return value;
-		}
-
-		if (['zal', 'zaliczone'].includes(value)) {
-			return 'zal';
-		}
-
-		if (['brak pracy'].includes(value)) {
-			return 'BP';
-		}
-
-		if (['nzal', 'niezal', 'niezaliczone'].includes(value)) {
-			return 'nzal';
-		}
-
-		return '...';
-	}
-
-	const preparedGrades = gradesData.map((item) => ({
-		value: normalizeGrade(item.grade),
-		subject: item.subject.split(' ')[0],
-		subjectUrl: item.subjectUrl,
-		description: item.description,
-	}));
 
 	function GradeRow({ item, isLast = false, showDescription = false }) {
 		return (
@@ -88,47 +59,54 @@ export function Grades({ widgetId, moveWidget, data }) {
 		);
 	}
 
-	function Grades22 () {
-		return <GradesList limit={2} />;
-	}
-
-	function Grades24 () {
-		return <GradesList limit={5} />;
-	}
-
-	function Grades42 () {
-		return <GradesList limit={4} lastLine={2}/>;
-	}
-
-	function Grades21 () {
+	function Announcements22 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OCENY</h1>
+			<div className="widget-title-box">
+				<h1>OGŁOSZENIA PRZEDMIOTOWE</h1>
+			</div>
 		</div>)
 	}
 
-	function Grades41 () {
+	function Announcements42 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OCENY</h1>
+			<div className="widget-title-box">
+				<h1>OGŁOSZENIA PRZEDMIOTOWE</h1>
+			</div>
 		</div>)
 	}
 
-	function Grades46 () {
-		return <GradesList limit={6} lastLine={2} showDescription={true}/>;
+	function Announcements21 () {
+		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
+			<h1>OGŁOSZENIA PRZEDMIOTOWE</h1>
+		</div>)
+	}
+
+	function Announcements41 () {
+		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
+			<h1>OGŁOSZENIA PRZEDMIOTOWE</h1>
+		</div>)
+	}
+
+	function Announcements44 () {
+		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
+			<div className="widget-title-box">
+				<h1>OGŁOSZENIA PRZEDMIOTOWE</h1>
+			</div>
+		</div>)
 	}
 
 	const gradeVariants = {
-		'22': Grades22,
-		'24': Grades24,
-		'42': Grades42,
-		'21': Grades21,
-		'41': Grades41,
-		'46': Grades46,
+		'22': Announcements22,
+		'42': Announcements42,
+		'21': Announcements21,
+		'41': Announcements41,
+		'46': Announcements44,
 	};
 
-	const Variant = gradeVariants[`${width}${height}`] || Grades22;
+	const Variant = gradeVariants[`${width}${height}`] || Announcements22;
 
 	return (
-		<div ref={widgetRef} id="gradesWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
+		<div ref={widgetRef} id="announcementsWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
 			<div
 				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}

@@ -48,6 +48,9 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			} else if (currentWidgetIndex !== betWidgetIndex) {
 				moveWidget(widgetID, widgets[betWidgetIndex].dataset.widgetId);
 			}
+			widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
+				child.style.opacity = '0';
+			});
 		}
 
 		function getOverlapArea(el1, el2) {

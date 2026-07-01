@@ -1,20 +1,23 @@
 import { h } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Grades } from './widgets/grades.jsx';
+import { Subjects } from './widgets/subjects.jsx';
+import { Schedule } from './widgets/schedule.jsx';
+import { SubjectNews } from './widgets/subjectNews.jsx';
 
 window.editMode = false;
 const widgetRegistry = {
 	grades: Grades,
+	subjects: Subjects,
+	schedule: Schedule,
+	subjectNews: SubjectNews,
 };
 
 const initialWidgets = [
 	{ id: 'grades', type: 'grades' },
-	{ id: 'test-1', type: 'test', width: 2, height: 2 },
-	{ id: 'test-2', type: 'test', width: 2, height: 2 },
-	{ id: 'test-3', type: 'test', width: 2, height: 2 },
-	{ id: 'test-4', type: 'test', width: 2, height: 2 },
-	{ id: 'test-6', type: 'test', width: 2, height: 2 },
-	{ id: 'test-8', type: 'test', width: 2, height: 2 },
+	{ id: 'subjects', type: 'subjects'},
+	{ id: 'schedule', type: 'schedule'},
+	{ id: 'subjectNews', type: 'subjectNews'},
 
 ];
 
@@ -74,7 +77,7 @@ function loadWidgetLayout() {
 	}
 }
 
-export function MainContent() {
+export function MainContent({data}) {
 	const [widgets, setWidgets] = useState(loadWidgetLayout);
 	const [openPopupId, setOpenPopupId] = useState(null);
 	const popupContainerRef = useRef(null);
@@ -114,7 +117,7 @@ export function MainContent() {
 					key={widget.id}
 					widgetId={widget.id}
 					moveWidget={handleMoveWidget}
-					openPopup={setOpenPopupId}
+					data = {data}
 				/>
 			);
 		}
