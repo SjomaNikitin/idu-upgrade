@@ -726,7 +726,7 @@
 
   // src/content/components/widgets/grades.jsx
   function Grades({ widgetId, moveWidget: moveWidget2, data }) {
-    const gradesData2 = data.grades;
+    const gradesData = data.grades;
     const possibleLayout = [
       { w: 2, h: 2 },
       { w: 2, h: 4 },
@@ -761,7 +761,7 @@
       }
       return "...";
     }
-    const preparedGrades2 = gradesData2.map((item) => ({
+    const preparedGrades = gradesData.map((item) => ({
       value: normalizeGrade(item.grade),
       subject: item.subject.split(" ")[0],
       subjectUrl: item.subjectUrl,
@@ -815,7 +815,7 @@
       ));
     }
     function GradesList({ limit, lastLine = 1, showDescription = false, allHref = false }) {
-      const visibleGrades = preparedGrades2.slice(0, limit);
+      const visibleGrades = preparedGrades.slice(0, limit);
       return /* @__PURE__ */ k(
         "div",
         {
@@ -832,7 +832,7 @@
             showDescription
           }
         )),
-        allHref && /* @__PURE__ */ k("a", { className: "grades-all-link", href: gradesData2[0].seeMoreUrl }, "Wszystkie oceny")
+        allHref && /* @__PURE__ */ k("a", { className: "grades-all-link", href: gradesData[0].seeMoreUrl }, "Wszystkie oceny")
       );
     }
     function Grades222() {
@@ -1209,7 +1209,7 @@
       { w: 4, h: 1 },
       { w: 4, h: 4 }
     ];
-    const fullSize = { w: 4, h: 6 };
+    const fullSize = { w: 4, h: 4 };
     const {
       width,
       height,
@@ -1220,6 +1220,15 @@
       resizingRef
     } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function normalizeLessonName(lessonName) {
+      let names = ["fizyczne", "WF", "godzina", "GW", "biznes", "BIZ", "kultura", "kultura"];
+      for (let i3 = 0; i3 < names.length; i3 += 2) {
+        if (lessonName.includes(names[i3])) {
+          return names[i3 + 1];
+        }
+      }
+      return lessonName;
+    }
     async function fetchAttendanceStats() {
       const res = await fetch(attendance[0].seeMoreUrl, {
         credentials: "include"
@@ -1244,36 +1253,42 @@
       };
       return summary;
     }
-    function GradeRow({ item, isLast = false, showDescription = false }) {
-      return /* @__PURE__ */ k("div", { className: `widget-grade-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("p", null, item.value), /* @__PURE__ */ k("a", { href: item.subjectUrl }, " | ", item.subject), showDescription && /* @__PURE__ */ k("a", { className: "grade-description" }, item.description));
+    function AttendanceRow({ item, rowWidth }) {
+      return /* @__PURE__ */ k("div", { className: "attendance-row", style: { width: rowWidth } }, /* @__PURE__ */ k("div", { className: "attendance-row-subject" }, normalizeLessonName(item.subject)), /* @__PURE__ */ k("div", { className: `attendance-row-value ${item.presence ? "ob" : ""} ${item.absence ? "nob" : ""} ${item.lateness ? "sp" : ""}` }, item.presence ? `OB` : "", " ", item.absence ? `NOB` : "", " ", item.lateness ? `SP` : ""));
     }
-    function GradesList({ limit, lastLine = 1, showDescription = false, allHref = false }) {
-      const visibleGrades = preparedGrades.slice(0, limit);
-      return /* @__PURE__ */ k(
-        "div",
+    function AttendanceGrid({ limit, width: width2 = "100%", graph = false, rowWidth = "100%", showMore = false }) {
+      let usableData = attendance.slice(0, limit);
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "var(--padding-1)" } }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106")), /* @__PURE__ */ k("div", { className: "attendance-grid", style: { width: width2 } }, usableData.map((item, index) => /* @__PURE__ */ k(
+        AttendanceRow,
         {
-          style: { width: `${previewWidth}px`, height: `${previewHeight}px` },
-          className: "widget-content-container"
-        },
-        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "OCENY")),
-        visibleGrades.map((item, index) => /* @__PURE__ */ k(
-          GradeRow,
-          {
-            key: `${item.subjectUrl}-${index}`,
-            item,
-            isLast: index === visibleGrades.length - lastLine || index === visibleGrades.length - 1,
-            showDescription
-          }
-        )),
-        allHref && /* @__PURE__ */ k("a", { className: "grades-all-link", href: gradesData[0].seeMoreUrl }, "Wszystkie oceny")
-      );
+          key: `${item.subjectUrl}-${index}`,
+          item,
+          rowWidth
+        }
+      ))), graph ? /* @__PURE__ */ k(AttendanceChart, { width: width2 }) : null, showMore ? /* @__PURE__ */ k("a", { href: attendance[0].seeMoreUrl, className: "grades-all-link" }, "Zobacz wi\u0119cej") : null);
     }
-    function AttendanceChart({ stats }) {
-      if (!stats) return null;
+    function AttendanceChart({ width: width2 = "100%" }) {
+      const [stats, setStats] = d2(null);
+      y2(() => {
+        let cancelled = false;
+        async function loadStats() {
+          const data2 = await fetchAttendanceStats();
+          if (!cancelled) {
+            setStats(data2);
+          }
+        }
+        loadStats();
+        return () => {
+          cancelled = true;
+        };
+      }, []);
+      if (!stats) {
+        return /* @__PURE__ */ k("div", { style: { padding: "16px" } }, "Loading...");
+      }
       let attendancePercentage = stats.presence;
       if (Number.isNaN(attendancePercentage)) attendancePercentage = 0;
-      let latencyPercentage = stats.lateness;
-      if (Number.isNaN(latencyPercentage)) latencyPercentage = 0;
+      let latenessPercentage = stats.lateness;
+      if (Number.isNaN(latenessPercentage)) latenessPercentage = 0;
       let absencePercentage = stats.absence;
       if (Number.isNaN(absencePercentage)) absencePercentage = 0;
       return /* @__PURE__ */ k(
@@ -1282,30 +1297,22 @@
           className: "donut-3",
           style: {
             "--part1": `${attendancePercentage}%`,
-            "--part2": `${latencyPercentage}%`,
-            "--part3": `${absencePercentage}%`
+            "--part2": `${latenessPercentage}%`,
+            "--part3": `${absencePercentage}%`,
+            "width": width2
           }
         },
         /* @__PURE__ */ k("div", { className: "donut-inner" }, Math.round(attendancePercentage), "%")
       );
     }
     function Attendance22() {
-      const [stats, setStats] = d2(null);
-      y2(() => {
-        async function loadStats() {
-          const data2 = await fetchAttendanceStats();
-          setStats(data2);
-        }
-        loadStats();
-      }, []);
-      if (!stats) return /* @__PURE__ */ k("div", { style: { padding: "16px" } }, "Loading...");
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k(AttendanceChart, { stats }));
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k(AttendanceChart, null));
     }
     function Attendance24() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106"));
+      return /* @__PURE__ */ k(AttendanceGrid, { limit: 10 });
     }
     function Attendance42() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106"));
+      return /* @__PURE__ */ k(AttendanceGrid, { limit: 8, graph: false, width: "100%", rowWidth: "calc(50% - var(--padding-1))" });
     }
     function Attendance21() {
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106"));
@@ -1314,10 +1321,10 @@
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106"));
     }
     function Attendance44() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106"));
+      return /* @__PURE__ */ k(AttendanceGrid, { limit: 10, width: "calc(50% - var(--padding-1))", graph: true, showMore: true });
     }
     function Attendance46() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106"));
+      return /* @__PURE__ */ k(AttendanceGrid, { limit: attendance.length, width: "calc(50% - var(--padding-1))", graph: true });
     }
     const widgetVariants = {
       "22": Attendance22,
@@ -1329,7 +1336,7 @@
       "46": Attendance46
     };
     const Variant = widgetVariants[`${width}${height}`] || Grades22;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "newsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "attendanceWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",

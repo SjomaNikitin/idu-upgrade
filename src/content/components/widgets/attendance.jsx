@@ -14,7 +14,7 @@ export function Attendance({ widgetId, moveWidget, data }) {
 		{ w: 4, h: 1 },
 		{ w: 4, h: 4 },
 	];
-	const fullSize = {w: 4, h: 6}
+	const fullSize = {w: 4, h: 4}
 	const {
 		width,
 		height,
@@ -25,6 +25,16 @@ export function Attendance({ widgetId, moveWidget, data }) {
 		resizingRef,
 	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
+
+	function normalizeLessonName(lessonName) {
+		let names = ['fizyczne', 'WF', 'godzina', 'GW', 'biznes', 'BIZ', 'kultura', 'kultura']
+		for (let i=0; i<names.length; i+=2) {
+			if (lessonName.includes(names[i])){
+				return names[i+1]
+			}
+		}
+		return lessonName;
+	}
 
 	async function fetchAttendanceStats() {
 		const res = await fetch(attendance[0].seeMoreUrl, {
@@ -56,58 +66,74 @@ export function Attendance({ widgetId, moveWidget, data }) {
 		return summary;
 	}
 
-
-	function GradeRow({ item, isLast = false, showDescription = false }) {
-		return (
-			<div className={`widget-grade-box ${isLast ? 'last' : ''}`}>
-				<p>{item.value}</p>
-				<a href={item.subjectUrl}> | {item.subject}</a>
-				{showDescription && <a className="grade-description">{item.description}</a>}
-			</div>
-		);
+	function AttendanceRow ({item, rowWidth}){
+		return(<div className="attendance-row" style={{width: rowWidth}}>
+			<div className="attendance-row-subject" >{normalizeLessonName(item.subject)}</div>
+			<div className={`attendance-row-value ${item.presence? 'ob' : ''} ${item.absence? 'nob' : ''} ${item.lateness? 'sp' : ''}`}>{item.presence? `OB` : ''} {item.absence? `NOB` : ''} {item.lateness? `SP` : ''}</div>
+		</div>)
 	}
 
-	function GradesList({ limit, lastLine = 1,showDescription = false,allHref=false}) {
-		const visibleGrades = preparedGrades.slice(0, limit);
-
-		return (
-			<div
-				style={{ width: `${previewWidth}px`, height: `${previewHeight}px` }}
-				className="widget-content-container"
-			>
-				<div className="widget-title-box">
-					<h1>OCENY</h1>
-				</div>
-
-				{visibleGrades.map((item, index) => (
-					<GradeRow
+	function AttendanceGrid ({limit, width = "100%", graph = false, rowWidth = "100%", showMore = false}) {
+		let usableData = attendance.slice(0, limit);
+		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
+			<div className="widget-title-box" style={{marginBottom: 'var(--padding-1)'}}>
+				<h1>OBECNOŚĆ</h1>
+			</div>
+			<div className="attendance-grid" style={{width: width}}>
+				{usableData.map((item, index) => (
+					<AttendanceRow
 						key={`${item.subjectUrl}-${index}`}
 						item={item}
-						isLast={index === visibleGrades.length - lastLine || index === visibleGrades.length - 1}
-						showDescription={showDescription}
+						rowWidth={rowWidth}
 					/>
 				))}
-
-				{allHref && <a className="grades-all-link" href={gradesData[0].seeMoreUrl}>Wszystkie oceny</a>}
 			</div>
-		);
+			{graph? <AttendanceChart width={width}/> : null}
+			{showMore? <a href={attendance[0].seeMoreUrl} className="grades-all-link">Zobacz więcej</a> : null}
+		</div>)
 	}
 
-	function AttendanceChart({ stats }) {
-		if (!stats) return null;
+	function AttendanceChart({width = "100%"}) {
+		const [stats, setStats] = useState(null);
+
+		useEffect(() => {
+			let cancelled = false;
+
+			async function loadStats() {
+				const data = await fetchAttendanceStats();
+				if (!cancelled) {
+					setStats(data);
+				}
+			}
+
+			loadStats();
+
+			return () => {
+				cancelled = true;
+			};
+		}, []);
+
+		if (!stats) {
+			return <div style={{ padding: '16px' }}>Loading...</div>;
+		}
+
 		let attendancePercentage = stats.presence;
 		if (Number.isNaN(attendancePercentage)) attendancePercentage = 0;
-		let latencyPercentage = stats.lateness;
-		if (Number.isNaN(latencyPercentage)) latencyPercentage = 0;
+
+		let latenessPercentage = stats.lateness;
+		if (Number.isNaN(latenessPercentage)) latenessPercentage = 0;
+
 		let absencePercentage = stats.absence;
 		if (Number.isNaN(absencePercentage)) absencePercentage = 0;
+
 		return (
 			<div
 				className="donut-3"
 				style={{
 					'--part1': `${attendancePercentage}%`,
-					'--part2': `${latencyPercentage}%`,
+					'--part2': `${latenessPercentage}%`,
 					'--part3': `${absencePercentage}%`,
+					'width': width,
 				}}
 			>
 				<div className="donut-inner">{Math.round(attendancePercentage)}%</div>
@@ -116,33 +142,17 @@ export function Attendance({ widgetId, moveWidget, data }) {
 	}
 
 	function Attendance22 () {
-		const [stats, setStats] = useState(null);
-
-		useEffect(() => {
-			async function loadStats() {
-				const data = await fetchAttendanceStats();
-				setStats(data);
-			}
-
-			loadStats();
-		}, []);
-
-		if (!stats) return <div style={{padding: '16px'}}>Loading...</div>;
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<AttendanceChart stats={stats} />
+			<AttendanceChart/>
 		</div>)
 	}
 
 	function Attendance24 () {
-		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OBECNOŚĆ</h1>
-		</div>)
+		return(<AttendanceGrid limit={10} />)
 	}
 
 	function Attendance42 () {
-		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OBECNOŚĆ</h1>
-		</div>)
+		return(<AttendanceGrid limit={8} graph = {false} width={"100%"} rowWidth={"calc(50% - var(--padding-1))"}/>)
 	}
 
 	function Attendance21 () {
@@ -158,15 +168,11 @@ export function Attendance({ widgetId, moveWidget, data }) {
 	}
 
 	function Attendance44 () {
-		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OBECNOŚĆ</h1>
-		</div>)
+		return(<AttendanceGrid limit={10} width={"calc(50% - var(--padding-1))"} graph = {true} showMore={true}/>)
 	}
 
 	function Attendance46 () {
-		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OBECNOŚĆ</h1>
-		</div>)
+		return(<AttendanceGrid limit={attendance.length} width={"calc(50% - var(--padding-1))"} graph = {true}/>)
 	}
 
 	const widgetVariants = {
@@ -182,7 +188,7 @@ export function Attendance({ widgetId, moveWidget, data }) {
 	const Variant = widgetVariants[`${width}${height}`] || Grades22;
 
 	return (
-		<div ref={widgetRef} id="newsWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
+		<div ref={widgetRef} id="attendanceWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
 			<div
 				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}
