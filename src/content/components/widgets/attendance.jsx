@@ -77,7 +77,7 @@ export function Attendance({ widgetId, moveWidget, data }) {
 		let usableData = attendance.slice(0, limit);
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
 			<div className="widget-title-box" style={{marginBottom: 'var(--padding-1)'}}>
-				<h1>OBECNOŚĆ</h1>
+				<h1>Obecność</h1>
 			</div>
 			<div className="attendance-grid" style={{width: width}}>
 				{usableData.map((item, index) => (
@@ -157,13 +157,13 @@ export function Attendance({ widgetId, moveWidget, data }) {
 
 	function Attendance21 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OBECNOŚĆ</h1>
+			<h1>Obecność</h1>
 		</div>)
 	}
 
 	function Attendance41 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OBECNOŚĆ</h1>
+			<h1>Obecność</h1>
 		</div>)
 	}
 

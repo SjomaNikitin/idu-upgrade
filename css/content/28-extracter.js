@@ -195,3 +195,7 @@ function extractAttendance(container) {
 		};
 	});
 }
+
+function extractReviewsUrl () {
+	return document.querySelector('#unique-id35 .see-more a')?.getAttribute('href') || '';
+}

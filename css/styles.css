@@ -1509,6 +1509,7 @@
 		height: max(30%, 5rem);
 		background: rgb(34 193 195 / 0);
 		background: linear-gradient(0deg,var(--module-color) 0%, rgb(244 155 0 / 0) 100%);
+		pointer-events: none;
 	}
 
 	.widget-subject-box.last{

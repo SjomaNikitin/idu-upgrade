@@ -1258,7 +1258,7 @@
     }
     function AttendanceGrid({ limit, width: width2 = "100%", graph = false, rowWidth = "100%", showMore = false }) {
       let usableData = attendance.slice(0, limit);
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "var(--padding-1)" } }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106")), /* @__PURE__ */ k("div", { className: "attendance-grid", style: { width: width2 } }, usableData.map((item, index) => /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "var(--padding-1)" } }, /* @__PURE__ */ k("h1", null, "Obecno\u015B\u0107")), /* @__PURE__ */ k("div", { className: "attendance-grid", style: { width: width2 } }, usableData.map((item, index) => /* @__PURE__ */ k(
         AttendanceRow,
         {
           key: `${item.subjectUrl}-${index}`,
@@ -1315,10 +1315,10 @@
       return /* @__PURE__ */ k(AttendanceGrid, { limit: 8, graph: false, width: "100%", rowWidth: "calc(50% - var(--padding-1))" });
     }
     function Attendance21() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106"));
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Obecno\u015B\u0107"));
     }
     function Attendance41() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OBECNO\u015A\u0106"));
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Obecno\u015B\u0107"));
     }
     function Attendance44() {
       return /* @__PURE__ */ k(AttendanceGrid, { limit: 10, width: "calc(50% - var(--padding-1))", graph: true, showMore: true });
@@ -1362,7 +1362,7 @@
       widgetRef,
       resizeZoneRef,
       resizingRef
-    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, false);
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, false, possibleLayout[0]);
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function Messages21() {
       return /* @__PURE__ */ k("div", { onClick: () => window.open("/internal_messages", "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Wiadomo\u015Bci"));
@@ -1386,6 +1386,86 @@
     ));
   }
 
+  // src/content/components/widgets/comingEvents.jsx
+  function ComingEvents({ widgetId, moveWidget: moveWidget2, data }) {
+    const schoolNR = 35;
+    const possibleLayout = [
+      { w: 2, h: 1 },
+      { w: 4, h: 1 }
+    ];
+    const fullSize = { w: 4, h: 1 };
+    const {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef,
+      resizingRef
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, false, possibleLayout[0]);
+    useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function Messages21() {
+      return /* @__PURE__ */ k("div", { onClick: () => window.open("/public_calendar/" + schoolNR, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Nadchodz\u0105ce Wydarzenia"));
+    }
+    function Messages41() {
+      return /* @__PURE__ */ k("div", { onClick: () => window.open("/public_calendar/" + schoolNR, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Nadchodz\u0105ce Wydarzenia"));
+    }
+    const contentVariants = {
+      "21": Messages21,
+      "41": Messages41
+    };
+    const Variant = contentVariants[`${width}${height}`] || Messages21;
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "comingEventsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "inner-widget",
+        style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
+      },
+      /* @__PURE__ */ k(Variant, null),
+      /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" })
+    ));
+  }
+
+  // src/content/components/widgets/lastReviews.jsx
+  function LastReviews({ widgetId, moveWidget: moveWidget2, data }) {
+    const reviewsHref = data.reviewsUrl;
+    const possibleLayout = [
+      { w: 2, h: 1 },
+      { w: 4, h: 1 }
+    ];
+    const fullSize = { w: 4, h: 1 };
+    const {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef,
+      resizingRef
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, false, possibleLayout[0]);
+    useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function Messages21() {
+      return /* @__PURE__ */ k("div", { onClick: () => window.open(reviewsHref, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Ostatnie Recenzje"));
+    }
+    function Messages41() {
+      return /* @__PURE__ */ k("div", { onClick: () => window.open(reviewsHref, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Ostatnie Recenzje"));
+    }
+    const contentVariants = {
+      "21": Messages21,
+      "41": Messages41
+    };
+    const Variant = contentVariants[`${width}${height}`] || Messages21;
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "reviewsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "inner-widget",
+        style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
+      },
+      /* @__PURE__ */ k(Variant, null),
+      /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" })
+    ));
+  }
+
   // src/content/components/mainContent.jsx
   window.editMode = false;
   var widgetRegistry = {
@@ -1395,7 +1475,9 @@
     subjectNews: SubjectNews,
     news: News,
     attendance: Attendance,
-    messages: Messages
+    messages: Messages,
+    comingEvents: ComingEvents,
+    reviews: LastReviews
   };
   var initialWidgets = [
     { id: "grades", type: "grades" },
@@ -1404,7 +1486,9 @@
     { id: "subjectNews", type: "subjectNews" },
     { id: "news", type: "news" },
     { id: "attendance", type: "attendance" },
-    { id: "messages", type: "messages" }
+    { id: "messages", type: "messages" },
+    { id: "comingEvents", type: "comingEvents" },
+    { id: "reviews", type: "reviews" }
   ];
   var widgetLayoutStorageKey = "mainContent.widgetOrder";
   function moveWidget(list, movedId, targetId) {

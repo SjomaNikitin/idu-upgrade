@@ -4,7 +4,8 @@ import { useWidgetResize } from './widgetResize.js';
 import { useWidgetDragging } from './widgetDragging.js';
 
 
-export function Messages({ widgetId, moveWidget, data }) {
+export function LastReviews({ widgetId, moveWidget, data }) {
+	const reviewsHref = data.reviewsUrl;
 	const possibleLayout = [
 		{ w: 2, h: 1 },
 		{ w: 4, h: 1 },
@@ -22,14 +23,14 @@ export function Messages({ widgetId, moveWidget, data }) {
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
 
 	function Messages21 () {
-		return(<div onClick={() => window.open("/internal_messages", "_self")} style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>Wiadomości</h1>
+		return(<div onClick={() => window.open(reviewsHref, "_self")} style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
+			<h1>Ostatnie Recenzje</h1>
 		</div>)
 	}
 
 	function Messages41 () {
-		return(<div onClick={() => window.open("/internal_messages", "_self")} style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>Wiadomości</h1>
+		return(<div onClick={() => window.open(reviewsHref, "_self")} style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
+			<h1>Ostatnie Recenzje</h1>
 		</div>)
 	}
 
@@ -41,7 +42,7 @@ export function Messages({ widgetId, moveWidget, data }) {
 	const Variant = contentVariants[`${width}${height}`] || Messages21;
 
 	return (
-		<div ref={widgetRef} id="messagesWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
+		<div ref={widgetRef} id="reviewsWidgetWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
 			<div
 				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}
