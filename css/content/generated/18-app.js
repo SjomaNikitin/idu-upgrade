@@ -1466,6 +1466,46 @@
     ));
   }
 
+  // src/content/components/widgets/lastHomeWork.jsx
+  function LastHomeWork({ widgetId, moveWidget: moveWidget2, data }) {
+    const homeworkHref = data.homeworkUrl;
+    const possibleLayout = [
+      { w: 2, h: 1 },
+      { w: 4, h: 1 }
+    ];
+    const fullSize = { w: 4, h: 1 };
+    const {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef,
+      resizingRef
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, false, possibleLayout[0]);
+    useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function Messages21() {
+      return /* @__PURE__ */ k("div", { onClick: () => window.open(homeworkHref, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Praca Domowa"));
+    }
+    function Messages41() {
+      return /* @__PURE__ */ k("div", { onClick: () => window.open(homeworkHref, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Praca Domowa"));
+    }
+    const contentVariants = {
+      "21": Messages21,
+      "41": Messages41
+    };
+    const Variant = contentVariants[`${width}${height}`] || Messages21;
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "homeWorkWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "inner-widget",
+        style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
+      },
+      /* @__PURE__ */ k(Variant, null),
+      /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" })
+    ));
+  }
+
   // src/content/components/mainContent.jsx
   window.editMode = false;
   var widgetRegistry = {
@@ -1477,7 +1517,8 @@
     attendance: Attendance,
     messages: Messages,
     comingEvents: ComingEvents,
-    reviews: LastReviews
+    reviews: LastReviews,
+    homework: LastHomeWork
   };
   var initialWidgets = [
     { id: "grades", type: "grades" },
@@ -1488,7 +1529,8 @@
     { id: "attendance", type: "attendance" },
     { id: "messages", type: "messages" },
     { id: "comingEvents", type: "comingEvents" },
-    { id: "reviews", type: "reviews" }
+    { id: "reviews", type: "reviews" },
+    { id: "homework", type: "homework" }
   ];
   var widgetLayoutStorageKey = "mainContent.widgetOrder";
   function moveWidget(list, movedId, targetId) {

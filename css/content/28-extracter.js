@@ -199,3 +199,7 @@ function extractAttendance(container) {
 function extractReviewsUrl () {
 	return document.querySelector('#unique-id35 .see-more a')?.getAttribute('href') || '';
 }
+
+function extractHomeWorkUrl () {
+	return document.querySelector('#unique-id191 .see-more a')?.getAttribute('href') || '';
+}
