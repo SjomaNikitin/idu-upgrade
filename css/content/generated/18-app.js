@@ -816,6 +816,8 @@
     }
     function GradesList({ limit, lastLine = 1, showDescription = false, allHref = false }) {
       const visibleGrades = preparedGrades.slice(0, limit);
+      const seeMoreHref = gradesData[0]?.seeMoreUrl;
+      const shouldShowSeeMore = allHref && seeMoreHref && seeMoreHref !== "mogData";
       return /* @__PURE__ */ k(
         "div",
         {
@@ -832,7 +834,7 @@
             showDescription
           }
         )),
-        allHref && /* @__PURE__ */ k("a", { className: "grades-all-link", href: gradesData[0].seeMoreUrl }, "Wszystkie oceny")
+        shouldShowSeeMore && /* @__PURE__ */ k("a", { className: "grades-all-link", href: seeMoreHref }, "Wszystkie oceny")
       );
     }
     function Grades222() {
@@ -939,10 +941,10 @@
   function Schedule({ widgetId, moveWidget: moveWidget2, data }) {
     const schedule = data.schedule;
     const possibleLayout = [
-      { w: 4, h: 4 },
+      { w: 4, h: 6 },
       { w: 2, h: 1 },
       { w: 4, h: 1 },
-      { w: 2, h: 4 }
+      { w: 2, h: 5 }
     ];
     const fullSize = { w: 4, h: 6 };
     const {
@@ -956,8 +958,17 @@
     } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function formatTodayKey() {
-      const today = /* @__PURE__ */ new Date();
-      return `${String(today.getDate()).padStart(2, "0")}.${String(today.getMonth() + 1).padStart(2, "0")}`;
+      const weekdayKeys = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+      return weekdayKeys[(/* @__PURE__ */ new Date()).getDay()];
+    }
+    function shortageNames(name) {
+      const names = ["ang", "angielski", "pol", "polski", "biol", "biologia", "his", "historia", "biz", "biznes", "kul", "kultura", "wiedza", "wos", "fizyczne", "wf"];
+      for (let i3 = 0; i3 < names.length / 2; i3 += 2) {
+        if (name.includes(names[i3])) {
+          return names[i3 + 1];
+        }
+      }
+      return name;
     }
     function compareTimes(left, right) {
       const leftStart = left.split("-")[0];
@@ -983,25 +994,22 @@
       return /* @__PURE__ */ k(
         "div",
         {
-          className: "schedule-grid",
+          className: mode !== "today" ? "schedule-grid" : "schedule-grid today",
           style: {
-            gridTemplateColumns: `72px repeat(${scheduleDays.length}, 1fr)`
+            gridTemplateColumns: mode === "today" ? "1fr" : `72px repeat(${scheduleDays.length}, 1fr)`
           }
         },
-        /* @__PURE__ */ k("div", { className: "schedule-head" }),
+        mode === "today" ? null : /* @__PURE__ */ k("div", { className: "schedule-head" }),
         scheduleDays.map((day) => {
           const firstLesson = Object.values(scheduleData?.[day] || {})[0];
           const label = firstLesson?.day || day;
           return /* @__PURE__ */ k("div", { key: day, className: "schedule-head" }, label);
         }),
-        visibleTimes.map((time) => /* @__PURE__ */ k(S, { key: time }, /* @__PURE__ */ k("div", { className: "time-cell" }, time), scheduleDays.map((day) => {
+        visibleTimes.map((time) => /* @__PURE__ */ k(S, { key: time }, mode === "today" ? null : /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])), scheduleDays.map((day) => {
           const lesson = scheduleData?.[day]?.[time];
-          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell" }, lesson?.subject || "");
+          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: mode !== "today" ? "lesson-cell" : "lesson-cell today" }, shortageNames(lesson?.subject || ""));
         })))
       );
-    }
-    function Schedule44() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Plan Lekcji")));
     }
     function Schedule21() {
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Plan Lekcji"));
@@ -1009,18 +1017,17 @@
     function Schedule41() {
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Plan Lekcji"));
     }
-    function Schedule24() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Plan Lekcji")), /* @__PURE__ */ k(ScheduleGrid, { scheduleData: schedule, mode: "today" }));
+    function Schedule25() {
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "1rem" } }, /* @__PURE__ */ k("h1", null, "Plan Lekcji")), /* @__PURE__ */ k(ScheduleGrid, { scheduleData: schedule, mode: "today" }));
     }
     function Schedule46() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Plan Lekcji"));
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "1rem" } }, /* @__PURE__ */ k("h1", null, "Plan Lekcji")), /* @__PURE__ */ k(ScheduleGrid, { scheduleData: schedule, mode: "all" }));
     }
     const gradeVariants = {
-      "44": Schedule44,
       "21": Schedule21,
       "41": Schedule41,
       "46": Schedule46,
-      "24": Schedule24
+      "25": Schedule25
     };
     const Variant = gradeVariants[`${width}${height}`] || Schedule21;
     return /* @__PURE__ */ k("div", { ref: widgetRef, id: "scheduleWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
@@ -1137,6 +1144,8 @@
     }
     function NewsList({ limit, lastLine = 1, gradient = false, allHref = true }) {
       const visibleNews = news.slice(0, limit);
+      const allNewsHref = "/informations";
+      const shouldShowSeeMore = allHref && allNewsHref !== "mogData";
       return /* @__PURE__ */ k(
         "div",
         {
@@ -1153,7 +1162,7 @@
           }
         )),
         gradient && /* @__PURE__ */ k("div", { className: "widget-news-gradient" }),
-        allHref && /* @__PURE__ */ k("a", { className: "grades-all-link", href: "/informations" }, "Zobacz Wszystkie")
+        shouldShowSeeMore && !window.__IDU_MOCK_DATA && /* @__PURE__ */ k("a", { className: "grades-all-link", href: allNewsHref }, "Zobacz Wszystkie")
       );
     }
     function Announcements22() {
@@ -1201,14 +1210,26 @@
   // src/content/components/widgets/attendance.jsx
   function Attendance({ widgetId, moveWidget: moveWidget2, data }) {
     const attendance = data.attendance;
-    const possibleLayout = [
-      { w: 2, h: 2 },
-      { w: 2, h: 4 },
-      { w: 4, h: 2 },
-      { w: 2, h: 1 },
-      { w: 4, h: 1 },
-      { w: 4, h: 4 }
-    ];
+    const mockData = data.attendance[0].mockData;
+    let possibleLayout;
+    if (mockData) {
+      possibleLayout = [
+        { w: 2, h: 4 },
+        { w: 4, h: 2 },
+        { w: 2, h: 1 },
+        { w: 4, h: 1 },
+        { w: 4, h: 4 }
+      ];
+    } else {
+      possibleLayout = [
+        { w: 2, h: 2 },
+        { w: 2, h: 4 },
+        { w: 4, h: 2 },
+        { w: 2, h: 1 },
+        { w: 4, h: 1 },
+        { w: 4, h: 4 }
+      ];
+    }
     const fullSize = { w: 4, h: 4 };
     const {
       width,
@@ -1218,7 +1239,7 @@
       widgetRef,
       resizeZoneRef,
       resizingRef
-    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 2, h: 1 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function normalizeLessonName(lessonName) {
       let names = ["fizyczne", "WF", "godzina", "GW", "biznes", "BIZ", "kultura", "kultura"];
@@ -1258,6 +1279,8 @@
     }
     function AttendanceGrid({ limit, width: width2 = "100%", graph = false, rowWidth = "100%", showMore = false }) {
       let usableData = attendance.slice(0, limit);
+      const seeMoreHref = attendance[0]?.seeMoreUrl;
+      const shouldShowSeeMore = showMore && seeMoreHref && seeMoreHref !== "mogData";
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "var(--padding-1)" } }, /* @__PURE__ */ k("h1", null, "Obecno\u015B\u0107")), /* @__PURE__ */ k("div", { className: "attendance-grid", style: { width: width2 } }, usableData.map((item, index) => /* @__PURE__ */ k(
         AttendanceRow,
         {
@@ -1265,10 +1288,13 @@
           item,
           rowWidth
         }
-      ))), graph ? /* @__PURE__ */ k(AttendanceChart, { width: width2 }) : null, showMore ? /* @__PURE__ */ k("a", { href: attendance[0].seeMoreUrl, className: "grades-all-link" }, "Zobacz wi\u0119cej") : null);
+      ))), graph ? /* @__PURE__ */ k(AttendanceChart, { width: width2 }) : null, shouldShowSeeMore ? /* @__PURE__ */ k("a", { href: seeMoreHref, className: "grades-all-link" }, "Zobacz wi\u0119cej") : null);
     }
     function AttendanceChart({ width: width2 = "100%" }) {
       const [stats, setStats] = d2(null);
+      if (mockData) {
+        return /* @__PURE__ */ k("div", { style: { padding: "16px" } }, "...");
+      }
       y2(() => {
         let cancelled = false;
         async function loadStats() {
@@ -1532,6 +1558,16 @@
     { id: "reviews", type: "reviews" },
     { id: "homework", type: "homework" }
   ];
+  if (window.__IDU_MOCK_DATA) {
+    initialWidgets = [
+      { id: "grades", type: "grades" },
+      { id: "subjects", type: "subjects" },
+      { id: "schedule", type: "schedule" },
+      { id: "subjectNews", type: "subjectNews" },
+      { id: "news", type: "news" },
+      { id: "attendance", type: "attendance" }
+    ];
+  }
   var widgetLayoutStorageKey = "mainContent.widgetOrder";
   function moveWidget(list, movedId, targetId) {
     if (movedId === targetId) return list;

@@ -6,14 +6,27 @@ import { useWidgetDragging } from './widgetDragging.js';
 
 export function Attendance({ widgetId, moveWidget, data }) {
 	const attendance = data.attendance;
-	const possibleLayout = [
-		{ w: 2, h: 2 },
-		{ w: 2, h: 4 },
-		{ w: 4, h: 2 },
-		{ w: 2, h: 1 },
-		{ w: 4, h: 1 },
-		{ w: 4, h: 4 },
-	];
+	const mockData = data.attendance[0].mockData;
+	let possibleLayout;
+	if (mockData) {
+		possibleLayout = [
+			{ w: 2, h: 4 },
+			{ w: 4, h: 2 },
+			{ w: 2, h: 1 },
+			{ w: 4, h: 1 },
+			{ w: 4, h: 4 },
+		];
+	} else {
+		possibleLayout = [
+			{ w: 2, h: 2 },
+			{ w: 2, h: 4 },
+			{ w: 4, h: 2 },
+			{ w: 2, h: 1 },
+			{ w: 4, h: 1 },
+			{ w: 4, h: 4 },
+		];
+	}
+
 	const fullSize = {w: 4, h: 4}
 	const {
 		width,
@@ -23,7 +36,7 @@ export function Attendance({ widgetId, moveWidget, data }) {
 		widgetRef,
 		resizeZoneRef,
 		resizingRef,
-	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, {w: 2, h: 1});
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
 
 	function normalizeLessonName(lessonName) {
@@ -75,6 +88,8 @@ export function Attendance({ widgetId, moveWidget, data }) {
 
 	function AttendanceGrid ({limit, width = "100%", graph = false, rowWidth = "100%", showMore = false}) {
 		let usableData = attendance.slice(0, limit);
+		const seeMoreHref = attendance[0]?.seeMoreUrl;
+		const shouldShowSeeMore = showMore && seeMoreHref && seeMoreHref !== 'mogData';
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
 			<div className="widget-title-box" style={{marginBottom: 'var(--padding-1)'}}>
 				<h1>Obecność</h1>
@@ -89,12 +104,17 @@ export function Attendance({ widgetId, moveWidget, data }) {
 				))}
 			</div>
 			{graph? <AttendanceChart width={width}/> : null}
-			{showMore? <a href={attendance[0].seeMoreUrl} className="grades-all-link">Zobacz więcej</a> : null}
+			{shouldShowSeeMore ? <a href={seeMoreHref} className="grades-all-link">Zobacz więcej</a> : null}
 		</div>)
 	}
 
 	function AttendanceChart({width = "100%"}) {
 		const [stats, setStats] = useState(null);
+
+		if (mockData) {
+			return <div style={{ padding: '16px' }}>...</div>;
+
+		}
 
 		useEffect(() => {
 			let cancelled = false;

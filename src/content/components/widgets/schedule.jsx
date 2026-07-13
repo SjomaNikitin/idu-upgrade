@@ -7,10 +7,10 @@ import { useWidgetDragging } from './widgetDragging.js';
 export function Schedule({ widgetId, moveWidget, data }) {
 	const schedule = data.schedule;
 	const possibleLayout = [
-		{ w: 4, h: 4 },
+		{ w: 4, h: 6 },
 		{ w: 2, h: 1 },
 		{ w: 4, h: 1 },
-		{ w: 2, h: 4 },
+		{ w: 2, h: 5 },
 	];
 	const fullSize = {w: 4, h: 6}
 	const {
@@ -25,8 +25,18 @@ export function Schedule({ widgetId, moveWidget, data }) {
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
 
 	function formatTodayKey() {
-		const today = new Date();
-		return `${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}`;
+		const weekdayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+		return weekdayKeys[new Date().getDay()];
+	}
+
+	function shortageNames (name) {
+		const names = ['ang', 'angielski', 'pol', 'polski', 'biol', 'biologia', 'his', 'historia', 'biz', 'biznes', 'kul', 'kultura', 'wiedza', 'wos', 'fizyczne', 'wf'];
+		for (let i=0; i < names.length / 2; i+=2) {
+			if (name.includes(names[i])) {
+				return names[i+1];
+			}
+		}
+		return name;
 	}
 
 	function compareTimes(left, right) {
@@ -58,18 +68,20 @@ export function Schedule({ widgetId, moveWidget, data }) {
 			return null;
 		}
 
-		return (
-			<div
-				className="schedule-grid"
-				style={{
-					gridTemplateColumns: `72px repeat(${scheduleDays.length}, 1fr)`,
-				}}
-			>
-				<div className="schedule-head"></div>
+			return (
+				<div
+						className={mode !== 'today' ? 'schedule-grid' : 'schedule-grid today'}
+						style={{
+							gridTemplateColumns: mode === 'today'
+								? '1fr'
+								: `72px repeat(${scheduleDays.length}, 1fr)`,
+						}}
+					>
+					{mode === 'today' ? null : <div className="schedule-head"></div>}
 
-				{scheduleDays.map((day) => {
-					const firstLesson = Object.values(scheduleData?.[day] || {})[0];
-					const label = firstLesson?.day || day;
+					{scheduleDays.map((day) => {
+						const firstLesson = Object.values(scheduleData?.[day] || {})[0];
+						const label = firstLesson?.day || day;
 
 					return (
 					<div key={day} className="schedule-head">
@@ -78,16 +90,21 @@ export function Schedule({ widgetId, moveWidget, data }) {
 					);
 				})}
 
-				{visibleTimes.map((time) => (
-					<Fragment key={time}>
-						<div className="time-cell">{time}</div>
+					{visibleTimes.map((time) => (
+						<Fragment key={time}>
+							{mode === 'today' ? null : (
+								<div className="time-cell">
+									<span>{time.split('-')[0]}</span>
+									<span>{time.split('-')[1]}</span>
+								</div>
+							)}
 
 						{scheduleDays.map((day) => {
 							const lesson = scheduleData?.[day]?.[time];
 
 							return (
-								<div key={`${day}-${time}`} className="lesson-cell">
-									{lesson?.subject || ''}
+								<div key={`${day}-${time}`} className={mode !== 'today' ? 'lesson-cell' : 'lesson-cell today'}>
+									{shortageNames(lesson?.subject || '')}
 								</div>
 							);
 						})}
@@ -97,13 +114,6 @@ export function Schedule({ widgetId, moveWidget, data }) {
 		);
 	}
 
-	function Schedule44 () {
-		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<div className="widget-title-box">
-				<h1>Plan Lekcji</h1>
-			</div>
-		</div>)
-	}
 
 
 	function Schedule21 () {
@@ -118,9 +128,9 @@ export function Schedule({ widgetId, moveWidget, data }) {
 		</div>)
 	}
 
-	function Schedule24 () {
+	function Schedule25 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<div className="widget-title-box">
+			<div className="widget-title-box" style={{marginBottom: '1rem'}}>
 				<h1>Plan Lekcji</h1>
 			</div>
 			<ScheduleGrid scheduleData={schedule} mode="today" />
@@ -129,16 +139,18 @@ export function Schedule({ widgetId, moveWidget, data }) {
 
 	function Schedule46 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>Plan Lekcji</h1>
+			<div className="widget-title-box" style={{marginBottom: '1rem'}}>
+				<h1>Plan Lekcji</h1>
+			</div>
+			<ScheduleGrid scheduleData={schedule} mode="all" />
 		</div>)
 	}
 
 	const gradeVariants = {
-		'44': Schedule44,
 		'21': Schedule21,
 		'41': Schedule41,
 		'46': Schedule46,
-		'24': Schedule24,
+		'25': Schedule25,
 	};
 
 	const Variant = gradeVariants[`${width}${height}`] || Schedule21;

@@ -25,7 +25,7 @@ const widgetRegistry = {
 	homework: LastHomeWork,
 };
 
-const initialWidgets = [
+let initialWidgets = [
 	{ id: 'grades', type: 'grades' },
 	{ id: 'subjects', type: 'subjects'},
 	{ id: 'schedule', type: 'schedule'},
@@ -37,7 +37,16 @@ const initialWidgets = [
 	{ id: 'reviews', type: 'reviews'},
 	{ id: 'homework', type: 'homework'},
 ];
-
+if (window.__IDU_MOCK_DATA) {
+	initialWidgets = [
+		{ id: 'grades', type: 'grades' },
+		{ id: 'subjects', type: 'subjects'},
+		{ id: 'schedule', type: 'schedule'},
+		{ id: 'subjectNews', type: 'subjectNews'},
+		{ id: 'news', type: 'news'},
+		{ id: 'attendance', type: 'attendance'},
+	];
+}
 const widgetLayoutStorageKey = 'mainContent.widgetOrder';
 
 function moveWidget(list, movedId, targetId) {

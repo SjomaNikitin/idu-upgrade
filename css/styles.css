@@ -188,6 +188,7 @@
 		font-optical-sizing: auto;
 		font-weight: 400;
 		font-style: normal;
+		margin: 0;
 
 		& .container {
 			width: 100vw !important;
@@ -1413,6 +1414,14 @@
 		display: grid;
 		border-top: 2px solid #222;
 		border-left: 2px solid #222;
+		font-size: 1rem;
+		overflow-x: auto;
+		min-height: 0;
+
+	}
+
+	.schedule-grid.today {
+		width: 100%;
 	}
 
 	.schedule-grid > div {
@@ -1424,11 +1433,34 @@
 
 	.schedule-head {
 		font-weight: 700;
+		background-color: var(--schedule-table-header-color);
+		color: var(--module-color);
+
 	}
 
 	.time-cell {
 		font-weight: 700;
-		white-space: nowrap;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		white-space: normal;
+		line-height: 1.1;
+		background-color: var(--schedule-table-time-color);
+		color: var(--module-color);
+		padding-right: 0.7rem;
+	}
+
+	.time-cell span {
+		font-size: 0.8rem;
+	}
+
+	.lesson-cell.today {
+		width: 100%;
+	}
+
+	.lesson-cell{
+		background-color: var(--schedule-lesson-color);
 	}
 
 	#announcementsWidget.w2{

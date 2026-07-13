@@ -37,6 +37,8 @@ export function News({ widgetId, moveWidget, data }) {
 
 	function NewsList({ limit, lastLine = 1, gradient = false, allHref = true}) {
 		const visibleNews = news.slice(0, limit);
+		const allNewsHref = '/informations';
+		const shouldShowSeeMore = allHref && allNewsHref !== 'mogData';
 
 		return (
 			<div
@@ -55,7 +57,7 @@ export function News({ widgetId, moveWidget, data }) {
 					/>
 				))}
 				{gradient && <div className="widget-news-gradient"></div>}
-				{allHref && <a className="grades-all-link" href={"/informations"}>Zobacz Wszystkie</a>}
+				{shouldShowSeeMore && !window.__IDU_MOCK_DATA &&<a className="grades-all-link" href={allNewsHref}>Zobacz Wszystkie</a>}
 			</div>
 		);
 	}

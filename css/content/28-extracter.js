@@ -69,17 +69,18 @@ function getScheduleLessons(schedule = document.querySelector(".schedule")) {
 	if (!dateMatch) return lessons;
 
 	const firstDate = new Date(Number(dateMatch[1]), Number(dateMatch[2]) - 1, Number(dateMatch[3]));
+	const weekdayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 	const dayHeaders = Array.from(table.querySelectorAll("thead tr:nth-child(2) th"))
 		.slice(1)
 		.map(th => th.textContent.trim());
-	const dates = dayHeaders.map((day, index) => {
+	const dayKeys = dayHeaders.map((day, index) => {
 		const date = new Date(firstDate);
 		date.setDate(firstDate.getDate() + index);
-		return `${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}`;
+		return weekdayKeys[date.getDay()];
 	});
 
-	for (let i = 0; i < dates.length; i++) {
-		lessons[dates[i]] = {};
+	for (let i = 0; i < dayKeys.length; i++) {
+		lessons[dayKeys[i]] = {};
 	}
 
 	const rows = table.querySelectorAll("tbody tr");
@@ -97,13 +98,13 @@ function getScheduleLessons(schedule = document.querySelector(".schedule")) {
 			const lessonCell = cells[j].querySelector(".lesson-cell");
 			if (!lessonCell) continue;
 
-			const date = dates[j - 1];
+			const dayKey = dayKeys[j - 1];
 			const subjectLink = lessonCell.querySelector(".subject a");
 			const locationLink = lessonCell.querySelector(".location a[href^='/rooms/']");
 			const note = Array.from(lessonCell.children)
 				.find(child => child.tagName === "DIV" && !child.classList.contains("lesson-cell"))?.textContent.trim() || "";
 
-			lessons[date][time] = {
+			lessons[dayKey][time] = {
 				lessonNumber,
 				time,
 				start,
@@ -192,6 +193,7 @@ function extractAttendance(container) {
 			presence: attendanceEl.classList.contains('presence'),
 			lateness: attendanceEl.classList.contains('lateness'),
 			seeMoreUrl: seeMoreLink?.getAttribute('href') || '',
+			mockData: false,
 		};
 	});
 }

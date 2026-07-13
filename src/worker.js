@@ -2,6 +2,7 @@
 /* global CSS_TEXT */
 /* global JS_TEXT */
 /* global RELEASE_BUILD */
+import { buildExampleDashboardData } from './mockDashboardData.js';
 
 const isWorkerRuntime = typeof WebSocketPair !== 'undefined' && typeof caches !== 'undefined';
 
@@ -57,6 +58,24 @@ function replaceHost(url, newHost) {
 	return urlObj.toString();
 }
 
+function renderCustomMainPage(data) {
+	return `<!doctype html>
+<html lang="pl">
+<head>
+	<meta charset="utf-8">
+	<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no" name="viewport">
+	<title>IDU Demo</title>
+	<link rel="stylesheet" href="/my-styles.css" />
+	<script>window.__IDU_MOCK_DATA = ${JSON.stringify(data)};</script>
+	<script type="module" src="/content.js"></script>
+</head>
+<body path="/">
+	<div id="top"></div>
+	<div id="content"></div>
+</body>
+</html>`;
+}
+
 
 export default {
 	async fetch(request, env, ctx) {
@@ -90,9 +109,30 @@ export default {
 		}
 
 		const needsBody = request.method !== 'GET' && request.method !== 'HEAD';
-		const body = needsBody ? await request.arrayBuffer() : undefined;
 		const headers = new Headers(request.headers);
+		let body;
+		if (needsBody) {
+			body = await request.arrayBuffer();
 
+			const contentType = headers.get('content-type') || '';
+			if (contentType.includes('application/x-www-form-urlencoded')) {
+				const text = new TextDecoder().decode(body);
+				const params = new URLSearchParams(text);
+
+					const login = params.get('user[login]');
+					const password = params.get('user[password]');
+
+					if (login === "AppleLogin" && password === "123") {
+						return new Response(renderCustomMainPage(buildExampleDashboardData()), {
+							status: 200,
+							headers: {
+								'content-type': 'text/html; charset=utf-8',
+								'cache-control': 'no-store'
+							}
+						});
+					}
+			}
+		}
 		console.log('Request', request.method, url.pathname, url.search);
 		const clonedHeaders = Object.fromEntries(
 			[...headers]

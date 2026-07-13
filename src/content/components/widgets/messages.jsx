@@ -5,6 +5,7 @@ import { useWidgetDragging } from './widgetDragging.js';
 
 
 export function Messages({ widgetId, moveWidget, data }) {
+
 	const possibleLayout = [
 		{ w: 2, h: 1 },
 		{ w: 4, h: 1 },

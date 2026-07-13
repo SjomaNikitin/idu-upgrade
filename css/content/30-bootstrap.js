@@ -1,21 +1,23 @@
 window.loadWebsiteTheme()
 let svgSize = "60%";
 window.addEventListener("DOMContentLoaded", function () {
+	const mockData = window.__IDU_MOCK_DATA;
 	if (window.innerWidth < window.innerHeight) {
-		const gradesData = extractGrades(document.querySelector("#unique-id12"));
-		const subjectsData = extractSubjects(document.querySelector("#unique-id192"));
-		const scheduleData = getScheduleLessons();
-		const subjectAnnouncements = extractSubjectAnnouncements(document.querySelector("#unique-id11"));
-		const news = extractNews(document.querySelector("#unique-id14"));
-		const attendance = extractAttendance(document.querySelector("#unique-id15"));
-		const reviewsHref = extractReviewsUrl();
-		const homeworkHref = extractHomeWorkUrl();
+		const pageData = mockData || {
+			homeworkUrl: extractHomeWorkUrl(),
+			reviewsUrl: extractReviewsUrl(),
+			attendance: extractAttendance(document.querySelector("#unique-id15")),
+			news: extractNews(document.querySelector("#unique-id14")),
+			grades: extractGrades(document.querySelector("#unique-id12")),
+			subjects: extractSubjects(document.querySelector("#unique-id192")),
+			schedule: getScheduleLessons(),
+			subjectAnnouncements: extractSubjectAnnouncements(document.querySelector("#unique-id11"))
+		};
 		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader();
 		console.log("Custom header loaded:", customHeaderLoaded)
-		if (window.location.pathname === "/") {
-			const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent({homeworkUrl: homeworkHref, reviewsUrl: reviewsHref,attendance: attendance, news: news, grades: gradesData, subjects: subjectsData, schedule: scheduleData, subjectAnnouncements: subjectAnnouncements})
+		if (window.location.pathname === "/" || mockData) {
+			const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent(pageData)
 			console.log("Custom content loaded:", customContentLoaded)
-
 		}
 
 		if (document.getElementById("top-selection")) {
@@ -51,15 +53,14 @@ window.addEventListener("DOMContentLoaded", function () {
 
 		linkifyUrls()
 
-		if (localStorage.getItem("autoLogin") === "yes" && window.location.pathname === "/users/sign_in") {
+		if (localStorage.getItem("autoLogin") === "yes" && window.location.pathname === "/users/sign_in" && !window.__IDU_MOCK_DATA) {
 
 		} else {
-			document.getElementById("loader").remove();
+			document.getElementById("loader")?.remove();
 			console.log("Loaded");
 		}
 	}
 })
-
 
 
 

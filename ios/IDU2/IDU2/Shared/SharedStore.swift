@@ -8,6 +8,7 @@ struct WidgetSnapshot: Codable {
 
 enum SharedStore {
     private static let snapshotKey = "widget_snapshot"
+    private static let scheduleKey = "widget_schedule"
 
     static func save(_ snapshot: WidgetSnapshot) {
         guard
@@ -29,6 +30,39 @@ enum SharedStore {
             return nil
         }
 
+        return snapshot
+    }
+
+    static func saveSchedule(_ payload: SchedulePayload) {
+        guard
+            let defaults = UserDefaults(suiteName: AppConfig.appGroupID),
+            let data = try? JSONEncoder().encode(payload)
+        else {
+            return
+        }
+
+        defaults.set(data, forKey: scheduleKey)
+    }
+
+    static func loadSchedule() -> SchedulePayload? {
+        guard
+            let defaults = UserDefaults(suiteName: AppConfig.appGroupID),
+            let data = defaults.data(forKey: scheduleKey),
+            let payload = try? JSONDecoder().decode(SchedulePayload.self, from: data)
+        else {
+            return nil
+        }
+
+        return payload
+    }
+
+    static func refreshBannerFromStoredSchedule(now: Date = Date()) -> WidgetSnapshot? {
+        guard let payload = loadSchedule() else {
+            return nil
+        }
+
+        let snapshot = NextLessonBannerResolver.makeSnapshot(from: payload, now: now)
+        save(snapshot)
         return snapshot
     }
 }

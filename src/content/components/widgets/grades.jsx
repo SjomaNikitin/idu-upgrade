@@ -114,6 +114,8 @@ export function Grades({ widgetId, moveWidget, data }) {
 
 	function GradesList({ limit, lastLine = 1,showDescription = false,allHref=false}) {
 		const visibleGrades = preparedGrades.slice(0, limit);
+		const seeMoreHref = gradesData[0]?.seeMoreUrl;
+		const shouldShowSeeMore = allHref && seeMoreHref && seeMoreHref !== 'mogData';
 
 		return (
 			<div
@@ -133,7 +135,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 					/>
 				))}
 
-				{allHref && <a className="grades-all-link" href={gradesData[0].seeMoreUrl}>Wszystkie oceny</a>}
+				{shouldShowSeeMore && <a className="grades-all-link" href={seeMoreHref}>Wszystkie oceny</a>}
 			</div>
 		);
 	}
