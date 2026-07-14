@@ -13,6 +13,17 @@ window.addEventListener("DOMContentLoaded", function () {
 			schedule: getScheduleLessons(),
 			subjectAnnouncements: extractSubjectAnnouncements(document.querySelector("#unique-id11"))
 		};
+		if (
+			window.webkit &&
+			window.webkit.messageHandlers &&
+			window.webkit.messageHandlers.iduScheduleSync
+		) {
+			window.webkit.messageHandlers.iduScheduleSync.postMessage({
+				updatedAt: new Date().toISOString(),
+				schedule: pageData.schedule
+			});
+			console.log("Synced schedule to app");
+		}
 		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader();
 		console.log("Custom header loaded:", customHeaderLoaded)
 		if (window.location.pathname === "/" || mockData) {
@@ -61,7 +72,5 @@ window.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 })
-
-
 
 

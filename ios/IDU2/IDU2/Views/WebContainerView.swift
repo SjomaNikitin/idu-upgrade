@@ -1,7 +1,10 @@
 import SwiftUI
 import WebKit
+import WidgetKit
 
 struct WebContainerView: UIViewRepresentable {
+    private static let scheduleBridgeName = "iduScheduleSync"
+
     func makeCoordinator() -> Coordinator {
         Coordinator()
     }
@@ -10,9 +13,12 @@ struct WebContainerView: UIViewRepresentable {
         let configuration = WKWebViewConfiguration()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         configuration.websiteDataStore = .default()
+        configuration.userContentController.add(context.coordinator, name: Self.scheduleBridgeName)
         configuration.userContentController.addUserScript(makePlatformBootstrapScript())
 
-        let webView = SafeAreaAwareWebView(frame: .zero, configuration: configuration)
+		let webView = SafeAreaAwareWebView(frame: .zero, configuration: configuration)
+		webView.isInspectable = true
+		webView.navigationDelegate = context.coordinator
         webView.navigationDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.contentInsetAdjustmentBehavior = .never
@@ -36,6 +42,16 @@ struct WebContainerView: UIViewRepresentable {
         let source = """
         document.documentElement.setAttribute('data-app-platform', 'ios');
         document.documentElement.classList.add('ios-app');
+        window.__IDUSyncScheduleToApp = function(schedule) {
+            if (!schedule || !window.webkit || !window.webkit.messageHandlers || !window.webkit.messageHandlers.\(Self.scheduleBridgeName)) {
+                return;
+            }
+
+            window.webkit.messageHandlers.\(Self.scheduleBridgeName).postMessage({
+                updatedAt: new Date().toISOString(),
+                schedule: schedule
+            });
+        };
         """
 
         return WKUserScript(
@@ -45,7 +61,7 @@ struct WebContainerView: UIViewRepresentable {
         )
     }
 
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             applySafeAreaInsets(to: webView)
             print("Loaded IDU worker site")
@@ -112,6 +128,35 @@ struct WebContainerView: UIViewRepresentable {
                     }
                 }
             }
+        }
+
+        func userContentController(
+            _ userContentController: WKUserContentController,
+            didReceive message: WKScriptMessage
+        ) {
+            guard message.name == WebContainerView.scheduleBridgeName else {
+                return
+            }
+
+            guard JSONSerialization.isValidJSONObject(message.body) else {
+                print("Schedule sync payload was not a valid JSON object")
+                return
+            }
+            do {
+                let data = try JSONSerialization.data(withJSONObject: message.body)
+                try SharedStore.saveScheduleMessageData(data)
+				WidgetCenter.shared.reloadTimelines(ofKind: "IDU2Widget")
+                print("Saved schedule payload from web app")
+            } catch {
+                print("Failed to save schedule payload: \(error.localizedDescription)")
+            }
+			if let payload = SharedStore.loadSchedule() {
+				print("Saved schedule days:", payload.schedule.keys.sorted())
+				print("Saved schedule updatedAt:", payload.updatedAt)
+			}
+			if let snapshot = SharedStore.load() {
+				print("Saved widget snapshot updatedAt:", snapshot.updatedAt)
+			}
         }
     }
 

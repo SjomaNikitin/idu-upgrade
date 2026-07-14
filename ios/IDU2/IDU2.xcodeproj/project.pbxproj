@@ -6,14 +6,65 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3DECE8A330065242004365F6 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DECE8A230065242004365F6 /* WidgetKit.framework */; };
+		3DECE8A530065242004365F6 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DECE8A430065242004365F6 /* SwiftUI.framework */; };
+		3DECE8B630065244004365F6 /* IDU2WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3DECE8A030065242004365F6 /* IDU2WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3DECE8B430065244004365F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3D22AD7F2FE12CB7005D8564 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3DECE89F30065242004365F6;
+			remoteInfo = IDU2WidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3DECE8B730065244004365F6 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3DECE8B630065244004365F6 /* IDU2WidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		3D22AD872FE12CB7005D8564 /* IDU2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IDU2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DECE8A030065242004365F6 /* IDU2WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = IDU2WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DECE8A230065242004365F6 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		3DECE8A430065242004365F6 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3DECE8BA30065244004365F6 /* Exceptions for "IDU2Widget" folder in "IDU2WidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3DECE89F30065242004365F6 /* IDU2WidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3D22AD892FE12CB7005D8564 /* IDU2 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = IDU2;
+			sourceTree = "<group>";
+		};
+		3DECE8A630065242004365F6 /* IDU2Widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3DECE8BA30065244004365F6 /* Exceptions for "IDU2Widget" folder in "IDU2WidgetExtension" target */,
+			);
+			path = IDU2Widget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,6 +77,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3DECE89D30065242004365F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3DECE8A530065242004365F6 /* SwiftUI.framework in Frameworks */,
+				3DECE8A330065242004365F6 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -33,6 +93,8 @@
 			isa = PBXGroup;
 			children = (
 				3D22AD892FE12CB7005D8564 /* IDU2 */,
+				3DECE8A630065242004365F6 /* IDU2Widget */,
+				3DECE8A130065242004365F6 /* Frameworks */,
 				3D22AD882FE12CB7005D8564 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +103,18 @@
 			isa = PBXGroup;
 			children = (
 				3D22AD872FE12CB7005D8564 /* IDU2.app */,
+				3DECE8A030065242004365F6 /* IDU2WidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		3DECE8A130065242004365F6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3DECE8A230065242004365F6 /* WidgetKit.framework */,
+				3DECE8A430065242004365F6 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -55,10 +127,12 @@
 				3D22AD832FE12CB7005D8564 /* Sources */,
 				3D22AD842FE12CB7005D8564 /* Frameworks */,
 				3D22AD852FE12CB7005D8564 /* Resources */,
+				3DECE8B730065244004365F6 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3DECE8B530065244004365F6 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				3D22AD892FE12CB7005D8564 /* IDU2 */,
@@ -70,6 +144,28 @@
 			productReference = 3D22AD872FE12CB7005D8564 /* IDU2.app */;
 			productType = "com.apple.product-type.application";
 		};
+		3DECE89F30065242004365F6 /* IDU2WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3DECE8BB30065244004365F6 /* Build configuration list for PBXNativeTarget "IDU2WidgetExtension" */;
+			buildPhases = (
+				3DECE89C30065242004365F6 /* Sources */,
+				3DECE89D30065242004365F6 /* Frameworks */,
+				3DECE89E30065242004365F6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				3DECE8A630065242004365F6 /* IDU2Widget */,
+			);
+			name = IDU2WidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = IDU2WidgetExtension;
+			productReference = 3DECE8A030065242004365F6 /* IDU2WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -77,11 +173,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2650;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					3D22AD862FE12CB7005D8564 = {
 						CreatedOnToolsVersion = 26.5;
+					};
+					3DECE89F30065242004365F6 = {
+						CreatedOnToolsVersion = 26.6;
 					};
 				};
 			};
@@ -100,12 +199,20 @@
 			projectRoot = "";
 			targets = (
 				3D22AD862FE12CB7005D8564 /* IDU2 */,
+				3DECE89F30065242004365F6 /* IDU2WidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3D22AD852FE12CB7005D8564 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DECE89E30065242004365F6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +229,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3DECE89C30065242004365F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3DECE8B530065244004365F6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3DECE89F30065242004365F6 /* IDU2WidgetExtension */;
+			targetProxy = 3DECE8B430065244004365F6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3D22AD902FE12CB9005D8564 /* Debug */ = {
@@ -312,6 +434,68 @@
 			};
 			name = Release;
 		};
+		3DECE8B830065244004365F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = IDU2Widget/IDU2Widget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2KW2X767X8;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IDU2Widget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IDU2Widget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.szymon.IDU2.IDU2Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3DECE8B930065244004365F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = IDU2Widget/IDU2Widget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2KW2X767X8;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IDU2Widget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IDU2Widget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.szymon.IDU2.IDU2Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -329,6 +513,15 @@
 			buildConfigurations = (
 				3D22AD932FE12CB9005D8564 /* Debug */,
 				3D22AD942FE12CB9005D8564 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3DECE8BB30065244004365F6 /* Build configuration list for PBXNativeTarget "IDU2WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3DECE8B830065244004365F6 /* Debug */,
+				3DECE8B930065244004365F6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

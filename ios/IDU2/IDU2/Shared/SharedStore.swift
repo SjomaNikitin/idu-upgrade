@@ -3,12 +3,18 @@ import Foundation
 struct WidgetSnapshot: Codable {
     let title: String
     let subtitle: String
+    let detail: String?
     let updatedAt: Date
 }
 
 enum SharedStore {
     private static let snapshotKey = "widget_snapshot"
     private static let scheduleKey = "widget_schedule"
+    private static let webDecoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
+    }()
 
     static func save(_ snapshot: WidgetSnapshot) {
         guard
@@ -42,6 +48,12 @@ enum SharedStore {
         }
 
         defaults.set(data, forKey: scheduleKey)
+    }
+
+    static func saveScheduleMessageData(_ data: Data) throws {
+        let payload = try webDecoder.decode(SchedulePayload.self, from: data)
+        saveSchedule(payload)
+        _ = refreshBannerFromStoredSchedule()
     }
 
     static func loadSchedule() -> SchedulePayload? {
