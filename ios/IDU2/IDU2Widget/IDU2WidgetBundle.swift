@@ -12,6 +12,7 @@ import SwiftUI
 struct IDU2WidgetBundle: WidgetBundle {
     var body: some Widget {
         IDU2Widget()
+        IDU2ScheduleWidget()
         IDU2WidgetControl()
         IDU2WidgetLiveActivity()
     }

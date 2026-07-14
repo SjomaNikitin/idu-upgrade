@@ -34,11 +34,17 @@ function buildDaySchedule(dayLabel, subjects) {
 	];
 
 	return Object.fromEntries(
-		timeSlots.map(([start, end], index) => {
+		timeSlots.flatMap(([start, end], index) => {
 			const slot = subjects[index];
+			if (!slot) {
+				return [];
+			}
+
 			return [
-				`${start}-${end}`,
-				createLesson(index + 1, start, end, dayLabel, slot.subject, slot.room, slot.note || '')
+				[
+					`${start}-${end}`,
+					createLesson(index + 1, start, end, dayLabel, slot.subject, slot.room, slot.note || '')
+				]
 			];
 		})
 	);
@@ -65,9 +71,7 @@ export function buildExampleDashboardData() {
 			{ subject: 'Jezyk angielski', room: '14' },
 			{ subject: 'Geografia', room: '10' },
 			{ subject: 'WF', room: 'Boisko' },
-			{ subject: 'Biznes', room: '5' },
-			{ subject: 'Religia', room: '3' },
-			{ subject: 'Hiszpanski', room: '11', note: 'Konwersacje' }
+			{ subject: 'Biznes', room: '5' }
 		]),
 		wednesday: buildDaySchedule('Wednesday', [
 			{ subject: 'Jezyk polski', room: '8' },

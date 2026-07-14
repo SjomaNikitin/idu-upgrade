@@ -229,6 +229,213 @@ private enum NextLessonBannerResolver {
     }
 }
 
+private enum ScheduleGridResolver {
+    static let weekdayOrder = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday"
+    ]
+
+    static func makeSnapshot(
+        from payload: SchedulePayload,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> FullScheduleSnapshot {
+        let dayColumns = makeDayColumns(from: payload.schedule, now: now, calendar: calendar)
+
+        return FullScheduleSnapshot(
+            dayColumns: dayColumns,
+            updatedAt: payload.updatedAt
+        )
+    }
+
+    private static func makeDayColumns(
+        from schedule: [String: [String: ScheduleLesson]],
+        now: Date,
+        calendar: Calendar
+    ) -> [FullScheduleDayColumn] {
+        weekdayOrder.map { weekday in
+            let label: String
+            if let date = makeRepresentativeDate(for: weekday, from: schedule, now: now, calendar: calendar) {
+                let day = calendar.component(.day, from: date)
+                label = "\(shortWeekdayLabel(for: weekday)) \(day)"
+            } else {
+                label = shortWeekdayLabel(for: weekday)
+            }
+
+            return FullScheduleDayColumn(
+                label: label,
+                lessons: flattenedLessons(for: weekday, in: schedule).sorted(by: compareLessons)
+            )
+        }
+    }
+
+    private static func flattenedLessons(
+        for weekday: String,
+        in schedule: [String: [String: ScheduleLesson]]
+    ) -> [ScheduleLesson] {
+        schedule
+            .filter { key, _ in normalizedWeekday(for: key) == weekday }
+            .flatMap { _, lessonsByTime in lessonsByTime.values }
+    }
+
+    private static func compareLessons(_ lhs: ScheduleLesson, _ rhs: ScheduleLesson) -> Bool {
+        if let leftNumber = Int(lhs.lessonNumber), let rightNumber = Int(rhs.lessonNumber), leftNumber != rightNumber {
+            return leftNumber < rightNumber
+        }
+
+        return lhs.start < rhs.start
+    }
+
+    private static func normalizedWeekday(for key: String) -> String? {
+        let normalized = key.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if weekdayOrder.contains(normalized) {
+            return normalized
+        }
+
+        return nil
+    }
+
+    private static func makeRepresentativeDate(
+        for weekday: String,
+        from schedule: [String: [String: ScheduleLesson]],
+        now: Date,
+        calendar: Calendar
+    ) -> Date? {
+        if let date = makeWeekdayDate(weekdayKey: weekday, hour: 12, minute: 0, now: now, calendar: calendar) {
+            return date
+        }
+
+        for key in schedule.keys where normalizedWeekday(for: key) == weekday {
+            if let date = makeDate(dayKey: key, time: "12:00", now: now, calendar: calendar) {
+                return date
+            }
+        }
+
+        return nil
+    }
+
+    private static func shortWeekdayLabel(for weekday: String) -> String {
+        switch weekday {
+        case "monday":
+            return "pon"
+        case "tuesday":
+            return "wt"
+        case "wednesday":
+            return "sr"
+        case "thursday":
+            return "czw"
+        case "friday":
+            return "pt"
+        default:
+            return weekday
+        }
+    }
+
+    private static func makeDate(
+        dayKey: String,
+        time: String,
+        now: Date,
+        calendar: Calendar
+    ) -> Date? {
+        let trimmedDayKey = dayKey.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let timeParts = time
+            .split(separator: ":")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+
+        guard
+            timeParts.count == 2,
+            let hour = Int(timeParts[0]),
+            let minute = Int(timeParts[1])
+        else {
+            return nil
+        }
+
+        if let weekdayDate = makeWeekdayDate(
+            weekdayKey: trimmedDayKey,
+            hour: hour,
+            minute: minute,
+            now: now,
+            calendar: calendar
+        ) {
+            return weekdayDate
+        }
+
+        let dayMonthParts = trimmedDayKey
+            .split(separator: ".")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+
+        guard
+            dayMonthParts.count == 2,
+            let day = Int(dayMonthParts[0]),
+            let month = Int(dayMonthParts[1])
+        else {
+            return nil
+        }
+
+        let currentYear = calendar.component(.year, from: now)
+        var components = DateComponents()
+        components.year = currentYear
+        components.month = month
+        components.day = day
+        components.hour = hour
+        components.minute = minute
+        return calendar.date(from: components)
+    }
+
+    private static func makeWeekdayDate(
+        weekdayKey: String,
+        hour: Int,
+        minute: Int,
+        now: Date,
+        calendar: Calendar
+    ) -> Date? {
+        let weekdayMap: [String: Int] = [
+            "sunday": 1,
+            "monday": 2,
+            "tuesday": 3,
+            "wednesday": 4,
+            "thursday": 5,
+            "friday": 6,
+            "saturday": 7
+        ]
+
+        guard
+            let targetWeekday = weekdayMap[weekdayKey],
+            let weekInterval = calendar.dateInterval(of: .weekOfYear, for: now)
+        else {
+            return nil
+        }
+
+        for offset in 0..<7 {
+            guard let candidateDay = calendar.date(byAdding: .day, value: offset, to: weekInterval.start) else {
+                continue
+            }
+
+            if calendar.component(.weekday, from: candidateDay) == targetWeekday {
+                var components = calendar.dateComponents([.year, .month, .day], from: candidateDay)
+                components.hour = hour
+                components.minute = minute
+                return calendar.date(from: components)
+            }
+        }
+
+        return nil
+    }
+}
+
+struct FullScheduleSnapshot {
+    let dayColumns: [FullScheduleDayColumn]
+    let updatedAt: Date
+}
+
+struct FullScheduleDayColumn {
+    let label: String
+    let lessons: [ScheduleLesson]
+}
+
 struct NextLessonEntry: TimelineEntry {
     let date: Date
     let snapshot: WidgetSnapshot
@@ -268,6 +475,109 @@ struct Provider: TimelineProvider {
         )
 
         return NextLessonEntry(date: now, snapshot: snapshot)
+    }
+}
+
+struct FullScheduleEntry: TimelineEntry {
+    let date: Date
+    let snapshot: FullScheduleSnapshot
+}
+
+struct FullScheduleProvider: TimelineProvider {
+    func placeholder(in context: Context) -> FullScheduleEntry {
+        FullScheduleEntry(date: Date(), snapshot: mockSnapshot())
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (FullScheduleEntry) -> Void) {
+        completion(loadEntry())
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<FullScheduleEntry>) -> Void) {
+        let entry = loadEntry()
+        let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date().addingTimeInterval(900)
+        completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
+    }
+
+    private func loadEntry(now: Date = Date()) -> FullScheduleEntry {
+        let snapshot = WidgetStore.loadSchedule().map {
+            ScheduleGridResolver.makeSnapshot(from: $0, now: now)
+        } ?? mockSnapshot()
+
+        return FullScheduleEntry(date: now, snapshot: snapshot)
+    }
+
+    private func mockSnapshot() -> FullScheduleSnapshot {
+        FullScheduleSnapshot(
+            dayColumns: [
+                FullScheduleDayColumn(label: "pon 14", lessons: [
+                    mockLesson("Mat", "201"),
+                    mockLesson("Pol", "12"),
+                    mockLesson("His", "7"),
+                    mockLesson("Bio", "15"),
+                    mockLesson("Ang", "105"),
+                    mockLesson("WF", "S"),
+                    mockLesson("Inf", "18"),
+                    mockLesson("Hiszp", "11")
+                ]),
+                FullScheduleDayColumn(label: "wt 15", lessons: [
+                    mockLesson("Fiz", "14"),
+                    mockLesson("Mat", "12"),
+                    mockLesson("Chem", "7"),
+                    mockLesson("Ang", "105"),
+                    mockLesson("Geo", "9"),
+                    mockLesson("WF", "S"),
+                    mockLesson("Biz", "5")
+                ]),
+                FullScheduleDayColumn(label: "sr 16", lessons: [
+                    mockLesson("Pol", "12"),
+                    mockLesson("His", "7"),
+                    mockLesson("Mat", "201"),
+                    mockLesson("Inf", "18"),
+                    mockLesson("Bio", "15"),
+                    mockLesson("Plast", "6"),
+                    mockLesson("Hiszp", "11"),
+                    mockLesson("WF", "S")
+                ]),
+                FullScheduleDayColumn(label: "czw 17", lessons: [
+                    mockLesson("Chem", "7"),
+                    mockLesson("Geo", "9"),
+                    mockLesson("Ang", "105"),
+                    mockLesson("Mat", "201"),
+                    mockLesson("Fiz", "14"),
+                    mockLesson("Biz", "5"),
+                    mockLesson("His", "7"),
+                    mockLesson("Muz", "9")
+                ]),
+                FullScheduleDayColumn(label: "pt 18", lessons: [
+                    mockLesson("Pol", "12"),
+                    mockLesson("Mat", "201"),
+                    mockLesson("Bio", "15"),
+                    mockLesson("Ang", "105"),
+                    mockLesson("Inf", "18"),
+                    mockLesson("WF", "S"),
+                    mockLesson("Godz", "4"),
+                    mockLesson("Hiszp", "11")
+                ])
+            ],
+            updatedAt: Date()
+        )
+    }
+
+    private func mockLesson(_ subject: String, _ room: String) -> ScheduleLesson {
+        ScheduleLesson(
+            lessonNumber: "1",
+            time: "08:00-08:45",
+            start: "08:00",
+            end: "08:45",
+            day: "monday",
+            subject: subject,
+            subjectHref: "",
+            location: room,
+            locationHref: "",
+            note: "",
+            absence: false,
+            lateness: false
+        )
     }
 }
 
@@ -359,6 +669,127 @@ struct IDU2WidgetEntryView: View {
     }
 }
 
+struct IDU2ScheduleWidgetEntryView: View {
+    let entry: FullScheduleProvider.Entry
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 4) {
+            ForEach(Array(entry.snapshot.dayColumns.enumerated()), id: \.offset) { _, column in
+                VStack(spacing: 4) {
+                    Text(column.label)
+                        .font(.system(size: 10, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+
+                    ForEach(0..<maxLessonCount, id: \.self) { index in
+                        if index < column.lessons.count {
+                            ScheduleLessonCell(lesson: column.lessons[index])
+                        } else {
+                            ScheduleLessonSpacer()
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .containerBackground(.clear, for: .widget)
+    }
+
+    private var maxLessonCount: Int {
+        max(entry.snapshot.dayColumns.map(\.lessons.count).max() ?? 0, 1)
+    }
+}
+
+private struct ScheduleLessonCell: View {
+    let lesson: ScheduleLesson
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color.primary.opacity(0.06))
+
+            Text(shortSubject(lesson.subject))
+                .font(.system(size: 11.5, weight: .bold, design: .rounded))
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.9)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .padding(.horizontal, 4)
+        }
+        .frame(minHeight: 34)
+    }
+
+    private func shortSubject(_ subject: String) -> String {
+        let trimmed = subject.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lowercase = trimmed.lowercased()
+
+        let replacements: [(String, String)] = [
+            ("język polski", "pol."),
+            ("jezyk polski", "pol."),
+            ("język angielski", "ang."),
+            ("jezyk angielski", "ang."),
+            ("język niemiecki", "niem."),
+            ("jezyk niemiecki", "niem."),
+            ("język hiszpański", "hiszp."),
+            ("jezyk hiszpanski", "hiszp."),
+            ("wychowanie fizyczne", "wf"),
+            ("religia", "rel."),
+            ("informatyka", "inf."),
+            ("matematyka", "matma"),
+            ("fizyka", "fiz."),
+            ("chemia", "chem."),
+            ("biologia", "biol."),
+            ("geografia", "geogr."),
+            ("historia", "hist."),
+            ("plastyka", "plast."),
+            ("muzyka", "muz."),
+            ("biznes", "biz."),
+            ("godzina wychowawcza", "godz.")
+        ]
+
+        if let match = replacements.first(where: { lowercase == $0.0 }) {
+            return shortenToFit(match.1)
+        }
+
+        let prefixesToDrop = [
+            "język ",
+            "jezyk ",
+            "zajęcia ",
+            "zajecia ",
+            "podstawy "
+        ]
+
+        for prefix in prefixesToDrop where lowercase.hasPrefix(prefix) {
+            let shortened = trimmed.dropFirst(prefix.count).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !shortened.isEmpty {
+                return shortenToFit(shortened)
+            }
+        }
+
+        if trimmed.count <= 7 {
+            return trimmed
+        }
+
+        return shortenToFit(trimmed)
+    }
+
+    private func shortenToFit(_ subject: String) -> String {
+        if subject.count <= 7 {
+            return subject
+        }
+
+        return String(subject.prefix(5)) + ".."
+    }
+}
+
+private struct ScheduleLessonSpacer: View {
+    var body: some View {
+        Color.clear
+            .frame(minHeight: 34)
+    }
+}
+
 struct IDU2Widget: Widget {
     let kind: String = "IDU2Widget"
 
@@ -372,6 +803,19 @@ struct IDU2Widget: Widget {
     }
 }
 
+struct IDU2ScheduleWidget: Widget {
+    let kind: String = "IDU2ScheduleWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: FullScheduleProvider()) { entry in
+            IDU2ScheduleWidgetEntryView(entry: entry)
+        }
+        .configurationDisplayName("Full Schedule")
+        .description("Shows the full weekly schedule from the latest synced data.")
+        .supportedFamilies([.systemLarge])
+    }
+}
+
 #Preview(as: .systemSmall) {
     IDU2Widget()
 } timeline: {
@@ -381,6 +825,37 @@ struct IDU2Widget: Widget {
             title: "Dzisiaj",
             subtitle: "Następny Angielski o 10:35",
             detail: "105",
+            updatedAt: .now
+        )
+    )
+}
+
+#Preview(as: .systemLarge) {
+    IDU2ScheduleWidget()
+} timeline: {
+    FullScheduleEntry(
+        date: .now,
+        snapshot: FullScheduleSnapshot(
+            dayColumns: [
+                FullScheduleDayColumn(label: "pon 14", lessons: [
+                    ScheduleLesson(lessonNumber: "1", time: "08:00-08:45", start: "08:00", end: "08:45", day: "monday", subject: "Matematyka", subjectHref: "", location: "201", locationHref: "", note: "", absence: false, lateness: false),
+                    ScheduleLesson(lessonNumber: "2", time: "08:55-09:40", start: "08:55", end: "09:40", day: "monday", subject: "Jezyk polski", subjectHref: "", location: "12", locationHref: "", note: "", absence: false, lateness: false),
+                    ScheduleLesson(lessonNumber: "3", time: "09:50-10:35", start: "09:50", end: "10:35", day: "monday", subject: "Historia", subjectHref: "", location: "7", locationHref: "", note: "", absence: false, lateness: false)
+                ]),
+                FullScheduleDayColumn(label: "wt 15", lessons: [
+                    ScheduleLesson(lessonNumber: "1", time: "08:00-08:45", start: "08:00", end: "08:45", day: "tuesday", subject: "Jezyk angielski", subjectHref: "", location: "12", locationHref: "", note: "", absence: false, lateness: false),
+                    ScheduleLesson(lessonNumber: "2", time: "08:55-09:40", start: "08:55", end: "09:40", day: "tuesday", subject: "Geografia", subjectHref: "", location: "12", locationHref: "", note: "", absence: false, lateness: false)
+                ]),
+                FullScheduleDayColumn(label: "sr 16", lessons: [
+                    ScheduleLesson(lessonNumber: "1", time: "08:00-08:45", start: "08:00", end: "08:45", day: "wednesday", subject: "Informatyka", subjectHref: "", location: "12", locationHref: "", note: "", absence: false, lateness: false)
+                ]),
+                FullScheduleDayColumn(label: "czw 17", lessons: [
+                    ScheduleLesson(lessonNumber: "1", time: "08:00-08:45", start: "08:00", end: "08:45", day: "thursday", subject: "Chemia", subjectHref: "", location: "12", locationHref: "", note: "", absence: false, lateness: false)
+                ]),
+                FullScheduleDayColumn(label: "pt 18", lessons: [
+                    ScheduleLesson(lessonNumber: "1", time: "08:00-08:45", start: "08:00", end: "08:45", day: "friday", subject: "WF", subjectHref: "", location: "12", locationHref: "", note: "", absence: false, lateness: false)
+                ])
+            ],
             updatedAt: .now
         )
     )
