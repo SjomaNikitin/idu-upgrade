@@ -154,13 +154,13 @@ export function Grades({ widgetId, moveWidget, data }) {
 
 	function Grades21 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OCENY</h1>
+			<h1>Oceny</h1>
 		</div>)
 	}
 
 	function Grades41 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<h1>OCENY</h1>
+			<h1>Oceny</h1>
 		</div>)
 	}
 

@@ -847,10 +847,10 @@
       return /* @__PURE__ */ k(GradesList, { limit: 4, lastLine: 2 });
     }
     function Grades21() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OCENY"));
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Oceny"));
     }
     function Grades41() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "OCENY"));
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("h1", null, "Oceny"));
     }
     function Grades46() {
       return /* @__PURE__ */ k(GradesList, { limit: 6, lastLine: 2, showDescription: true, allHref: true });

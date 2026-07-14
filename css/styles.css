@@ -1381,6 +1381,7 @@
 			margin: 0;
 			color: var(--main-text-color) !important;
 			white-space: nowrap;
+			text-decoration: none;
 		}
 		a[href]{
 			color: var(--mc) !important;
