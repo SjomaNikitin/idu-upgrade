@@ -26,7 +26,7 @@ export function Header({accountHref}) {
 		setSettingsOpen(true);
 		setMenuOpen(false);
 	}
-	function switchEditMode () {
+	window.switchEditMode = function switchEditMode () {
 		window.editMode = !editMode;
 		const widgets = document.querySelectorAll(".widget");
 		if (editMode) {

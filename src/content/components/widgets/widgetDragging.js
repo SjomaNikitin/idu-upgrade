@@ -8,6 +8,9 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 	widthRef.current = width;
 	heightRef.current = height;
 	let visualUpdateTimer;
+	let editModeTimeOut;
+	let pointerPosition;
+	let currentPointerPosition;
 
 	function getCellSize() {
 		const gridWidth = window.innerWidth;
@@ -74,7 +77,16 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		}
 
 		function startDragging(e){
-			if (!window.editMode) return;
+			if (!window.editMode) {
+				editModeTimeOut = setTimeout(() => {
+					if (!window.editMode && pointerPosition === currentPointerPosition) {
+						window.switchEditMode();
+					}
+				}, 500)
+				pointerPosition = e.clientY;
+				currentPointerPosition = e.clientY;
+				return;
+			}
 			if (resizingZoneRef.current?.contains(e.target)) return;
 			if (resizeRef.current) return;
 			e.preventDefault();
@@ -89,7 +101,9 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 				child.style.opacity = '0';
 			});
 		}
+
 		function stopDragging (e) {
+			clearTimeout(editModeTimeOut);
 			if (activePointerId !== null && e.pointerId !== activePointerId) return;
 			dragging = false;
 			if (activePointerId !== null) {
@@ -107,6 +121,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			}
 		}
 		function updatePos (e) {
+			currentPointerPosition = e.clientY;
 			if (dragging) {
 				if (activePointerId !== null && e.pointerId !== activePointerId) return;
 				e.preventDefault();
@@ -126,7 +141,6 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		widget.addEventListener('pointerdown', startDragging);
 		document.addEventListener("pointermove", updatePos)
 		document.addEventListener("pointerup", stopDragging)
-
 		return () => {
 			widget.removeEventListener('pointerdown', startDragging);
 			document.removeEventListener("pointermove", updatePos);

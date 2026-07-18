@@ -423,7 +423,7 @@
       setSettingsOpen(true);
       setMenuOpen(false);
     }
-    function switchEditMode() {
+    window.switchEditMode = function switchEditMode2() {
       window.editMode = !editMode;
       const widgets = document.querySelectorAll(".widget");
       if (editMode) {
@@ -438,7 +438,7 @@
         }
       }
       setEditMode(!editMode);
-    }
+    };
     if (window.location.pathname === "/" || window.location.pathname === "/users/sign_in") {
       return /* @__PURE__ */ k("header", { id: "top", className: "idu-custom-header" }, /* @__PURE__ */ k("div", { className: "header-menu" }, /* @__PURE__ */ k(
         "a",
@@ -639,6 +639,9 @@
     widthRef.current = width;
     heightRef.current = height;
     let visualUpdateTimer;
+    let editModeTimeOut;
+    let pointerPosition;
+    let currentPointerPosition;
     function getCellSize() {
       const gridWidth = window.innerWidth;
       return gridWidth / 4;
@@ -695,7 +698,16 @@
         return overlapWidth * overlapHeight;
       }
       function startDragging(e3) {
-        if (!window.editMode) return;
+        if (!window.editMode) {
+          editModeTimeOut = setTimeout(() => {
+            if (!window.editMode && pointerPosition === currentPointerPosition) {
+              window.switchEditMode();
+            }
+          }, 500);
+          pointerPosition = e3.clientY;
+          currentPointerPosition = e3.clientY;
+          return;
+        }
         if (resizingZoneRef.current?.contains(e3.target)) return;
         if (resizeRef.current) return;
         e3.preventDefault();
@@ -711,6 +723,7 @@
         });
       }
       function stopDragging(e3) {
+        clearTimeout(editModeTimeOut);
         if (activePointerId !== null && e3.pointerId !== activePointerId) return;
         dragging = false;
         if (activePointerId !== null) {
@@ -728,6 +741,7 @@
         }
       }
       function updatePos(e3) {
+        currentPointerPosition = e3.clientY;
         if (dragging) {
           if (activePointerId !== null && e3.pointerId !== activePointerId) return;
           e3.preventDefault();
