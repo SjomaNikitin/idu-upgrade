@@ -51,6 +51,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 
 	function dynamicSizeUpdate(e) {
 		if (!resizingRef.current) return;
+		e.preventDefault();
 
 		const positions = calcCornerPositions();
 		if (!positions.length) return;
@@ -98,15 +99,24 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 
 	useEffect(() => {
 		const resizeZone = resizeZoneRef.current;
+		let activePointerId = null;
 		if (!resizeZone) return undefined;
 
-		function startResize() {
+		function startResize(e) {
 			if (!window.editMode) return;
+			e.preventDefault();
+			activePointerId = e.pointerId;
+			resizeZone.setPointerCapture?.(e.pointerId);
 			resizingRef.current = true;
 		}
 
-		function stopResize() {
+		function stopResize(e) {
+			if (activePointerId !== null && e.pointerId !== activePointerId) return;
 			resizingRef.current = false;
+			if (activePointerId !== null) {
+				resizeZone.releasePointerCapture?.(activePointerId);
+				activePointerId = null;
+			}
 		}
 
 		function togglePopup (e) {

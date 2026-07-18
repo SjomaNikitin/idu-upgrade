@@ -24,6 +24,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 
 	useEffect(() => {
 		const widget = widgetRef.current;
+		let activePointerId = null;
 
 		if (!widget) return;
 
@@ -76,17 +77,25 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			if (!window.editMode) return;
 			if (resizingZoneRef.current?.contains(e.target)) return;
 			if (resizeRef.current) return;
-				dragging = true;
-				widgetClone = widgetRef.current.children[0].cloneNode(false);
-				widgetClone.className = "widget-clone inner-widget wiggle";
-				document.body.appendChild(widgetClone);
-				widgetRef.current.children[0].style.opacity = "0.3";
-				widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
+			e.preventDefault();
+			activePointerId = e.pointerId;
+			widget.setPointerCapture?.(e.pointerId);
+			dragging = true;
+			widgetClone = widgetRef.current.children[0].cloneNode(false);
+			widgetClone.className = "widget-clone inner-widget wiggle";
+			document.body.appendChild(widgetClone);
+			widgetRef.current.children[0].style.opacity = "0.3";
+			widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
 				child.style.opacity = '0';
 			});
 		}
-		function stopDragging () {
+		function stopDragging (e) {
+			if (activePointerId !== null && e.pointerId !== activePointerId) return;
 			dragging = false;
+			if (activePointerId !== null) {
+				widget.releasePointerCapture?.(activePointerId);
+				activePointerId = null;
+			}
 			if (widgetClone) {
 				document.body.removeChild(widgetClone);
 				widgetClone = null;
@@ -99,6 +108,8 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		}
 		function updatePos (e) {
 			if (dragging) {
+				if (activePointerId !== null && e.pointerId !== activePointerId) return;
+				e.preventDefault();
 				if (widthRef.current <= getCellSize() * 2) {
 					widgetClone.style.left = e.clientX - widthRef.current / 2 + "px";
 				} else {
@@ -118,6 +129,8 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 
 		return () => {
 			widget.removeEventListener('pointerdown', startDragging);
+			document.removeEventListener("pointermove", updatePos);
+			document.removeEventListener("pointerup", stopDragging);
 		};
 	}, []);
 

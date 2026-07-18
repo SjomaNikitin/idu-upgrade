@@ -57,14 +57,15 @@ export function Header({accountHref}) {
 					</a>
 
 					<div className={`header-menu-panel ${menuOpen ? "open" : ""}`}>
-						<a href={accountHref} className="header-panel-link">
+						{!window.__IDU_MOCK_DATA ? <a href={accountHref} className="header-panel-link">
 							<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} viewBox="0 0 24 24">
 								<g fill="none" stroke="currentColor" stroke-width="2">
 									<path stroke-linejoin="round" d="M4 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
 									<circle cx="12" cy="7" r="3"/>
 								</g>
 							</svg>
-						</a>
+						</a> : null}
+
 						<a onClick={() => openSettings()} className="header-panel-link">
 							<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path fillRule="evenodd" clipRule="evenodd" d="M12 8.25C9.92894 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92894 15.75 12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25ZM9.75 12C9.75 10.7574 10.7574 9.75 12 9.75C13.2426 9.75 14.25 10.7574 14.25 12C14.25 13.2426 13.2426 14.25 12 14.25C10.7574 14.25 9.75 13.2426 9.75 12Z" fill={panelIconColor}/>

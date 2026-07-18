@@ -447,6 +447,11 @@
 		}
 	}
 
+	body.edit-mode {
+		overflow: hidden;
+		overscroll-behavior: none;
+	}
+
 	select {
 		width: 100%;
 		margin: 0;
