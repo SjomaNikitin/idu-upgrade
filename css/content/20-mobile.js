@@ -1,9 +1,3 @@
-function closeAllTabs() {
-	const switches = document.querySelectorAll("a.hide-me")
-	for (let i = 0; i < switches.length; i++) {
-		switches[i].click();
-	}
-}
 
 function addSnow(el) {
 	const snow = document.createElement("img");
@@ -15,74 +9,6 @@ function addSnow(el) {
 		snow.style.transform = "translate(-50%, -75%) scaleX(-1)";
 	}
 }
-
-
-
-function moveScheduleHigher() {
-	const h3 = Array.from(document.querySelectorAll('h3'))
-		.find(el => el.textContent.trim().includes("Aktualny plan"));
-
-	if (h3) {
-		const schedule = h3.parentElement; // or .closest('.your-container-class')
-		const leftColumn = document.querySelector("div.left-column");
-		if (!leftColumn) return;
-		leftColumn.insertBefore(schedule, leftColumn.children[1] ?? null);
-	}
-}
-function moveGradesHigher() {
-	const h3 = Array.from(document.querySelectorAll('h3'))
-		.find(el => el.textContent.trim().includes("Oceny"));
-
-	if (h3) {
-		const grades = h3.parentElement; // or .closest('.your-container-class')
-		const leftColumn = document.querySelector("div.left-column");
-		if (!leftColumn) return;
-		leftColumn.insertBefore(grades, leftColumn.children[1] ?? null);
-	}
-}
-
-
-
-function timeToMinutes(time) {
-	const [hours, minutes] = time.split(":").map(Number);
-	return hours * 60 + minutes;
-}
-
-
-function addNextLessonBanner() {
-	const lessons = getScheduleLessons();
-
-	const today = new Date().toLocaleDateString("pl-PL", {
-		day: "2-digit",
-		month: "2-digit",
-	});
-
-	const todaysLessons = Object.values(lessons[today] || {});
-	const currentTime = new Date().toLocaleTimeString("pl-PL", {
-		hour: "2-digit",
-		minute: "2-digit",
-	});
-
-	let nextLesson = null;
-
-	for (let i = 0; i < todaysLessons.length; i++) {
-		if (timeToMinutes(todaysLessons[i].start) >= timeToMinutes(currentTime)) {
-			nextLesson = todaysLessons[i];
-			break;
-		}
-	}
-	if (!nextLesson) return;
-
-	const banner = document.createElement("div");
-	banner.classList.add("next-lesson-banner");
-	document.getElementById("top").appendChild(banner);
-	const bannerText = document.createElement("p");
-	bannerText.classList.add("banner-text");
-	bannerText.innerHTML = "Next Lesson: <br>" + nextLesson.subject + " (" + nextLesson.start + " - " + nextLesson.end + ")";
-	banner.appendChild(bannerText);
-	console.log(nextLesson);
-}
-
 
 function removeUnwantedLinks(container) {
 	// List of link texts to remove (case-insensitive)

@@ -28,10 +28,17 @@ export function Header({accountHref}) {
 	}
 	function switchEditMode () {
 		window.editMode = !editMode;
+		const widgets = document.querySelectorAll(".widget");
 		if (editMode) {
 			document.body.classList.remove('edit-mode');
+			for (let i=0; i < widgets.length; i++) {
+				widgets[i].classList.remove('edit-mode');
+			}
 		} else {
 			document.body.classList.add('edit-mode');
+			for (let i=0; i < widgets.length; i++) {
+				widgets[i].classList.add('edit-mode');
+			}
 		}
 		setEditMode(!editMode);
 	}

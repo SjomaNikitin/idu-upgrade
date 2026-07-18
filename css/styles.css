@@ -1322,6 +1322,10 @@
 		position: relative;
 		user-select: none;
 	}
+
+	.widget.edit-mode{
+		touch-action: none;
+	}
 	.inner-widget{
 		background: var(--module-color);
 		border-radius: 12px;

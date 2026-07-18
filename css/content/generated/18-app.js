@@ -425,10 +425,17 @@
     }
     function switchEditMode() {
       window.editMode = !editMode;
+      const widgets = document.querySelectorAll(".widget");
       if (editMode) {
         document.body.classList.remove("edit-mode");
+        for (let i3 = 0; i3 < widgets.length; i3++) {
+          widgets[i3].classList.remove("edit-mode");
+        }
       } else {
         document.body.classList.add("edit-mode");
+        for (let i3 = 0; i3 < widgets.length; i3++) {
+          widgets[i3].classList.add("edit-mode");
+        }
       }
       setEditMode(!editMode);
     }
