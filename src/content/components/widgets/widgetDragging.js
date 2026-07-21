@@ -79,12 +79,12 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		function startDragging(e){
 			if (!window.editMode) {
 				editModeTimeOut = setTimeout(() => {
-					if (!window.editMode && pointerPosition === currentPointerPosition) {
+					if (!window.editMode && pointerPosition.w === currentPointerPosition.w && pointerPosition.y === currentPointerPosition.y) {
 						window.switchEditMode();
 					}
 				}, 500)
-				pointerPosition = e.clientY;
-				currentPointerPosition = e.clientY;
+				pointerPosition = {x: e.clientX , y: e.clientY };
+				currentPointerPosition = {x: e.clientX , y: e.clientY };
 				return;
 			}
 			if (resizingZoneRef.current?.contains(e.target)) return;
@@ -121,7 +121,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			}
 		}
 		function updatePos (e) {
-			currentPointerPosition = e.clientY;
+			currentPointerPosition = {x: e.clientX , y: e.clientY };
 			if (dragging) {
 				if (activePointerId !== null && e.pointerId !== activePointerId) return;
 				e.preventDefault();

@@ -161,6 +161,39 @@
 	--latency-wheel-color: rgba(255, 169, 185);
 }
 
+:root[data-theme="Mila"] {
+	--idu-logo: #ffffff;
+	--mg: rgba(255, 103, 141);
+	--gradient-text-color: rgb(147, 67, 81);
+	--mc: rgb(228, 72, 99);
+	--topmg: rgba(255, 103, 141);
+	--module-color: rgb(255, 226, 223);
+	--background-color: rgba(255, 169, 185);
+	--module-shadow-color: rgba(115, 108, 81, 0.45);
+	--underline-color: rgb(252 196 183 / 0.54);
+	--module-border-color: rgba(252, 196, 183);
+	--main-text-color: rgb(147, 67, 81);
+	--input-field-color: rgb(255, 226, 223);
+	--darker-messages-color: rgba(252, 196, 183);
+	--form-background-color: rgba(253, 121, 145);
+	--akcent-color: rgb(147, 67, 81);
+	--icon-background-color: rgba(254, 222, 211);
+	--schedule-table-header-color: rgba(240, 86, 114);
+	--schedule-table-time-color: rgba(240, 86, 114);
+	--schedule-lesson-color: rgb(255, 158, 173);
+	--schedule-time-color: rgba(253, 237, 222);
+	--actionbtn-text-color: rgba(253, 237, 222);
+	--location-text-color: rgb(147, 67, 81);
+	--shorted-gradient-color: rgba(252, 196, 183);
+	--breadcrumbs-text: rgb(152, 53, 67);
+	--underline: 2px solid rgb(147 67 81 / 0.51);
+	--h3-margin: 0;
+	--footer-text-color: var(--main-text-color);
+	--attendance-wheel-color: rgb(228, 72, 99);
+	--upsent-wheel-color: rgb(147, 67, 81);
+	--latency-wheel-color: rgba(255, 169, 185);
+}
+
 
 /* Use media tag not to break desktop version */
 

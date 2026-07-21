@@ -708,12 +708,12 @@
       function startDragging(e3) {
         if (!window.editMode) {
           editModeTimeOut = setTimeout(() => {
-            if (!window.editMode && pointerPosition === currentPointerPosition) {
+            if (!window.editMode && pointerPosition.w === currentPointerPosition.w && pointerPosition.y === currentPointerPosition.y) {
               window.switchEditMode();
             }
           }, 500);
-          pointerPosition = e3.clientY;
-          currentPointerPosition = e3.clientY;
+          pointerPosition = { x: e3.clientX, y: e3.clientY };
+          currentPointerPosition = { x: e3.clientX, y: e3.clientY };
           return;
         }
         if (resizingZoneRef.current?.contains(e3.target)) return;
@@ -749,7 +749,7 @@
         }
       }
       function updatePos(e3) {
-        currentPointerPosition = e3.clientY;
+        currentPointerPosition = { x: e3.clientX, y: e3.clientY };
         if (dragging) {
           if (activePointerId !== null && e3.pointerId !== activePointerId) return;
           e3.preventDefault();
