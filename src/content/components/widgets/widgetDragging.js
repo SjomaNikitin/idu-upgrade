@@ -104,6 +104,11 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			autoScrollDirection = null;
 		}
 
+		function setDraggingMode(active) {
+			document.documentElement.classList.toggle('dragging-widget', active);
+			document.body.classList.toggle('dragging-widget', active);
+		}
+
 		function getScrollElement() {
 			return document.scrollingElement || document.documentElement;
 		}
@@ -222,6 +227,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 				activePointerId = e.pointerId;
 				widget.setPointerCapture?.(e.pointerId);
 				dragging = true;
+				setDraggingMode(true);
 				widgetClone = widgetRef.current.children[0].cloneNode(false);
 				widgetClone.className = "widget-clone inner-widget wiggle";
 				document.body.appendChild(widgetClone);
@@ -236,6 +242,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		function stopDragging (e) {
 			clearTimeout(editModeTimeOut);
 			clearTimeout(widgetDragTimeOut);
+			setDraggingMode(false);
 			if (activePointerId !== null && e.pointerId !== activePointerId) return;
 			dragging = false;
 			if (activePointerId !== null) {
@@ -253,6 +260,12 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 				clearTimeout(visualUpdateTimer);
 			}
 		}
+
+		function preventNativeScroll(e) {
+			if (!dragging) return;
+			e.preventDefault();
+		}
+
 		function updatePos (e) {
 			if (typeof e.clientX === "number" && typeof e.clientY === "number") {
 				currentPointerPosition = {x: e.clientX , y: e.clientY };
@@ -272,11 +285,14 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		widget.addEventListener('pointerdown', startDragging);
 		document.addEventListener("pointermove", updatePos)
 		document.addEventListener("pointerup", stopDragging)
+		document.addEventListener("touchmove", preventNativeScroll, { passive: false })
 		return () => {
 			clearAutoScroll();
+			setDraggingMode(false);
 			widget.removeEventListener('pointerdown', startDragging);
 			document.removeEventListener("pointermove", updatePos);
 			document.removeEventListener("pointerup", stopDragging);
+			document.removeEventListener("touchmove", preventNativeScroll);
 		};
 	}, []);
 

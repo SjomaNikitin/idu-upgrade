@@ -425,19 +425,27 @@
     }
     window.switchEditMode = function switchEditMode2() {
       window.editMode = !editMode;
+      const widgets = document.querySelectorAll(".widget");
       if (editMode) {
         document.body.classList.remove("edit-mode");
+        for (let i3 = 0; i3 < widgets.length; i3++) {
+          widgets[i3].classList.remove("edit-mode");
+        }
         let editBlock = document.querySelector("div.edit-block");
         if (editBlock) {
           document.body.removeChild(editBlock);
         }
       } else {
         document.body.classList.add("edit-mode");
+        for (let i3 = 0; i3 < widgets.length; i3++) {
+          widgets[i3].classList.add("edit-mode");
+        }
         let editBlock = document.createElement("div");
         editBlock.classList.add("edit-block");
         editBlock.addEventListener("click", function() {
           window.switchEditMode();
         });
+        editBlock.innerHTML = '<svg width={svgSize} height={svgSize} viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"/></svg>';
         document.body.appendChild(editBlock);
       }
       setEditMode(!editMode);
@@ -722,6 +730,10 @@
         autoScrollInterval = null;
         autoScrollDirection = null;
       }
+      function setDraggingMode(active) {
+        document.documentElement.classList.toggle("dragging-widget", active);
+        document.body.classList.toggle("dragging-widget", active);
+      }
       function getScrollElement() {
         return document.scrollingElement || document.documentElement;
       }
@@ -821,6 +833,7 @@
           activePointerId = e3.pointerId;
           widget.setPointerCapture?.(e3.pointerId);
           dragging = true;
+          setDraggingMode(true);
           widgetClone = widgetRef.current.children[0].cloneNode(false);
           widgetClone.className = "widget-clone inner-widget wiggle";
           document.body.appendChild(widgetClone);
@@ -834,6 +847,7 @@
       function stopDragging(e3) {
         clearTimeout(editModeTimeOut);
         clearTimeout(widgetDragTimeOut);
+        setDraggingMode(false);
         if (activePointerId !== null && e3.pointerId !== activePointerId) return;
         dragging = false;
         if (activePointerId !== null) {
@@ -850,6 +864,10 @@
           });
           clearTimeout(visualUpdateTimer);
         }
+      }
+      function preventNativeScroll(e3) {
+        if (!dragging) return;
+        e3.preventDefault();
       }
       function updatePos(e3) {
         if (typeof e3.clientX === "number" && typeof e3.clientY === "number") {
@@ -869,11 +887,14 @@
       widget.addEventListener("pointerdown", startDragging);
       document.addEventListener("pointermove", updatePos);
       document.addEventListener("pointerup", stopDragging);
+      document.addEventListener("touchmove", preventNativeScroll, { passive: false });
       return () => {
         clearAutoScroll();
+        setDraggingMode(false);
         widget.removeEventListener("pointerdown", startDragging);
         document.removeEventListener("pointermove", updatePos);
         document.removeEventListener("pointerup", stopDragging);
+        document.removeEventListener("touchmove", preventNativeScroll);
       };
     }, []);
   }
