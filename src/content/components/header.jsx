@@ -28,19 +28,12 @@ export function Header({accountHref}) {
 	}
 	window.switchEditMode = function switchEditMode () {
 		window.editMode = !editMode;
-		const widgets = document.querySelectorAll(".widget");
 		if (editMode) {
 			document.body.classList.remove('edit-mode');
-			for (let i=0; i < widgets.length; i++) {
-				widgets[i].classList.remove('edit-mode');
-			}
 			let editBlock = document.querySelector("div.edit-block");
 			if (editBlock) {document.body.removeChild(editBlock);}
 		} else {
 			document.body.classList.add('edit-mode');
-			for (let i=0; i < widgets.length; i++) {
-				widgets[i].classList.add('edit-mode');
-			}
 			let editBlock = document.createElement("div");
 			editBlock.classList.add('edit-block');
 			editBlock.addEventListener("click", function () {window.switchEditMode()})

@@ -11,6 +11,10 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 	let editModeTimeOut;
 	let pointerPosition;
 	let currentPointerPosition;
+	let widgetDragTimeOut;
+	let autoScrollStartTimeout;
+	let autoScrollInterval;
+	let autoScrollDirection = null;
 
 	function getCellSize() {
 		const gridWidth = window.innerWidth;
@@ -28,6 +32,10 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 	useEffect(() => {
 		const widget = widgetRef.current;
 		let activePointerId = null;
+		const detectScrollZoneHeight = 140;
+		const autoScrollDelay = 180;
+		const autoScrollStep = 18;
+		const autoScrollIntervalMs = 16;
 
 		if (!widget) return;
 
@@ -76,40 +84,158 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			return overlapWidth * overlapHeight;
 		}
 
+		function setClonePosition(clientX, clientY) {
+			if (!widgetClone) return;
+
+			if (widthRef.current <= getCellSize() * 2) {
+				widgetClone.style.left = clientX - widthRef.current / 2 + "px";
+			} else {
+				widgetClone.style.left = 16 + "px";
+			}
+
+			widgetClone.style.top = clientY + window.scrollY - heightRef.current / 2 + "px";
+		}
+
+		function clearAutoScroll() {
+			clearTimeout(autoScrollStartTimeout);
+			clearInterval(autoScrollInterval);
+			autoScrollStartTimeout = null;
+			autoScrollInterval = null;
+			autoScrollDirection = null;
+		}
+
+		function getScrollElement() {
+			return document.scrollingElement || document.documentElement;
+		}
+
+		function getCurrentScrollTop() {
+			return getScrollElement().scrollTop || window.scrollY || 0;
+		}
+
+		function getMaxScrollTop() {
+			const scrollElement = getScrollElement();
+			const body = document.body;
+			const documentElement = document.documentElement;
+			const contentHeight = Math.max(
+				scrollElement.scrollHeight || 0,
+				scrollElement.offsetHeight || 0,
+				body?.scrollHeight || 0,
+				body?.offsetHeight || 0,
+				documentElement.scrollHeight || 0,
+				documentElement.offsetHeight || 0
+			);
+
+			return Math.max(0, contentHeight - window.innerHeight);
+		}
+
+		function setPageScrollTop(top) {
+			const scrollElement = getScrollElement();
+			scrollElement.scrollTop = top;
+			window.scrollTo(0, top);
+		}
+
+		function getAutoScrollDirection() {
+			if (!widgetClone) return null;
+
+			const rect = widgetClone.getBoundingClientRect();
+			if (rect.top < detectScrollZoneHeight) {
+				return "up";
+			}
+
+			if (rect.bottom > window.innerHeight - detectScrollZoneHeight) {
+				return "down";
+			}
+
+			return null;
+		}
+
+		function startAutoScroll(direction) {
+			clearInterval(autoScrollInterval);
+			autoScrollInterval = setInterval(() => {
+				if (!dragging || !widgetClone || !currentPointerPosition) {
+					clearAutoScroll();
+					return;
+				}
+
+				const currentScrollTop = getCurrentScrollTop();
+				const maxScrollTop = getMaxScrollTop();
+				const nextScrollTop = direction === "up"
+					? Math.max(0, currentScrollTop - autoScrollStep)
+					: Math.min(maxScrollTop, currentScrollTop + autoScrollStep);
+
+				if (nextScrollTop === currentScrollTop) {
+					clearAutoScroll();
+					return;
+				}
+
+				setPageScrollTop(nextScrollTop);
+				setClonePosition(currentPointerPosition.x, currentPointerPosition.y);
+
+				const nextDirection = getAutoScrollDirection();
+				if (nextDirection !== direction) {
+					if (nextDirection) {
+						scheduleAutoScroll(nextDirection);
+					} else {
+						clearAutoScroll();
+					}
+				}
+			}, autoScrollIntervalMs);
+		}
+
+		function scheduleAutoScroll(direction) {
+			if (!direction) {
+				clearAutoScroll();
+				return;
+			}
+
+			if (autoScrollDirection === direction && (autoScrollStartTimeout || autoScrollInterval)) {
+				return;
+			}
+
+			clearTimeout(autoScrollStartTimeout);
+			clearInterval(autoScrollInterval);
+			autoScrollDirection = direction;
+			autoScrollStartTimeout = setTimeout(() => {
+				autoScrollStartTimeout = null;
+				startAutoScroll(direction);
+			}, autoScrollDelay);
+		}
+
 		function startDragging(e){
 			if (!window.editMode) {
 				editModeTimeOut = setTimeout(() => {
-					if (!window.editMode && pointerPosition.w === currentPointerPosition.w && pointerPosition.y === currentPointerPosition.y) {
+					if (!window.editMode && pointerPosition.x === currentPointerPosition.x && pointerPosition.y === currentPointerPosition.y) {
 						window.switchEditMode();
 					}
-				}, 500)
+				}, 750)
 				pointerPosition = {x: e.clientX , y: e.clientY };
 				currentPointerPosition = {x: e.clientX , y: e.clientY };
 				return;
 			}
 			if (resizingZoneRef.current?.contains(e.target)) return;
 			if (resizeRef.current) return;
-			e.preventDefault();
-			activePointerId = e.pointerId;
-			widget.setPointerCapture?.(e.pointerId);
-			dragging = true;
-			widgetClone = widgetRef.current.children[0].cloneNode(false);
-			widgetClone.className = "widget-clone inner-widget wiggle";
-			document.body.appendChild(widgetClone);
-			widgetRef.current.children[0].style.opacity = "0.3";
-			widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
-				child.style.opacity = '0';
-			});
-			if (widthRef.current <= getCellSize() * 2) {
-				widgetClone.style.left = e.clientX - widthRef.current / 2 + "px";
-			} else {
-				widgetClone.style.left = 16 + "px";
-			}
-			widgetClone.style.top = e.clientY + window.scrollY - heightRef.current / 2 + "px";
+			pointerPosition = {x: e.clientX , y: e.clientY };
+			currentPointerPosition = {x: e.clientX , y: e.clientY };
+			widgetDragTimeOut = setTimeout(() => {
+				if (pointerPosition.x !== currentPointerPosition.x || pointerPosition.y !== currentPointerPosition.y) return;
+				e.preventDefault();
+				activePointerId = e.pointerId;
+				widget.setPointerCapture?.(e.pointerId);
+				dragging = true;
+				widgetClone = widgetRef.current.children[0].cloneNode(false);
+				widgetClone.className = "widget-clone inner-widget wiggle";
+				document.body.appendChild(widgetClone);
+				widgetRef.current.children[0].style.opacity = "0.3";
+				widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
+					child.style.opacity = '0';
+				});
+				setClonePosition(e.clientX, e.clientY);
+			}, 500)
 		}
 
 		function stopDragging (e) {
 			clearTimeout(editModeTimeOut);
+			clearTimeout(widgetDragTimeOut);
 			if (activePointerId !== null && e.pointerId !== activePointerId) return;
 			dragging = false;
 			if (activePointerId !== null) {
@@ -119,6 +245,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			if (widgetClone) {
 				document.body.removeChild(widgetClone);
 				widgetClone = null;
+				clearAutoScroll();
 				widgetRef.current.children[0].style.opacity = "1";
 				widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
 					child.style.opacity = '1';
@@ -127,20 +254,18 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			}
 		}
 		function updatePos (e) {
-			currentPointerPosition = {x: e.clientX , y: e.clientY };
+			if (typeof e.clientX === "number" && typeof e.clientY === "number") {
+				currentPointerPosition = {x: e.clientX , y: e.clientY };
+			}
 			if (dragging) {
 				if (activePointerId !== null && e.pointerId !== activePointerId) return;
 				e.preventDefault();
-				if (widthRef.current <= getCellSize() * 2) {
-					widgetClone.style.left = e.clientX - widthRef.current / 2 + "px";
-				} else {
-					widgetClone.style.left = 16 + "px";
-				}
-				widgetClone.style.top = e.clientY + window.scrollY - heightRef.current / 2 + "px";
+				setClonePosition(currentPointerPosition.x, currentPointerPosition.y);
 				clearTimeout(visualUpdateTimer);
 				visualUpdateTimer = setTimeout(() => {
 					updateLayout()
 				}, 200);
+				scheduleAutoScroll(getAutoScrollDirection());
 			}
 		}
 
@@ -148,6 +273,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		document.addEventListener("pointermove", updatePos)
 		document.addEventListener("pointerup", stopDragging)
 		return () => {
+			clearAutoScroll();
 			widget.removeEventListener('pointerdown', startDragging);
 			document.removeEventListener("pointermove", updatePos);
 			document.removeEventListener("pointerup", stopDragging);

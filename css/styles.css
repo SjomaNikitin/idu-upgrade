@@ -446,11 +446,6 @@
 		}
 	}
 
-	body.edit-mode {
-		overflow: hidden;
-		overscroll-behavior: none;
-	}
-
 	select {
 		width: 100%;
 		margin: 0;
@@ -1329,9 +1324,9 @@
 		-webkit-touch-callout: none;
 	}
 
-	.widget.edit-mode{
-		touch-action: none;
-	}
+	/*.widget.edit-mode{*/
+	/*	touch-action: none;*/
+	/*}*/
 	.inner-widget{
 		background: var(--module-color);
 		border-radius: 12px;
@@ -1354,6 +1349,11 @@
 		position: absolute !important;
 		z-index: 999;
 		box-shadow: 0 4px 8px var(--module-shadow-color);
+	}
+
+	body.edit-mode{
+		overflow: hidden;
+		touch-action: none;
 	}
 
 	.widget.w2 { grid-column: span 2; }
