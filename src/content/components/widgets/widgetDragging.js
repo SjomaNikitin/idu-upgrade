@@ -100,6 +100,12 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
 				child.style.opacity = '0';
 			});
+			if (widthRef.current <= getCellSize() * 2) {
+				widgetClone.style.left = e.clientX - widthRef.current / 2 + "px";
+			} else {
+				widgetClone.style.left = 16 + "px";
+			}
+			widgetClone.style.top = e.clientY + window.scrollY - heightRef.current / 2 + "px";
 		}
 
 		function stopDragging (e) {

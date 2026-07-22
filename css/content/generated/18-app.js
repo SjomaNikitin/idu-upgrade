@@ -729,6 +729,12 @@
         widgetRef.current.children[0].querySelectorAll("*").forEach((child) => {
           child.style.opacity = "0";
         });
+        if (widthRef.current <= getCellSize() * 2) {
+          widgetClone.style.left = e3.clientX - widthRef.current / 2 + "px";
+        } else {
+          widgetClone.style.left = "16px";
+        }
+        widgetClone.style.top = e3.clientY + window.scrollY - heightRef.current / 2 + "px";
       }
       function stopDragging(e3) {
         clearTimeout(editModeTimeOut);
