@@ -25,10 +25,38 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 	const widthRef = useRef(width);
 	const heightRef = useRef(height);
 	const openPopupRef = useRef(openPopup);
+	const hiddenWidgetsRef = useRef([]);
 
 	widthRef.current = width;
 	heightRef.current = height;
 	openPopupRef.current = openPopup;
+
+	function hidePopupObstacles() {
+		const widget = widgetRef.current;
+		if (!widget?.parentElement) return;
+
+		const widgetRect = widget.getBoundingClientRect();
+		const siblings = Array.from(widget.parentElement.children);
+		const widgetIndex = siblings.indexOf(widget);
+
+		hiddenWidgetsRef.current = siblings.slice(0, widgetIndex).filter((sibling) => {
+			if (!sibling.classList.contains('widget')) return false;
+
+			const siblingRect = sibling.getBoundingClientRect();
+			return siblingRect.top < widgetRect.bottom && siblingRect.bottom > widgetRect.top;
+		});
+
+		hiddenWidgetsRef.current.forEach((sibling) => {
+			sibling.classList.add('widget-popup-obstacle');
+		});
+	}
+
+	function restorePopupObstacles() {
+		hiddenWidgetsRef.current.forEach((sibling) => {
+			sibling.classList.remove('widget-popup-obstacle');
+		});
+		hiddenWidgetsRef.current = [];
+	}
 
 	function calcCornerPositions() {
 		const widget = widgetRef.current;
@@ -98,6 +126,10 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 	}
 
 	useEffect(() => {
+		if (!openPopup) restorePopupObstacles();
+	}, [openPopup]);
+
+	useEffect(() => {
 		const resizeZone = resizeZoneRef.current;
 		let activePointerId = null;
 		if (!resizeZone) return undefined;
@@ -127,6 +159,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 			if (openPopupRef.current) {
 				finalSize = widgetLastSizeRef.current;
 			} else {
+				hidePopupObstacles();
 				finalSize = fullSize;
 				widgetLastSizeRef.current = { w: widthRef.current, h: heightRef.current };
 			}
@@ -149,6 +182,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 			document.removeEventListener('pointerup', stopResize);
 			document.removeEventListener('pointermove', dynamicSizeUpdate);
 			widgetRef.current.removeEventListener('click', togglePopup);
+			restorePopupObstacles();
 		};
 	}, []);
 

@@ -524,9 +524,31 @@
     const widthRef = A2(width);
     const heightRef = A2(height);
     const openPopupRef = A2(openPopup);
+    const hiddenWidgetsRef = A2([]);
     widthRef.current = width;
     heightRef.current = height;
     openPopupRef.current = openPopup;
+    function hidePopupObstacles() {
+      const widget = widgetRef.current;
+      if (!widget?.parentElement) return;
+      const widgetRect = widget.getBoundingClientRect();
+      const siblings = Array.from(widget.parentElement.children);
+      const widgetIndex = siblings.indexOf(widget);
+      hiddenWidgetsRef.current = siblings.slice(0, widgetIndex).filter((sibling) => {
+        if (!sibling.classList.contains("widget")) return false;
+        const siblingRect = sibling.getBoundingClientRect();
+        return siblingRect.top < widgetRect.bottom && siblingRect.bottom > widgetRect.top;
+      });
+      hiddenWidgetsRef.current.forEach((sibling) => {
+        sibling.classList.add("widget-popup-obstacle");
+      });
+    }
+    function restorePopupObstacles() {
+      hiddenWidgetsRef.current.forEach((sibling) => {
+        sibling.classList.remove("widget-popup-obstacle");
+      });
+      hiddenWidgetsRef.current = [];
+    }
     function calcCornerPositions() {
       const widget = widgetRef.current;
       if (!widget) return [];
@@ -581,6 +603,9 @@
       }
     }
     y2(() => {
+      if (!openPopup) restorePopupObstacles();
+    }, [openPopup]);
+    y2(() => {
       const resizeZone = resizeZoneRef.current;
       let activePointerId = null;
       if (!resizeZone) return void 0;
@@ -607,6 +632,7 @@
         if (openPopupRef.current) {
           finalSize = widgetLastSizeRef.current;
         } else {
+          hidePopupObstacles();
           finalSize = fullSize;
           widgetLastSizeRef.current = { w: widthRef.current, h: heightRef.current };
         }
@@ -626,6 +652,7 @@
         document.removeEventListener("pointerup", stopResize);
         document.removeEventListener("pointermove", dynamicSizeUpdate);
         widgetRef.current.removeEventListener("click", togglePopup);
+        restorePopupObstacles();
       };
     }, []);
     return {

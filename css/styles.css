@@ -1324,6 +1324,10 @@
 		-webkit-touch-callout: none;
 	}
 
+	.widget.widget-popup-obstacle{
+		display: none;
+	}
+
 	/*.widget.edit-mode{*/
 	/*	touch-action: none;*/
 	/*}*/
