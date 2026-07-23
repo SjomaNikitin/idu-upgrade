@@ -18,7 +18,6 @@ export function Schedule({ widgetId, moveWidget, data }) {
 		height,
 		previewWidth,
 		previewHeight,
-		openPopup,
 		widgetRef,
 		resizeZoneRef,
 		resizingRef,
@@ -157,9 +156,9 @@ export function Schedule({ widgetId, moveWidget, data }) {
 	const Variant = gradeVariants[`${width}${height}`] || Schedule21;
 
 	return (
-		<div ref={widgetRef} id="scheduleWidget" data-widget-id={widgetId} className={`widget w${width} h${height} ${window.editMode ? 'edit-mode' : ''} ${openPopup ? 'popup-open' : ''}`}>
+		<div ref={widgetRef} id="scheduleWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
 			<div
-				className={`inner-widget ${openPopup ? 'widget-popup open widget-popup-open' : ''}`}
+				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}
 			>
 				<Variant />

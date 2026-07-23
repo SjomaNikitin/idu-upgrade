@@ -33,7 +33,6 @@ export function Attendance({ widgetId, moveWidget, data }) {
 		height,
 		previewWidth,
 		previewHeight,
-		openPopup,
 		widgetRef,
 		resizeZoneRef,
 		resizingRef,
@@ -209,9 +208,9 @@ export function Attendance({ widgetId, moveWidget, data }) {
 	const Variant = widgetVariants[`${width}${height}`] || Grades22;
 
 	return (
-		<div ref={widgetRef} id="attendanceWidget" data-widget-id={widgetId} className={`widget w${width} h${height} ${window.editMode ? 'edit-mode' : ''} ${openPopup ? 'popup-open' : ''}`}>
+		<div ref={widgetRef} id="attendanceWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
 			<div
-				className={`inner-widget ${openPopup ? 'widget-popup open widget-popup-open' : ''}`}
+				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}
 			>
 				<Variant />

@@ -1324,14 +1324,6 @@
 		-webkit-touch-callout: none;
 	}
 
-	.widget.popup-open{
-		z-index: 4;
-	}
-
-	.widget-popup-hidden{
-		display: none !important;
-	}
-
 	/*.widget.edit-mode{*/
 	/*	touch-action: none;*/
 	/*}*/
@@ -1340,9 +1332,7 @@
 		border-radius: 12px;
 		transition:
 			width 0.2s ease,
-			height 0.2s ease,
-			transform 0.2s ease,
-			box-shadow 0.2s ease;
+			height 0.2s ease;
 		overflow: hidden;
 		user-select: none;
 		-webkit-user-select: none;
@@ -1638,26 +1628,24 @@
 	}
 
 	.widget-popup{
+		width: calc(100% - 32px);
+		height: calc((100vw - 32px) * 1.5 + 8px);
 		background-color: var(--module-color);
+		border-radius: 12px;
 		opacity: 0;
-		transition:
-			opacity 0.2s ease,
-			transform 0.2s ease,
-			box-shadow 0.2s ease;
+		transition: opacity 0.2s ease;
+		top: var(--header-height);
+		position: fixed;
 		z-index: 999;
+		left: var(--padding-2);
+		margin-top: 16px;
 		box-shadow: 0 4px 8px var(--module-shadow-color);
-		pointer-events: none;
+		padding: var(--padding-2);
 	}
 
 	.widget-popup.open{
 		opacity: 1;
-		transform: translateY(0) scale(1);
 		pointer-events: auto;
-	}
-
-	.widget-popup-open{
-		transform: translateY(-4px) scale(1.01);
-		box-shadow: 0 10px 24px var(--module-shadow-color);
 	}
 
 	.widget-popup-close-button{

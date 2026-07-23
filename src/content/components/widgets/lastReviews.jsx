@@ -42,7 +42,7 @@ export function LastReviews({ widgetId, moveWidget, data }) {
 	const Variant = contentVariants[`${width}${height}`] || Messages21;
 
 	return (
-		<div ref={widgetRef} id="reviewsWidgetWidget" data-widget-id={widgetId} className={`widget w${width} h${height} ${window.editMode ? 'edit-mode' : ''}`}>
+		<div ref={widgetRef} id="reviewsWidgetWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
 			<div
 				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}

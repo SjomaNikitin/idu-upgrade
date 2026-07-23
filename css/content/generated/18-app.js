@@ -524,35 +524,9 @@
     const widthRef = A2(width);
     const heightRef = A2(height);
     const openPopupRef = A2(openPopup);
-    const hiddenWidgetsRef = A2([]);
     widthRef.current = width;
     heightRef.current = height;
     openPopupRef.current = openPopup;
-    function setBlockingWidgetsHidden(hidden) {
-      const widget = widgetRef.current;
-      if (!widget) return;
-      const widgets = Array.from(document.querySelectorAll(".widgets-grid .widget"));
-      const currentIndex = widgets.findIndex((item) => item.dataset.widgetId === name);
-      if (currentIndex === -1) return;
-      if (!hidden) {
-        hiddenWidgetsRef.current.forEach((item) => item.classList.remove("widget-popup-hidden"));
-        hiddenWidgetsRef.current = [];
-        return;
-      }
-      const rect = widget.getBoundingClientRect();
-      const widgetCenter = rect.left + rect.width / 2;
-      const isRightSided = widgetCenter > window.innerWidth / 2;
-      if (!isRightSided) {
-        hiddenWidgetsRef.current = [];
-        return;
-      }
-      const blockingWidgets = widgets.slice(0, currentIndex).filter((candidate) => {
-        const candidateRect = candidate.getBoundingClientRect();
-        return candidateRect.top < rect.bottom && candidateRect.left < rect.left;
-      });
-      blockingWidgets.forEach((item) => item.classList.add("widget-popup-hidden"));
-      hiddenWidgetsRef.current = blockingWidgets;
-    }
     function calcCornerPositions() {
       const widget = widgetRef.current;
       if (!widget) return [];
@@ -632,9 +606,7 @@
         let finalSize;
         if (openPopupRef.current) {
           finalSize = widgetLastSizeRef.current;
-          setBlockingWidgetsHidden(false);
         } else {
-          setBlockingWidgetsHidden(true);
           finalSize = fullSize;
           widgetLastSizeRef.current = { w: widthRef.current, h: heightRef.current };
         }
@@ -654,7 +626,6 @@
         document.removeEventListener("pointerup", stopResize);
         document.removeEventListener("pointermove", dynamicSizeUpdate);
         widgetRef.current.removeEventListener("click", togglePopup);
-        setBlockingWidgetsHidden(false);
       };
     }, []);
     return {
@@ -662,7 +633,6 @@
       height,
       previewWidth,
       previewHeight,
-      openPopup,
       widgetRef,
       resizeZoneRef,
       resizingRef
@@ -945,7 +915,6 @@
       height,
       previewWidth,
       previewHeight,
-      openPopup,
       widgetRef,
       resizeZoneRef,
       resizingRef
@@ -1070,10 +1039,10 @@
       "46": Grades46
     };
     const Variant = gradeVariants[`${width}${height}`] || Grades222;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "gradesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""} ${openPopup ? "popup-open" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "gradesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
-        className: `inner-widget ${openPopup ? "widget-popup open widget-popup-open" : ""}`,
+        className: "inner-widget",
         style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
       },
       /* @__PURE__ */ k(Variant, null),
@@ -1095,7 +1064,6 @@
       height,
       previewWidth,
       previewHeight,
-      openPopup,
       widgetRef,
       resizeZoneRef,
       resizingRef
@@ -1133,10 +1101,10 @@
       "45": Subjects45
     };
     const Variant = gradeVariants[`${width}${height}`] || Subjects21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "subjectsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""} ${openPopup ? "popup-open" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "subjectsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
-        className: `inner-widget ${openPopup ? "widget-popup open widget-popup-open" : ""}`,
+        className: "inner-widget",
         style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
       },
       /* @__PURE__ */ k(Variant, null),
@@ -1159,7 +1127,6 @@
       height,
       previewWidth,
       previewHeight,
-      openPopup,
       widgetRef,
       resizeZoneRef,
       resizingRef
@@ -1238,10 +1205,10 @@
       "25": Schedule25
     };
     const Variant = gradeVariants[`${width}${height}`] || Schedule21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "scheduleWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""} ${openPopup ? "popup-open" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "scheduleWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
-        className: `inner-widget ${openPopup ? "widget-popup open widget-popup-open" : ""}`,
+        className: "inner-widget",
         style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
       },
       /* @__PURE__ */ k(Variant, null),
@@ -1264,7 +1231,6 @@
       height,
       previewWidth,
       previewHeight,
-      openPopup,
       widgetRef,
       resizeZoneRef,
       resizingRef
@@ -1315,10 +1281,10 @@
       "45": Announcements45
     };
     const Variant = gradeVariants[`${width}${height}`] || Announcements22;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "announcementsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""} ${openPopup ? "popup-open" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "announcementsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
-        className: `inner-widget ${openPopup ? "widget-popup open widget-popup-open" : ""}`,
+        className: "inner-widget",
         style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
       },
       /* @__PURE__ */ k(Variant, null),
@@ -1343,7 +1309,6 @@
       height,
       previewWidth,
       previewHeight,
-      openPopup,
       widgetRef,
       resizeZoneRef,
       resizingRef
@@ -1406,10 +1371,10 @@
       "46": Announcements46
     };
     const Variant = gradeVariants[`${width}${height}`] || Announcements22;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "newsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""} ${openPopup ? "popup-open" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "newsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
-        className: `inner-widget ${openPopup ? "widget-popup open widget-popup-open" : ""}`,
+        className: "inner-widget",
         style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
       },
       /* @__PURE__ */ k(Variant, null),
@@ -1446,7 +1411,6 @@
       height,
       previewWidth,
       previewHeight,
-      openPopup,
       widgetRef,
       resizeZoneRef,
       resizingRef
@@ -1573,10 +1537,10 @@
       "46": Attendance46
     };
     const Variant = widgetVariants[`${width}${height}`] || Grades22;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "attendanceWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""} ${openPopup ? "popup-open" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "attendanceWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
-        className: `inner-widget ${openPopup ? "widget-popup open widget-popup-open" : ""}`,
+        className: "inner-widget",
         style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
       },
       /* @__PURE__ */ k(Variant, null),
@@ -1612,7 +1576,7 @@
       "41": Messages41
     };
     const Variant = contentVariants[`${width}${height}`] || Messages21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "messagesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "messagesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1652,7 +1616,7 @@
       "41": Messages41
     };
     const Variant = contentVariants[`${width}${height}`] || Messages21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "comingEventsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "comingEventsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1692,7 +1656,7 @@
       "41": Messages41
     };
     const Variant = contentVariants[`${width}${height}`] || Messages21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "reviewsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "reviewsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1732,7 +1696,7 @@
       "41": Messages41
     };
     const Variant = contentVariants[`${width}${height}`] || Messages21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "homeWorkWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "homeWorkWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
