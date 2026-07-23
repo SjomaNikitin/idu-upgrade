@@ -208,7 +208,7 @@ export function Attendance({ widgetId, moveWidget, data }) {
 	const Variant = widgetVariants[`${width}${height}`] || Grades22;
 
 	return (
-		<div ref={widgetRef} id="attendanceWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
+		<div ref={widgetRef} id="attendanceWidget" data-widget-id={widgetId} className={`widget w${width} h${height} ${window.editMode ? 'edit-mode' : ''}`}>
 			<div
 				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}

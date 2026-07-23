@@ -106,7 +106,7 @@ export function News({ widgetId, moveWidget, data }) {
 	const Variant = gradeVariants[`${width}${height}`] || Announcements22;
 
 	return (
-		<div ref={widgetRef} id="newsWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
+		<div ref={widgetRef} id="newsWidget" data-widget-id={widgetId} className={`widget w${width} h${height} ${window.editMode ? 'edit-mode' : ''}`}>
 			<div
 				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}

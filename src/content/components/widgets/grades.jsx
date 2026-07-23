@@ -180,7 +180,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 	const Variant = gradeVariants[`${width}${height}`] || Grades22;
 
 	return (
-		<div ref={widgetRef} id="gradesWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
+		<div ref={widgetRef} id="gradesWidget" data-widget-id={widgetId} className={`widget w${width} h${height} ${window.editMode ? 'edit-mode' : ''}`}>
 			<div
 				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}

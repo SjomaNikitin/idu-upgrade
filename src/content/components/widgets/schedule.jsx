@@ -156,7 +156,7 @@ export function Schedule({ widgetId, moveWidget, data }) {
 	const Variant = gradeVariants[`${width}${height}`] || Schedule21;
 
 	return (
-		<div ref={widgetRef} id="scheduleWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
+		<div ref={widgetRef} id="scheduleWidget" data-widget-id={widgetId} className={`widget w${width} h${height} ${window.editMode ? 'edit-mode' : ''}`}>
 			<div
 				className="inner-widget"
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}

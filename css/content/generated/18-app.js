@@ -1070,7 +1070,7 @@
       "46": Grades46
     };
     const Variant = gradeVariants[`${width}${height}`] || Grades222;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "gradesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "gradesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1132,7 +1132,7 @@
       "45": Subjects45
     };
     const Variant = gradeVariants[`${width}${height}`] || Subjects21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "subjectsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "subjectsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1236,7 +1236,7 @@
       "25": Schedule25
     };
     const Variant = gradeVariants[`${width}${height}`] || Schedule21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "scheduleWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "scheduleWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1312,7 +1312,7 @@
       "45": Announcements45
     };
     const Variant = gradeVariants[`${width}${height}`] || Announcements22;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "announcementsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "announcementsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1402,7 +1402,7 @@
       "46": Announcements46
     };
     const Variant = gradeVariants[`${width}${height}`] || Announcements22;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "newsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "newsWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1568,7 +1568,7 @@
       "46": Attendance46
     };
     const Variant = widgetVariants[`${width}${height}`] || Grades22;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "attendanceWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "attendanceWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1607,7 +1607,7 @@
       "41": Messages41
     };
     const Variant = contentVariants[`${width}${height}`] || Messages21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "messagesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "messagesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1647,7 +1647,7 @@
       "41": Messages41
     };
     const Variant = contentVariants[`${width}${height}`] || Messages21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "comingEventsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "comingEventsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1687,7 +1687,7 @@
       "41": Messages41
     };
     const Variant = contentVariants[`${width}${height}`] || Messages21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "reviewsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "reviewsWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -1727,7 +1727,7 @@
       "41": Messages41
     };
     const Variant = contentVariants[`${width}${height}`] || Messages21;
-    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "homeWorkWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "homeWorkWidgetWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
