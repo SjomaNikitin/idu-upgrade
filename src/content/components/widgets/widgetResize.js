@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 
 function getPreviewSize(width, height, cellSize, gap) {
 	return {
@@ -26,6 +26,8 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 	const heightRef = useRef(height);
 	const openPopupRef = useRef(openPopup);
 	const hiddenWidgetsRef = useRef([]);
+	const resizeFromRightRef = useRef(false);
+	const resizeViewportTopRef = useRef(null);
 
 	widthRef.current = width;
 	heightRef.current = height;
@@ -63,19 +65,52 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 		if (widgetRef.current) delete widgetRef.current.dataset.popupFromRight;
 	}
 
+	function updateResizeSide() {
+		const widget = widgetRef.current;
+		if (!widget) return;
+
+		if (!window.editMode) {
+			delete widget.dataset.resizeFromRight;
+			return;
+		}
+
+		// Preserve the anchor of a full-width widget so it can shrink back
+		// toward the side it expanded from.
+		if (widthRef.current === 4) return;
+
+		const grid = widget.parentElement;
+		if (!grid) return;
+
+		const widgetRect = widget.getBoundingClientRect();
+		const gridRect = grid.getBoundingClientRect();
+		const gridStyle = getComputedStyle(grid);
+		const contentLeft = gridRect.left + parseFloat(gridStyle.paddingLeft || 0);
+		const contentRight = gridRect.right - parseFloat(gridStyle.paddingRight || 0);
+		const distanceFromLeft = Math.abs(widgetRect.left - contentLeft);
+		const distanceFromRight = Math.abs(contentRight - widgetRect.right);
+
+		if (distanceFromRight < distanceFromLeft) {
+			widget.dataset.resizeFromRight = '';
+		} else {
+			delete widget.dataset.resizeFromRight;
+		}
+	}
+
 	function calcCornerPositions() {
 		const widget = widgetRef.current;
 		if (!widget) return [];
 
 		const cellSize = getCellSize();
 		const positions = [];
+		const widgetRect = widget.getBoundingClientRect();
 
 		for (let i = 0; i < possibleLayout.length; i++) {
 			const layout = possibleLayout[i];
-			const x = (layout.w) * cellSize;
-			const y = (layout.h) * cellSize;
-			const realX = widget.getBoundingClientRect().left + x;
-			const realY = widget.getBoundingClientRect().top + y;
+			const preview = getPreviewSize(layout.w, layout.h, cellSize, gap);
+			const realX = resizeFromRightRef.current
+				? widgetRect.right - preview.width
+				: widgetRect.left + preview.width;
+			const realY = widgetRect.top + preview.height;
 			positions.push({ realX, realY });
 		}
 
@@ -106,8 +141,13 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 		}
 
 		const nextLayout = possibleLayout[bestOption.index];
+		if (nextLayout.w === widthRef.current && nextLayout.h === heightRef.current) return;
+
+		resizeViewportTopRef.current = widgetRef.current.getBoundingClientRect().top;
 		const preview = getPreviewSize(nextLayout.w, nextLayout.h, getCellSize(), gap);
 
+		widthRef.current = nextLayout.w;
+		heightRef.current = nextLayout.h;
 		setWidth(nextLayout.w);
 		setHeight(nextLayout.h);
 		setPreviewWidth(preview.width);
@@ -130,6 +170,18 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 		}
 	}
 
+	useLayoutEffect(() => {
+		if (resizeViewportTopRef.current === null) return;
+
+		const widget = widgetRef.current;
+		const previousTop = resizeViewportTopRef.current;
+		resizeViewportTopRef.current = null;
+		if (!widget) return;
+
+		const topDelta = widget.getBoundingClientRect().top - previousTop;
+		if (Math.abs(topDelta) > 1) window.scrollBy(0, topDelta);
+	}, [width, height]);
+
 	useEffect(() => {
 		if (!openPopup) restorePopupObstacles();
 	}, [openPopup]);
@@ -137,11 +189,22 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 	useEffect(() => {
 		const resizeZone = resizeZoneRef.current;
 		let activePointerId = null;
+		let resizeSideFrame = null;
 		if (!resizeZone) return undefined;
+
+		function scheduleResizeSideUpdate() {
+			if (resizeSideFrame !== null) cancelAnimationFrame(resizeSideFrame);
+			resizeSideFrame = requestAnimationFrame(() => {
+				resizeSideFrame = null;
+				updateResizeSide();
+			});
+		}
 
 		function startResize(e) {
 			if (!window.editMode) return;
 			e.preventDefault();
+			updateResizeSide();
+			resizeFromRightRef.current = widgetRef.current.hasAttribute('data-resize-from-right');
 			activePointerId = e.pointerId;
 			resizeZone.setPointerCapture?.(e.pointerId);
 			resizingRef.current = true;
@@ -154,6 +217,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 				resizeZone.releasePointerCapture?.(activePointerId);
 				activePointerId = null;
 			}
+			scheduleResizeSideUpdate();
 		}
 
 		function togglePopup (e) {
@@ -179,13 +243,19 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 		resizeZone.addEventListener('pointerdown', startResize);
 		document.addEventListener('pointerup', stopResize);
 		document.addEventListener('pointermove', dynamicSizeUpdate);
+		window.addEventListener('resize', scheduleResizeSideUpdate);
+		window.addEventListener('idu-edit-mode-change', scheduleResizeSideUpdate);
 
 		widgetRef.current.addEventListener('click', togglePopup);
+		scheduleResizeSideUpdate();
 
 		return () => {
+			if (resizeSideFrame !== null) cancelAnimationFrame(resizeSideFrame);
 			resizeZone.removeEventListener('pointerdown', startResize);
 			document.removeEventListener('pointerup', stopResize);
 			document.removeEventListener('pointermove', dynamicSizeUpdate);
+			window.removeEventListener('resize', scheduleResizeSideUpdate);
+			window.removeEventListener('idu-edit-mode-change', scheduleResizeSideUpdate);
 			widgetRef.current.removeEventListener('click', togglePopup);
 			restorePopupObstacles();
 		};

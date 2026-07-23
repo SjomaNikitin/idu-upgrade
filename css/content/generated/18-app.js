@@ -70,8 +70,8 @@
     }
   }
   function L(n2, l3, u3, t3, i3, r3, o3, e3, f3, c3, a3) {
-    var s3, h3, p3, v3, y3, _2, g2, m3 = t3 && t3.__k || w, b2 = l3.length;
-    for (f3 = T(u3, l3, m3, f3, b2), s3 = 0; s3 < b2; s3++) null != (p3 = u3.__k[s3]) && (h3 = -1 != p3.__i && m3[p3.__i] || d, p3.__i = s3, _2 = q(n2, p3, h3, i3, r3, o3, e3, f3, c3, a3), v3 = p3.__e, p3.ref && h3.ref != p3.ref && (h3.ref && J(h3.ref, null, p3), a3.push(p3.ref, p3.__c || v3, p3)), null == y3 && null != v3 && (y3 = v3), (g2 = !!(4 & p3.__u)) || h3.__k === p3.__k ? (f3 = j(p3, f3, n2, g2), g2 && h3.__e && (h3.__e = null)) : "function" == typeof p3.type && void 0 !== _2 ? f3 = _2 : v3 && (f3 = v3.nextSibling), p3.__u &= -7);
+    var s3, h3, p3, v3, y3, _3, g2, m3 = t3 && t3.__k || w, b2 = l3.length;
+    for (f3 = T(u3, l3, m3, f3, b2), s3 = 0; s3 < b2; s3++) null != (p3 = u3.__k[s3]) && (h3 = -1 != p3.__i && m3[p3.__i] || d, p3.__i = s3, _3 = q(n2, p3, h3, i3, r3, o3, e3, f3, c3, a3), v3 = p3.__e, p3.ref && h3.ref != p3.ref && (h3.ref && J(h3.ref, null, p3), a3.push(p3.ref, p3.__c || v3, p3)), null == y3 && null != v3 && (y3 = v3), (g2 = !!(4 & p3.__u)) || h3.__k === p3.__k ? (f3 = j(p3, f3, n2, g2), g2 && h3.__e && (h3.__e = null)) : "function" == typeof p3.type && void 0 !== _3 ? f3 = _3 : v3 && (f3 = v3.nextSibling), p3.__u &= -7);
     return u3.__e = y3, f3;
   }
   function T(n2, l3, u3, t3, i3) {
@@ -132,11 +132,11 @@
     };
   }
   function q(n2, u3, t3, i3, r3, o3, e3, f3, c3, a3) {
-    var s3, h3, p3, v3, y3, d3, _2, k3, x2, M, $2, I2, P2, A3, H2, T3 = u3.type;
+    var s3, h3, p3, v3, y3, d3, _3, k3, x2, M, $2, I2, P2, A3, H2, T3 = u3.type;
     if (void 0 !== u3.constructor) return null;
     128 & t3.__u && (c3 = !!(32 & t3.__u), o3 = [f3 = u3.__e = t3.__e]), (s3 = l.__b) && s3(u3);
     n: if ("function" == typeof T3) try {
-      if (k3 = u3.props, x2 = T3.prototype && T3.prototype.render, M = (s3 = T3.contextType) && i3[s3.__c], $2 = s3 ? M ? M.props.value : s3.__ : i3, t3.__c ? _2 = (h3 = u3.__c = t3.__c).__ = h3.__E : (x2 ? u3.__c = h3 = new T3(k3, $2) : (u3.__c = h3 = new C(k3, $2), h3.constructor = T3, h3.render = Q), M && M.sub(h3), h3.state || (h3.state = {}), h3.__n = i3, p3 = h3.__d = true, h3.__h = [], h3._sb = []), x2 && null == h3.__s && (h3.__s = h3.state), x2 && null != T3.getDerivedStateFromProps && (h3.__s == h3.state && (h3.__s = m({}, h3.__s)), m(h3.__s, T3.getDerivedStateFromProps(k3, h3.__s))), v3 = h3.props, y3 = h3.state, h3.__v = u3, p3) x2 && null == T3.getDerivedStateFromProps && null != h3.componentWillMount && h3.componentWillMount(), x2 && null != h3.componentDidMount && h3.__h.push(h3.componentDidMount);
+      if (k3 = u3.props, x2 = T3.prototype && T3.prototype.render, M = (s3 = T3.contextType) && i3[s3.__c], $2 = s3 ? M ? M.props.value : s3.__ : i3, t3.__c ? _3 = (h3 = u3.__c = t3.__c).__ = h3.__E : (x2 ? u3.__c = h3 = new T3(k3, $2) : (u3.__c = h3 = new C(k3, $2), h3.constructor = T3, h3.render = Q), M && M.sub(h3), h3.state || (h3.state = {}), h3.__n = i3, p3 = h3.__d = true, h3.__h = [], h3._sb = []), x2 && null == h3.__s && (h3.__s = h3.state), x2 && null != T3.getDerivedStateFromProps && (h3.__s == h3.state && (h3.__s = m({}, h3.__s)), m(h3.__s, T3.getDerivedStateFromProps(k3, h3.__s))), v3 = h3.props, y3 = h3.state, h3.__v = u3, p3) x2 && null == T3.getDerivedStateFromProps && null != h3.componentWillMount && h3.componentWillMount(), x2 && null != h3.componentDidMount && h3.__h.push(h3.componentDidMount);
       else {
         if (x2 && null == T3.getDerivedStateFromProps && k3 !== v3 && null != h3.componentWillReceiveProps && h3.componentWillReceiveProps(k3, $2), u3.__v == t3.__v || !h3.__e && null != h3.shouldComponentUpdate && false === h3.shouldComponentUpdate(k3, h3.__s, $2)) {
           u3.__v != t3.__v && (h3.props = k3, h3.state = h3.__s, h3.__d = false), u3.__e = t3.__e, u3.__k = t3.__k, u3.__k.some(function(n3) {
@@ -152,7 +152,7 @@
       else do {
         h3.__d = false, I2 && I2(u3), s3 = h3.render(h3.props, h3.state, h3.context), h3.state = h3.__s;
       } while (h3.__d && ++P2 < 25);
-      h3.state = h3.__s, null != h3.getChildContext && (i3 = m(m({}, i3), h3.getChildContext())), x2 && !p3 && null != h3.getSnapshotBeforeUpdate && (d3 = h3.getSnapshotBeforeUpdate(v3, y3)), A3 = null != s3 && s3.type === S && null == s3.key ? E(s3.props.children) : s3, f3 = L(n2, g(A3) ? A3 : [A3], u3, t3, i3, r3, o3, e3, f3, c3, a3), h3.base = u3.__e, u3.__u &= -161, h3.__h.length && e3.push(h3), _2 && (h3.__E = h3.__ = null);
+      h3.state = h3.__s, null != h3.getChildContext && (i3 = m(m({}, i3), h3.getChildContext())), x2 && !p3 && null != h3.getSnapshotBeforeUpdate && (d3 = h3.getSnapshotBeforeUpdate(v3, y3)), A3 = null != s3 && s3.type === S && null == s3.key ? E(s3.props.children) : s3, f3 = L(n2, g(A3) ? A3 : [A3], u3, t3, i3, r3, o3, e3, f3, c3, a3), h3.base = u3.__e, u3.__u &= -161, h3.__h.length && e3.push(h3), _3 && (h3.__E = h3.__ = null);
     } catch (n3) {
       if (u3.__v = null, c3 || null != o3) if (n3.then) {
         for (u3.__u |= c3 ? 160 : 128; f3 && 8 == f3.nodeType && f3.nextSibling; ) f3 = f3.nextSibling;
@@ -186,7 +186,7 @@
     return "object" != typeof n2 || null == n2 || n2.__b > 0 ? n2 : g(n2) ? n2.map(E) : void 0 !== n2.constructor ? null : m({}, n2);
   }
   function G(u3, t3, i3, r3, o3, e3, f3, c3, a3) {
-    var s3, h3, p3, v3, y3, w3, _2, m3 = i3.props || d, k3 = t3.props, x2 = t3.type;
+    var s3, h3, p3, v3, y3, w3, _3, m3 = i3.props || d, k3 = t3.props, x2 = t3.type;
     if ("svg" == x2 ? o3 = "http://www.w3.org/2000/svg" : "math" == x2 ? o3 = "http://www.w3.org/1998/Math/MathML" : o3 || (o3 = "http://www.w3.org/1999/xhtml"), null != e3) {
       for (s3 = 0; s3 < e3.length; s3++) if ((y3 = e3[s3]) && "setAttribute" in y3 == !!x2 && (x2 ? y3.localName == x2 : 3 == y3.nodeType)) {
         u3 = y3, e3[s3] = null;
@@ -201,10 +201,10 @@
     else {
       if (e3 = "textarea" == x2 && null != k3.defaultValue ? null : e3 && n.call(u3.childNodes), !c3 && null != e3) for (m3 = {}, s3 = 0; s3 < u3.attributes.length; s3++) m3[(y3 = u3.attributes[s3]).name] = y3.value;
       for (s3 in m3) y3 = m3[s3], "dangerouslySetInnerHTML" == s3 ? p3 = y3 : "children" == s3 || s3 in k3 || "value" == s3 && "defaultValue" in k3 || "checked" == s3 && "defaultChecked" in k3 || N(u3, s3, null, y3, o3);
-      for (s3 in k3) y3 = k3[s3], "children" == s3 ? v3 = y3 : "dangerouslySetInnerHTML" == s3 ? h3 = y3 : "value" == s3 ? w3 = y3 : "checked" == s3 ? _2 = y3 : c3 && "function" != typeof y3 || m3[s3] === y3 || N(u3, s3, y3, m3[s3], o3);
+      for (s3 in k3) y3 = k3[s3], "children" == s3 ? v3 = y3 : "dangerouslySetInnerHTML" == s3 ? h3 = y3 : "value" == s3 ? w3 = y3 : "checked" == s3 ? _3 = y3 : c3 && "function" != typeof y3 || m3[s3] === y3 || N(u3, s3, y3, m3[s3], o3);
       if (h3) c3 || p3 && (h3.__html == p3.__html || h3.__html == u3.innerHTML) || (u3.innerHTML = h3.__html), t3.__k = [];
       else if (p3 && (u3.innerHTML = ""), L("template" == t3.type ? u3.content : u3, g(v3) ? v3 : [v3], t3, i3, r3, "foreignObject" == x2 ? "http://www.w3.org/1999/xhtml" : o3, e3, f3, e3 ? e3[0] : i3.__k && $(i3, 0), c3, a3), null != e3) for (s3 = e3.length; s3--; ) b(e3[s3]);
-      c3 && "textarea" != x2 || (s3 = "value", "progress" == x2 && null == w3 ? u3.removeAttribute("value") : null != w3 && (w3 !== u3[s3] || "progress" == x2 && !w3 || "option" == x2 && w3 != m3[s3]) && N(u3, s3, w3, m3[s3], o3), s3 = "checked", null != _2 && _2 != u3[s3] && N(u3, s3, _2, m3[s3], o3));
+      c3 && "textarea" != x2 || (s3 = "value", "progress" == x2 && null == w3 ? u3.removeAttribute("value") : null != w3 && (w3 !== u3[s3] || "progress" == x2 && !w3 || "option" == x2 && w3 != m3[s3]) && N(u3, s3, w3, m3[s3], o3), s3 = "checked", null != _3 && _3 != u3[s3] && N(u3, s3, _3, m3[s3], o3));
     }
     return u3;
   }
@@ -315,6 +315,10 @@
   function y2(n2, u3) {
     var i3 = p2(t2++, 3);
     !c2.__s && C2(i3.__H, u3) && (i3.__ = n2, i3.u = u3, r2.__H.__h.push(i3));
+  }
+  function _2(n2, u3) {
+    var i3 = p2(t2++, 4);
+    !c2.__s && C2(i3.__H, u3) && (i3.__ = n2, i3.u = u3, r2.__h.push(i3));
   }
   function A2(n2) {
     return o2 = 5, T2(function() {
@@ -448,6 +452,7 @@
         editBlock.innerHTML = '<svg width={svgSize} height={svgSize} viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"/></svg>';
         document.body.appendChild(editBlock);
       }
+      window.dispatchEvent(new Event("idu-edit-mode-change"));
       setEditMode(!editMode);
     };
     if (window.location.pathname === "/" || window.location.pathname === "/users/sign_in") {
@@ -525,6 +530,8 @@
     const heightRef = A2(height);
     const openPopupRef = A2(openPopup);
     const hiddenWidgetsRef = A2([]);
+    const resizeFromRightRef = A2(false);
+    const resizeViewportTopRef = A2(null);
     widthRef.current = width;
     heightRef.current = height;
     openPopupRef.current = openPopup;
@@ -553,17 +560,40 @@
       hiddenWidgetsRef.current = [];
       if (widgetRef.current) delete widgetRef.current.dataset.popupFromRight;
     }
+    function updateResizeSide() {
+      const widget = widgetRef.current;
+      if (!widget) return;
+      if (!window.editMode) {
+        delete widget.dataset.resizeFromRight;
+        return;
+      }
+      if (widthRef.current === 4) return;
+      const grid = widget.parentElement;
+      if (!grid) return;
+      const widgetRect = widget.getBoundingClientRect();
+      const gridRect = grid.getBoundingClientRect();
+      const gridStyle = getComputedStyle(grid);
+      const contentLeft = gridRect.left + parseFloat(gridStyle.paddingLeft || 0);
+      const contentRight = gridRect.right - parseFloat(gridStyle.paddingRight || 0);
+      const distanceFromLeft = Math.abs(widgetRect.left - contentLeft);
+      const distanceFromRight = Math.abs(contentRight - widgetRect.right);
+      if (distanceFromRight < distanceFromLeft) {
+        widget.dataset.resizeFromRight = "";
+      } else {
+        delete widget.dataset.resizeFromRight;
+      }
+    }
     function calcCornerPositions() {
       const widget = widgetRef.current;
       if (!widget) return [];
       const cellSize = getCellSize();
       const positions = [];
+      const widgetRect = widget.getBoundingClientRect();
       for (let i3 = 0; i3 < possibleLayout.length; i3++) {
         const layout = possibleLayout[i3];
-        const x2 = layout.w * cellSize;
-        const y3 = layout.h * cellSize;
-        const realX = widget.getBoundingClientRect().left + x2;
-        const realY = widget.getBoundingClientRect().top + y3;
+        const preview = getPreviewSize(layout.w, layout.h, cellSize, gap);
+        const realX = resizeFromRightRef.current ? widgetRect.right - preview.width : widgetRect.left + preview.width;
+        const realY = widgetRect.top + preview.height;
         positions.push({ realX, realY });
       }
       return positions;
@@ -587,7 +617,11 @@
         }
       }
       const nextLayout = possibleLayout[bestOption.index];
+      if (nextLayout.w === widthRef.current && nextLayout.h === heightRef.current) return;
+      resizeViewportTopRef.current = widgetRef.current.getBoundingClientRect().top;
       const preview = getPreviewSize(nextLayout.w, nextLayout.h, getCellSize(), gap);
+      widthRef.current = nextLayout.w;
+      heightRef.current = nextLayout.h;
       setWidth(nextLayout.w);
       setHeight(nextLayout.h);
       setPreviewWidth(preview.width);
@@ -606,16 +640,35 @@
         return null;
       }
     }
+    _2(() => {
+      if (resizeViewportTopRef.current === null) return;
+      const widget = widgetRef.current;
+      const previousTop = resizeViewportTopRef.current;
+      resizeViewportTopRef.current = null;
+      if (!widget) return;
+      const topDelta = widget.getBoundingClientRect().top - previousTop;
+      if (Math.abs(topDelta) > 1) window.scrollBy(0, topDelta);
+    }, [width, height]);
     y2(() => {
       if (!openPopup) restorePopupObstacles();
     }, [openPopup]);
     y2(() => {
       const resizeZone = resizeZoneRef.current;
       let activePointerId = null;
+      let resizeSideFrame = null;
       if (!resizeZone) return void 0;
+      function scheduleResizeSideUpdate() {
+        if (resizeSideFrame !== null) cancelAnimationFrame(resizeSideFrame);
+        resizeSideFrame = requestAnimationFrame(() => {
+          resizeSideFrame = null;
+          updateResizeSide();
+        });
+      }
       function startResize(e3) {
         if (!window.editMode) return;
         e3.preventDefault();
+        updateResizeSide();
+        resizeFromRightRef.current = widgetRef.current.hasAttribute("data-resize-from-right");
         activePointerId = e3.pointerId;
         resizeZone.setPointerCapture?.(e3.pointerId);
         resizingRef.current = true;
@@ -627,6 +680,7 @@
           resizeZone.releasePointerCapture?.(activePointerId);
           activePointerId = null;
         }
+        scheduleResizeSideUpdate();
       }
       function togglePopup(e3) {
         if (window.editMode) return;
@@ -650,11 +704,17 @@
       resizeZone.addEventListener("pointerdown", startResize);
       document.addEventListener("pointerup", stopResize);
       document.addEventListener("pointermove", dynamicSizeUpdate);
+      window.addEventListener("resize", scheduleResizeSideUpdate);
+      window.addEventListener("idu-edit-mode-change", scheduleResizeSideUpdate);
       widgetRef.current.addEventListener("click", togglePopup);
+      scheduleResizeSideUpdate();
       return () => {
+        if (resizeSideFrame !== null) cancelAnimationFrame(resizeSideFrame);
         resizeZone.removeEventListener("pointerdown", startResize);
         document.removeEventListener("pointerup", stopResize);
         document.removeEventListener("pointermove", dynamicSizeUpdate);
+        window.removeEventListener("resize", scheduleResizeSideUpdate);
+        window.removeEventListener("idu-edit-mode-change", scheduleResizeSideUpdate);
         widgetRef.current.removeEventListener("click", togglePopup);
         restorePopupObstacles();
       };
