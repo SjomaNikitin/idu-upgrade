@@ -39,6 +39,11 @@ export function Attendance({ widgetId, moveWidget, data }) {
 	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, {w: 2, h: 1});
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
 
+	function normalizePercentage(value) {
+		const number = Number(value);
+		return Number.isFinite(number) ? number : 0;
+	}
+
 	function normalizeLessonName(lessonName) {
 		let names = ['fizyczne', 'WF', 'godzina', 'GW', 'biznes', 'BIZ', 'kultura', 'kultura']
 		for (let i=0; i<names.length; i+=2) {
@@ -49,7 +54,23 @@ export function Attendance({ widgetId, moveWidget, data }) {
 		return lessonName;
 	}
 
+	function loadData(storageKey) {
+		const saved = localStorage.getItem(storageKey);
+
+		if (!saved) return null;
+
+		try {
+			return JSON.parse(saved);
+		} catch {
+			return null;
+		}
+	}
+
 	async function fetchAttendanceStats() {
+		let attendanceData = loadData('attendance')
+		if (attendanceData && attendanceData.date === new Date().getDate()) {
+			return attendanceData.summary;
+		}
 		const res = await fetch(attendance[0].seeMoreUrl, {
 			credentials: 'include',
 		});
@@ -75,7 +96,7 @@ export function Attendance({ widgetId, moveWidget, data }) {
 				summaryCells?.[2].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(',', '.')
 			),
 		};
-
+		localStorage.setItem('attendance', JSON.stringify({summary: summary, date: new Date().getDate()}));
 		return summary;
 	}
 
@@ -121,6 +142,10 @@ export function Attendance({ widgetId, moveWidget, data }) {
 
 			async function loadStats() {
 				const data = await fetchAttendanceStats();
+				data.lateness = normalizePercentage(data.lateness);
+				data.absence = normalizePercentage(data.absence);
+				data.presence = normalizePercentage(data.presence);
+
 				if (!cancelled) {
 					setStats(data);
 				}

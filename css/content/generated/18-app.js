@@ -1507,6 +1507,10 @@
       resizingRef
     } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 2, h: 1 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function normalizePercentage(value) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : 0;
+    }
     function normalizeLessonName(lessonName) {
       let names = ["fizyczne", "WF", "godzina", "GW", "biznes", "BIZ", "kultura", "kultura"];
       for (let i3 = 0; i3 < names.length; i3 += 2) {
@@ -1516,7 +1520,20 @@
       }
       return lessonName;
     }
+    function loadData(storageKey) {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) return null;
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return null;
+      }
+    }
     async function fetchAttendanceStats() {
+      let attendanceData = loadData("attendance");
+      if (attendanceData && attendanceData.date === (/* @__PURE__ */ new Date()).getDate()) {
+        return attendanceData.summary;
+      }
       const res = await fetch(attendance[0].seeMoreUrl, {
         credentials: "include"
       });
@@ -1538,6 +1555,7 @@
           summaryCells?.[2].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(",", ".")
         )
       };
+      localStorage.setItem("attendance", JSON.stringify({ summary, date: (/* @__PURE__ */ new Date()).getDate() }));
       return summary;
     }
     function AttendanceRow({ item, rowWidth }) {
@@ -1565,6 +1583,9 @@
         let cancelled = false;
         async function loadStats() {
           const data2 = await fetchAttendanceStats();
+          data2.lateness = normalizePercentage(data2.lateness);
+          data2.absence = normalizePercentage(data2.absence);
+          data2.presence = normalizePercentage(data2.presence);
           if (!cancelled) {
             setStats(data2);
           }
