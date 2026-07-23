@@ -25,10 +25,44 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 	const widthRef = useRef(width);
 	const heightRef = useRef(height);
 	const openPopupRef = useRef(openPopup);
+	const hiddenWidgetsRef = useRef([]);
 
 	widthRef.current = width;
 	heightRef.current = height;
 	openPopupRef.current = openPopup;
+
+	function setBlockingWidgetsHidden(hidden) {
+		const widget = widgetRef.current;
+		if (!widget) return;
+
+		const widgets = Array.from(document.querySelectorAll('.widgets-grid .widget'));
+		const currentIndex = widgets.findIndex((item) => item.dataset.widgetId === name);
+
+		if (currentIndex === -1) return;
+
+		if (!hidden) {
+			hiddenWidgetsRef.current.forEach((item) => item.classList.remove('widget-popup-hidden'));
+			hiddenWidgetsRef.current = [];
+			return;
+		}
+
+		const rect = widget.getBoundingClientRect();
+		const widgetCenter = rect.left + rect.width / 2;
+		const isRightSided = widgetCenter > window.innerWidth / 2;
+
+		if (!isRightSided) {
+			hiddenWidgetsRef.current = [];
+			return;
+		}
+
+		const blockingWidgets = widgets.slice(0, currentIndex).filter((candidate) => {
+			const candidateRect = candidate.getBoundingClientRect();
+			return candidateRect.top < rect.bottom && candidateRect.left < rect.left;
+		});
+
+		blockingWidgets.forEach((item) => item.classList.add('widget-popup-hidden'));
+		hiddenWidgetsRef.current = blockingWidgets;
+	}
 
 	function calcCornerPositions() {
 		const widget = widgetRef.current;
@@ -74,7 +108,6 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 
 		const nextLayout = possibleLayout[bestOption.index];
 		const preview = getPreviewSize(nextLayout.w, nextLayout.h, getCellSize(), gap);
-
 		setWidth(nextLayout.w);
 		setHeight(nextLayout.h);
 		setPreviewWidth(preview.width);
@@ -126,7 +159,9 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 			let finalSize;
 			if (openPopupRef.current) {
 				finalSize = widgetLastSizeRef.current;
+				setBlockingWidgetsHidden(false);
 			} else {
+				setBlockingWidgetsHidden(true);
 				finalSize = fullSize;
 				widgetLastSizeRef.current = { w: widthRef.current, h: heightRef.current };
 			}
@@ -149,6 +184,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 			document.removeEventListener('pointerup', stopResize);
 			document.removeEventListener('pointermove', dynamicSizeUpdate);
 			widgetRef.current.removeEventListener('click', togglePopup);
+			setBlockingWidgetsHidden(false);
 		};
 	}, []);
 
@@ -157,6 +193,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 		height,
 		previewWidth,
 		previewHeight,
+		openPopup,
 		widgetRef,
 		resizeZoneRef,
 		resizingRef

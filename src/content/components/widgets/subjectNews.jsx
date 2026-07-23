@@ -18,6 +18,7 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 		height,
 		previewWidth,
 		previewHeight,
+		openPopup,
 		widgetRef,
 		resizeZoneRef,
 		resizingRef,
@@ -91,9 +92,9 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 	const Variant = gradeVariants[`${width}${height}`] || Announcements22;
 
 	return (
-		<div ref={widgetRef} id="announcementsWidget" data-widget-id={widgetId} className={`widget w${width} h${height}`}>
+		<div ref={widgetRef} id="announcementsWidget" data-widget-id={widgetId} className={`widget w${width} h${height} ${window.editMode ? 'edit-mode' : ''} ${openPopup ? 'popup-open' : ''}`}>
 			<div
-				className="inner-widget"
+				className={`inner-widget ${openPopup ? 'widget-popup open widget-popup-open' : ''}`}
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, position: 'relative' }}
 			>
 				<Variant />
