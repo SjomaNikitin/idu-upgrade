@@ -49,6 +49,10 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 		hiddenWidgetsRef.current.forEach((sibling) => {
 			sibling.classList.add('widget-popup-obstacle');
 		});
+
+		if (hiddenWidgetsRef.current.length) {
+			widget.dataset.popupFromRight = '';
+		}
 	}
 
 	function restorePopupObstacles() {
@@ -56,6 +60,7 @@ export function useWidgetResize(possibleLayout, name, gap = 16, fullSize, popup 
 			sibling.classList.remove('widget-popup-obstacle');
 		});
 		hiddenWidgetsRef.current = [];
+		if (widgetRef.current) delete widgetRef.current.dataset.popupFromRight;
 	}
 
 	function calcCornerPositions() {

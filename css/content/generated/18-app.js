@@ -542,12 +542,16 @@
       hiddenWidgetsRef.current.forEach((sibling) => {
         sibling.classList.add("widget-popup-obstacle");
       });
+      if (hiddenWidgetsRef.current.length) {
+        widget.dataset.popupFromRight = "";
+      }
     }
     function restorePopupObstacles() {
       hiddenWidgetsRef.current.forEach((sibling) => {
         sibling.classList.remove("widget-popup-obstacle");
       });
       hiddenWidgetsRef.current = [];
+      if (widgetRef.current) delete widgetRef.current.dataset.popupFromRight;
     }
     function calcCornerPositions() {
       const widget = widgetRef.current;
