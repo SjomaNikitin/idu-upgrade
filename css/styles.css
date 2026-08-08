@@ -61,6 +61,7 @@
 	--attendance-text-color: green;
 	--absence-text-color: red;
 	--lateness-text-color: orange;
+	--news-date-bg: #d2d2d7;
 }
 
 :root[data-theme="Ocean"] {
@@ -72,7 +73,7 @@
 	--module-color: rgb(42, 69, 75);
 	--background-color: rgb(19, 35, 44);
 	--module-shadow-color: rgba(0, 0, 0, 0);
-	--module-border-color: rgb(28, 49, 57);
+	--module-border-color: rgb(45 101 90);
 	--main-text-color: rgb(145, 219, 164);
 	--input-field-color: rgb(33, 55, 63);
 	--darker-messages-color: rgb(33, 55, 63);
@@ -93,7 +94,7 @@
 	--attendance-wheel-color: rgb(145, 219, 164);
 	--upsent-wheel-color: rgb(14, 28, 38);
 	--latency-wheel-color: rgb(53 90 97);
-
+	--news-date-bg: rgb(43 87 94);
 }
 
 :root[data-theme="Dzaga"] {
@@ -126,6 +127,8 @@
 	--attendance-wheel-color: rgb(70, 129, 137);
 	--upsent-wheel-color: rgb(3, 25, 38);
 	--latency-wheel-color: rgb(157, 190, 187);
+	--news-date-bg: rgb(3, 25, 38);
+
 }
 
 :root[data-theme="Besties"] {
@@ -138,7 +141,7 @@
 	--background-color: rgba(255, 169, 185);
 	--module-shadow-color: rgba(115, 108, 81, 0.45);
 	--underline-color: rgb(252 196 183 / 0.54);
-	--module-border-color: rgba(252, 196, 183);
+	--module-border-color: rgb(194 148 137);
 	--main-text-color: rgb(147, 67, 81);
 	--input-field-color: rgb(255, 226, 223);
 	--darker-messages-color: rgba(252, 196, 183);
@@ -159,6 +162,8 @@
 	--attendance-wheel-color: rgb(228, 72, 99);
 	--upsent-wheel-color: rgb(147, 67, 81);
 	--latency-wheel-color: rgba(255, 169, 185);
+	--news-date-bg: rgb(194 148 137);
+
 }
 
 /* Use media tag not to break desktop version */
@@ -1411,6 +1416,7 @@
 		user-select: none;
 		-webkit-user-select: none;
 		-webkit-touch-callout: none;
+		border: 1px solid var(--module-border-color);
 	}
 
 	.inner-widget *{
@@ -1557,18 +1563,6 @@
 		background-color: var(--schedule-lesson-color);
 	}
 
-	#announcementsWidget.w2{
-		h1{
-			font-size: 1.1rem;
-		}
-	}
-
-	#announcementsWidget.w4{
-		h1{
-			font-size: 1.4rem;
-		}
-	}
-
 	.widget-title-box{
 		width: calc(100% + var(--padding-2) * 2);
 		margin-left: calc(var(--padding-2) * -1);
@@ -1613,11 +1607,52 @@
 		box-sizing: border-box;
 		padding-top: var(--padding-1);
 		a {
-			font-size: 1rem;
+			font-size: 0.9rem;
 			white-space: wrap;
 			word-break: break-word;
+			align-self: flex-start;
+			line-height: var(--padding-2);
+		}
+
+		a[href] {
+			color: var(--main-text-color) !important;
+		}
+		.widget-news-box-comments{
+			font-size: 0.8rem;
+			color: var(--mc);
+		}
+		height: calc(var(--padding-2) * 3);
+		margin: var(--padding-1);
+	}
+
+	.widget-news-box-date{
+		width: calc(var(--padding-2) * 3);
+		height: calc(var(--padding-2) * 3);
+		background-color: var(--news-date-bg);
+		padding: var(--padding-1);
+		line-height: var(--padding-2);
+		text-align: center;
+		border-radius: var(--padding-1);
+		margin-left: calc(var(--padding-1) * -1);
+		margin-right: var(--padding-1);
+		a {
+			line-height: var(--padding-2);
 		}
 	}
+
+	.widget-news-box-date-day{
+		font-size: 1rem;
+		font-weight: bold;
+		text-align: center;
+		color: var(--main-text-color);
+	}
+
+	.widget-news-box-date-month{
+		font-size: 0.85rem;
+		text-align: center;
+		color: var(--mc);
+	}
+
 
 	#announcementsWidget .widget.w4 .widget-news-box{
 		width: calc(50% - var(--padding-1));
@@ -1664,8 +1699,8 @@
 		font-weight: bold;
 	}
 
-	.widget.w2 h1{
-		font-size: 1.4rem;
+	.widget h1{
+		font-size: 1.2rem !important;
 	}
 
 	.widget.w2.h1 .widget-content-container{

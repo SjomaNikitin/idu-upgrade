@@ -30,7 +30,13 @@ export function News({ widgetId, moveWidget, data }) {
 	function NewsRow({ item, isLast = false}) {
 		return (
 			<div className={`widget-news-box ${isLast ? 'last' : ''}`}>
-				<a href={item.titleUrl}>{item.title}</a>
+				<div className={'widget-news-box-date'}>
+					<span className={"widget-news-box-date-day"}>{item.date.slice(0, 2)}</span>
+					<br></br>
+					<span className={"widget-news-box-date-month"}>{item.date.slice(3, 6)}</span>
+				</div>
+				<a href={item.titleUrl}>{item.title} <br></br> <span className={"widget-news-box-comments"}>komentarze: {item.comments}</span></a>
+
 			</div>
 		);
 	}
@@ -67,7 +73,7 @@ export function News({ widgetId, moveWidget, data }) {
 	}
 
 	function Announcements42 () {
-		return(<NewsList limit={4} lastLine={2} gradient={true}/>)
+		return(<NewsList limit={2} lastLine={2} gradient={false} allHref={false}/>)
 	}
 	function Announcements24 () {
 		return(<NewsList limit={6} gradient={true}/>)

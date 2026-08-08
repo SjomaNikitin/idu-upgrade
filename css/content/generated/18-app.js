@@ -1406,7 +1406,7 @@
     } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function NewsRow({ item, isLast = false }) {
-      return /* @__PURE__ */ k("div", { className: `widget-news-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("a", { href: item.titleUrl }, item.title));
+      return /* @__PURE__ */ k("div", { className: `widget-news-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("div", { className: "widget-news-box-date" }, /* @__PURE__ */ k("span", { className: "widget-news-box-date-day" }, item.date.slice(0, 2)), /* @__PURE__ */ k("br", null), /* @__PURE__ */ k("span", { className: "widget-news-box-date-month" }, item.date.slice(3, 6))), /* @__PURE__ */ k("a", { href: item.titleUrl }, item.title, " ", /* @__PURE__ */ k("br", null), " ", /* @__PURE__ */ k("span", { className: "widget-news-box-comments" }, "komentarze: ", item.comments)));
     }
     function NewsList({ limit, lastLine = 1, gradient = false, allHref = true }) {
       const visibleNews = news.slice(0, limit);
@@ -1435,7 +1435,7 @@
       return /* @__PURE__ */ k(NewsList, { limit: 2, gradient: true });
     }
     function Announcements42() {
-      return /* @__PURE__ */ k(NewsList, { limit: 4, lastLine: 2, gradient: true });
+      return /* @__PURE__ */ k(NewsList, { limit: 2, lastLine: 2, gradient: false, allHref: false });
     }
     function Announcements24() {
       return /* @__PURE__ */ k(NewsList, { limit: 6, gradient: true });
