@@ -7,7 +7,6 @@ import { useWidgetDragging } from './widgetDragging.js';
 export function News({ widgetId, moveWidget, data }) {
 	const news = data.news;
 	const possibleLayout = [
-		{ w: 2, h: 2 },
 		{ w: 4, h: 2 },
 		{ w: 2, h: 4},
 		{ w: 4, h: 4},
@@ -23,7 +22,7 @@ export function News({ widgetId, moveWidget, data }) {
 		widgetRef,
 		resizeZoneRef,
 		resizingRef,
-	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, {w: 4, h: 2});
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
 
 

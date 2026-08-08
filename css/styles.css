@@ -738,7 +738,7 @@
 	}
 
 	.profile-event .date {
-		color: var(--main-text-color);
+		color: var(--mc);
 	}
 
 	body[path="/users/sign_in"] .remember-me {
@@ -830,13 +830,11 @@
 	.priority_1 {
 		border-color: var(--module-border-color) !important;
 		border-width: 0;
-		border-bottom: 2px solid;
 	}
 
 	.priority_2 {
 		border-color: var(--underline-color) !important;
 		border-width: 0;
-		border-bottom: 2px solid;
 	}
 
 	.apple_pagination {
@@ -1877,5 +1875,14 @@
 		border-radius: var(--padding-1);
 		z-index: 999;
 		box-shadow: 0 4px 8px var(--module-shadow-color);
+	}
+	.profile-event{
+		padding: var(--padding-1);
+		span {
+			color: var(--mc);
+			a[href]{
+				color: var(--main-text-color) !important;
+			}
+		}
 	}
 }

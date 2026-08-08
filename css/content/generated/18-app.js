@@ -1387,7 +1387,6 @@
   function News({ widgetId, moveWidget: moveWidget2, data }) {
     const news = data.news;
     const possibleLayout = [
-      { w: 2, h: 2 },
       { w: 4, h: 2 },
       { w: 2, h: 4 },
       { w: 4, h: 4 },
@@ -1403,7 +1402,7 @@
       widgetRef,
       resizeZoneRef,
       resizingRef
-    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 4, h: 2 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function NewsRow({ item, isLast = false }) {
       return /* @__PURE__ */ k("div", { className: `widget-news-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("div", { className: "widget-news-box-date" }, /* @__PURE__ */ k("span", { className: "widget-news-box-date-day" }, item.date.slice(0, 2)), /* @__PURE__ */ k("br", null), /* @__PURE__ */ k("span", { className: "widget-news-box-date-month" }, item.date.slice(3, 6))), /* @__PURE__ */ k("a", { href: item.titleUrl }, item.title, " ", /* @__PURE__ */ k("br", null), " ", /* @__PURE__ */ k("span", { className: "widget-news-box-comments" }, "komentarze: ", item.comments)));
