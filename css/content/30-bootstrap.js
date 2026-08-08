@@ -2,7 +2,7 @@ window.loadWebsiteTheme()
 let svgSize = "60%";
 window.addEventListener("DOMContentLoaded", function () {
 	const mockData = window.__IDU_MOCK_DATA;
-	if (window.innerWidth < window.innerHeight) {
+	if (window.innerWidth < window.innerHeight || mockData) {
 		const pageData = mockData || {
 			homeworkUrl: extractHomeWorkUrl(),
 			reviewsUrl: extractReviewsUrl(),
@@ -26,6 +26,8 @@ window.addEventListener("DOMContentLoaded", function () {
 		}
 		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader();
 		console.log("Custom header loaded:", customHeaderLoaded)
+		const customFooterLoaded = typeof replaceFooter === "function" && replaceFooter();
+		console.log("Custom footer loaded:", customFooterLoaded)
 		if (window.location.pathname === "/" || mockData) {
 			const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent(pageData)
 			console.log("Custom content loaded:", customContentLoaded)
@@ -72,5 +74,3 @@ window.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 })
-
-

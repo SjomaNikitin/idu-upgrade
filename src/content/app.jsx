@@ -2,6 +2,7 @@
 import { h, render } from "preact";
 import { Header } from "./components/header.jsx";
 import { MainContent } from "./components/mainContent.jsx";
+import { Footer } from "./components/footer.jsx";
 
 window.replaceHeader = function replaceHeader() {
 	const oldHeader = document.querySelector("#top");
@@ -30,3 +31,21 @@ window.replaceMainContent = function replaceMainContent(data) {
 	return true;
 };
 
+window.replaceFooter = function replaceFooter() {
+	const oldFooter = document.getElementById("footer");
+	const mountPoint = document.createElement("footer");
+	mountPoint.id = "footer";
+
+	if (oldFooter) {
+		oldFooter.replaceWith(mountPoint);
+	} else {
+		document.body.append(mountPoint);
+	}
+
+	if (window.location.pathname === "/users/sign_in") {
+		render(<Footer/>, mountPoint);
+	}
+
+	render(<Footer/>, mountPoint);
+	return true;
+};

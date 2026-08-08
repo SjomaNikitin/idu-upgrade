@@ -1943,6 +1943,24 @@
     return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("div", { className: "widgets-grid" }, widgets.map(renderWidget)));
   }
 
+  // src/content/components/footer.jsx
+  var supportUrl = "https://sjomanikitin.github.io/idu-upgrade/";
+  var privacyUrl = "https://sjomanikitin.github.io/idu-upgrade/privacy.html";
+  var sourceUrl = "https://github.com/SjomaNikitin/idu-upgrade";
+  function Footer() {
+    const isSignInPage = window.location.pathname === "/users/sign_in" && !window.__IDU_MOCK_DATA;
+    return /* @__PURE__ */ k(
+      "div",
+      {
+        className: "idu-app-footer",
+        style: isSignInPage ? { display: "none", bottom: "0px" } : void 0
+      },
+      /* @__PURE__ */ k("div", { className: "idu-app-footer__identity" }, /* @__PURE__ */ k("strong", null, "IDU2"), /* @__PURE__ */ k("span", null, "\u017Bycie szkolne w jednym miejscu")),
+      /* @__PURE__ */ k("nav", { className: "idu-app-footer__links", "aria-label": "Informacje o aplikacji" }, /* @__PURE__ */ k("a", { href: privacyUrl }, "Polityka prywatno\u015Bci"), /* @__PURE__ */ k("a", { href: supportUrl }, "Pomoc"), /* @__PURE__ */ k("a", { href: sourceUrl }, "Kod \u017Ar\xF3d\u0142owy")),
+      /* @__PURE__ */ k("p", { className: "idu-app-footer__legal" }, "\xA9 2026 IDU2 \xB7 Projekt niezale\u017Cny")
+    );
+  }
+
   // src/content/app.jsx
   window.replaceHeader = function replaceHeader() {
     const oldHeader = document.querySelector("#top");
@@ -1964,6 +1982,21 @@
     if (!oldMainContent) return false;
     oldMainContent.innerHTML = "";
     R(/* @__PURE__ */ k(MainContent, { data }), oldMainContent);
+    return true;
+  };
+  window.replaceFooter = function replaceFooter() {
+    const oldFooter = document.getElementById("footer");
+    const mountPoint = document.createElement("footer");
+    mountPoint.id = "footer";
+    if (oldFooter) {
+      oldFooter.replaceWith(mountPoint);
+    } else {
+      document.body.append(mountPoint);
+    }
+    if (window.location.pathname === "/users/sign_in") {
+      R(/* @__PURE__ */ k(Footer, null), mountPoint);
+    }
+    R(/* @__PURE__ */ k(Footer, null), mountPoint);
     return true;
   };
 })();
