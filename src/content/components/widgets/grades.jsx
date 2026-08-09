@@ -112,20 +112,26 @@ export function Grades({ widgetId, moveWidget, data }) {
 		}, [showDescription, item.gradeDescriptionUrl]);
 
 		return (
-			<div className={`widget-grade-box ${isLast ? 'last' : ''}`}>
-				<div className={'widget-grade-box-value'}>
+			<div className={`widget-grade-box ${showDescription ? 'with-description' : ''}`}>
+				<div className="widget-grade-box-value">
 					<span>{item.value}</span>
 				</div>
-				<a href={item.subjectUrl} title={item.subject}>{item.subject}</a>
-				{showDescription && (
-					<a
-						ref={descriptionLinkRef}
-						href={item.gradeDescriptionUrl}
-						className="grade-description fancybox"
-					>
-						{item.description}
+
+				<div className="grade-text">
+					<a href={item.subjectUrl} title={item.subject}>
+						{item.subject}
 					</a>
-				)}
+
+					{showDescription && (
+						<a
+							ref={descriptionLinkRef}
+							href={item.gradeDescriptionUrl}
+							className="grade-description fancybox"
+						>
+							{item.description}
+						</a>
+					)}
+				</div>
 			</div>
 		);
 	}
@@ -137,7 +143,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 
 		return (
 			<div
-				style={{ width: `${previewWidth}px`, height: `${previewHeight}px` }}
+				style={{ width: `${previewWidth}px`, height: `${previewHeight}px`, gap: 'var(--padding-1)'}}
 				className="widget-content-container"
 			>
 				<div className="widget-title-box" style={{marginBottom: 'var(--padding-1)'}}>
@@ -208,7 +214,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 	}
 
 	function Grades46 () {
-		return <GradesList limit={6} lastLine={2} showDescription={true} allHref={true}/>;
+		return <GradesList limit={7} lastLine={2} showDescription={true} allHref={true}/>;
 	}
 
 	const gradeVariants = {

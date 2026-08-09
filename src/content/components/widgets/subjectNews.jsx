@@ -45,7 +45,7 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px` }}
 				className="widget-content-container"
 			>
-				<div className="widget-title-box">
+				<div className="widget-title-box" style={{marginBottom: 'var(--padding-1)'}}>
 					<h1>Ogłoszenia Przedmiotowe</h1>
 					<svg className={"titleArrow"} fill="currentColor" version="1.1" baseProfile="tiny" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
 					     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"

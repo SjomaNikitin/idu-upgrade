@@ -1118,7 +1118,7 @@
         };
         window.jQuery(descriptionLinkRef.current).fancybox(options);
       }, [showDescription, item.gradeDescriptionUrl]);
-      return /* @__PURE__ */ k("div", { className: `widget-grade-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("div", { className: "widget-grade-box-value" }, /* @__PURE__ */ k("span", null, item.value)), /* @__PURE__ */ k("a", { href: item.subjectUrl, title: item.subject }, item.subject), showDescription && /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { className: `widget-grade-box ${showDescription ? "with-description" : ""}` }, /* @__PURE__ */ k("div", { className: "widget-grade-box-value" }, /* @__PURE__ */ k("span", null, item.value)), /* @__PURE__ */ k("div", { className: "grade-text" }, /* @__PURE__ */ k("a", { href: item.subjectUrl, title: item.subject }, item.subject), showDescription && /* @__PURE__ */ k(
         "a",
         {
           ref: descriptionLinkRef,
@@ -1126,7 +1126,7 @@
           className: "grade-description fancybox"
         },
         item.description
-      ));
+      )));
     }
     function GradesList({ limit, lastLine = 1, showDescription = false, allHref = false }) {
       const visibleGrades = preparedGrades.slice(0, limit);
@@ -1135,7 +1135,7 @@
       return /* @__PURE__ */ k(
         "div",
         {
-          style: { width: `${previewWidth}px`, height: `${previewHeight}px` },
+          style: { width: `${previewWidth}px`, height: `${previewHeight}px`, gap: "var(--padding-1)" },
           className: "widget-content-container"
         },
         /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "var(--padding-1)" } }, /* @__PURE__ */ k("h1", null, "Oceny"), /* @__PURE__ */ k(
@@ -1227,7 +1227,7 @@
       )));
     }
     function Grades46() {
-      return /* @__PURE__ */ k(GradesList, { limit: 6, lastLine: 2, showDescription: true, allHref: true });
+      return /* @__PURE__ */ k(GradesList, { limit: 7, lastLine: 2, showDescription: true, allHref: true });
     }
     const gradeVariants = {
       "22": Grades222,
@@ -1585,7 +1585,7 @@
           style: { width: `${previewWidth}px`, height: `${previewHeight}px` },
           className: "widget-content-container"
         },
-        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Og\u0142oszenia Przedmiotowe"), /* @__PURE__ */ k(
+        /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "var(--padding-1)" } }, /* @__PURE__ */ k("h1", null, "Og\u0142oszenia Przedmiotowe"), /* @__PURE__ */ k(
           "svg",
           {
             className: "titleArrow",

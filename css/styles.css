@@ -1674,6 +1674,9 @@
 
 	.titleArrow{
 		margin-left: auto;
+		width: 16px;
+		height: 16px;
+		flex: 0 0 16px;
 	}
 
 	.titleIcon{
@@ -1704,15 +1707,24 @@
 		padding-bottom: var(--padding-2);
 	}
 
+	.widget.h6 .widget-grade-box{
+		width: 100% !important;
+		height: calc(var(--padding-2) * 4);
+		.widget-grade-box-value{
+			height: calc(var(--padding-2) * 4);
+		}
+	}
+
 	.widget-grade-box{
 		display: flex;
-		align-items: center;
 		width: 100%;
 		box-sizing: border-box;
 		background-color: var(--grades-box-bg);
-		margin: var(--padding-1);
+		margin-left: 0;
+		margin-right: 0;
 		border-radius: var(--padding-1);
 		padding-right: var(--padding-1);
+		padding-top: var(--padding-1);
 		.widget-grade-box-value{
 			color: var(--main-text-color) !important;
 			width: calc(var(--padding-2) * 3);
@@ -1725,6 +1737,8 @@
 			justify-content: center;
 			border-radius: var(--padding-1);
 			margin-right: var(--padding-1);
+			margin-bottom: auto;
+			margin-top: calc(var(--padding-1) * -1);
 			span{
 				font-weight: bold;
 				font-size: 1.2rem;
@@ -1735,13 +1749,44 @@
 			font-size: 0.9rem;
 			color: var(--main-text-color) !important;
 			font-weight: bold;
-			flex: 1;
 			min-width: 0;
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
 		}
 	}
+
+	.grade-text {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+	}
+	.grade-text > a {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		flex: 0 0 auto;
+	}
+
+	a[href].grade-description {
+		font-size: 0.8rem !important;
+		font-weight: normal !important;
+		color: var(--mc) !important;
+		min-width: 0;
+		overflow: hidden;
+		white-space: nowrap !important;
+		text-overflow: ellipsis;
+	}
+
+	.widget-grade-box.with-description {
+		height: auto;
+		min-height: calc(var(--padding-2) * 3);
+	}
+
 
 	.widget-subject-box{
 		background-color: var(--subjects-bg);
@@ -1783,6 +1828,7 @@
 
 		a[href] {
 			color: var(--main-text-color) !important;
+			font-weight: bold;
 		}
 		.widget-news-box-comments{
 			font-size: 0.8rem;
@@ -1805,6 +1851,7 @@
 		margin-top: calc(var(--padding-1) * -1);
 		a {
 			line-height: var(--padding-2);
+
 		}
 	}
 
@@ -1847,7 +1894,7 @@
 	}
 
 	.widget.w4 .widget-grade-box{
-		width: calc(50% - var(--padding-2));
+		width: calc(50% - var(--padding-1) / 2);
 	}
 
 	.widget-grade-box.last{
@@ -1857,8 +1904,8 @@
 
 	.grades-all-link{
 		position: absolute;
-		right: var(--padding-2);
-		bottom: var(--padding-2);
+		right: var(--padding-1);
+		bottom: var(--padding-1);
 		font-size: 1rem !important;
 		font-weight: bold;
 	}
