@@ -1620,7 +1620,7 @@
       return /* @__PURE__ */ k(NewsList, { limit: 2 });
     }
     function Announcements42() {
-      return /* @__PURE__ */ k(NewsList, { limit: 4, lastLine: 2 });
+      return /* @__PURE__ */ k(NewsList, { limit: 2, lastLine: 2 });
     }
     function Announcements21() {
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("h1", null, "Og\u0142oszenia Przedmiotowe"), /* @__PURE__ */ k(

@@ -26,7 +26,7 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 
 	function NewsRow({ item, isLast = false}) {
 		return (
-			<div className={`widget-news-box ${isLast ? 'last' : ''}`}>
+			<div className={`widget-news-box ${isLast ? 'last' : ''}`} >
 				<div className={'widget-news-box-date'}>
 					<span className={"widget-news-box-date-day"}>{item.date.slice(0, 2)}</span>
 					<br></br>
@@ -71,7 +71,7 @@ export function SubjectNews({ widgetId, moveWidget, data }) {
 	}
 
 	function Announcements42 () {
-		return(<NewsList limit={4} lastLine={2}/>)
+		return(<NewsList limit={2} lastLine={2}/>)
 	}
 
 	function Announcements21 () {

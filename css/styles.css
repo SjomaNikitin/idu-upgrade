@@ -1679,6 +1679,20 @@
 		flex: 0 0 16px;
 	}
 
+	#announcementsWidget .widget-news-box > a {
+		display: flex;
+		align-items: center;
+		align-self: stretch;
+	}
+
+	#announcementsWidget .widget-news-box {
+		padding: 0 !important;
+	}
+
+	#announcementsWidget .widget-news-box-date {
+		margin-top: 0;
+	}
+
 	.titleIcon{
 		background-color: var(--title-icon-bg);
 		display: flex;
