@@ -1090,7 +1090,27 @@
           style: { width: `${previewWidth}px`, height: `${previewHeight}px` },
           className: "widget-content-container"
         },
-        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Oceny")),
+        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Oceny"), /* @__PURE__ */ k(
+          "svg",
+          {
+            className: "titleArrow",
+            fill: "currentColor",
+            version: "1.1",
+            baseProfile: "tiny",
+            id: "Layer_1",
+            "xmlns:x": "&ns_extend;",
+            "xmlns:i": "&ns_ai;",
+            "xmlns:graph": "&ns_graphs;",
+            xmlns: "http://www.w3.org/2000/svg",
+            "xmlns:xlink": "http://www.w3.org/1999/xlink",
+            "xmlns:a": "http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/",
+            width: "16px",
+            height: "16px",
+            viewBox: "0 0 42 42",
+            "xml:space": "preserve"
+          },
+          /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " })
+        )),
         visibleGrades.map((item, index) => /* @__PURE__ */ k(
           GradeRow,
           {
@@ -1136,7 +1156,7 @@
       )));
     }
     function Grades41() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", style: { transform: "translateY(-1px)" } }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M6.31317 12.463C6.20006 9.29213 8.60976 6.6252 11.701 6.5C14.7923 6.6252 17.202 9.29213 17.0889 12.463C17.0889 13.78 18.4841 15.063 18.525 16.383C18.525 16.4017 18.525 16.4203 18.525 16.439C18.5552 17.2847 17.9124 17.9959 17.0879 18.029H13.9757C13.9786 18.677 13.7404 19.3018 13.3098 19.776C12.8957 20.2372 12.3123 20.4996 11.701 20.4996C11.0897 20.4996 10.5064 20.2372 10.0923 19.776C9.66161 19.3018 9.42346 18.677 9.42635 18.029H6.31317C5.48869 17.9959 4.84583 17.2847 4.87602 16.439C4.87602 16.4203 4.87602 16.4017 4.87602 16.383C4.91795 15.067 6.31317 13.781 6.31317 12.463Z", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M9.42633 17.279C9.01212 17.279 8.67633 17.6148 8.67633 18.029C8.67633 18.4432 9.01212 18.779 9.42633 18.779V17.279ZM13.9757 18.779C14.3899 18.779 14.7257 18.4432 14.7257 18.029C14.7257 17.6148 14.3899 17.279 13.9757 17.279V18.779ZM12.676 5.25C13.0902 5.25 13.426 4.91421 13.426 4.5C13.426 4.08579 13.0902 3.75 12.676 3.75V5.25ZM10.726 3.75C10.3118 3.75 9.97601 4.08579 9.97601 4.5C9.97601 4.91421 10.3118 5.25 10.726 5.25V3.75ZM9.42633 18.779H13.9757V17.279H9.42633V18.779ZM12.676 3.75H10.726V5.25H12.676V3.75Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Oceny"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { fill: "currentColor", width: "24px", height: "24px", viewBox: "0 0 24 24", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("rect", { x: "0", fill: "none", width: "24", height: "24" }), /* @__PURE__ */ k("g", null, /* @__PURE__ */ k("path", { d: "M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V5h14v14zM9 17H7v-5h2v5zm4 0h-2v-7h2v7zm4 0h-2V7h2v10z" })))), /* @__PURE__ */ k("h1", null, "Oceny"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
@@ -1204,7 +1224,27 @@
       return /* @__PURE__ */ k("div", { className: `widget-subject-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("a", { href: item.url }, item.name));
     }
     function SubjectsList({ lastLine = 1, classInfo = false }) {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Przedmioty")), classInfo ? /* @__PURE__ */ k("a", { href: subjects.classInfo.url, className: "widget-subjects-class" }, subjects.classInfo.name) : null, /* @__PURE__ */ k("div", { className: "widget-subjects-list" }, subjects.subjects.map((item, index) => /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Przedmioty"), /* @__PURE__ */ k(
+        "svg",
+        {
+          className: "titleArrow",
+          fill: "currentColor",
+          version: "1.1",
+          baseProfile: "tiny",
+          id: "Layer_1",
+          "xmlns:x": "&ns_extend;",
+          "xmlns:i": "&ns_ai;",
+          "xmlns:graph": "&ns_graphs;",
+          xmlns: "http://www.w3.org/2000/svg",
+          "xmlns:xlink": "http://www.w3.org/1999/xlink",
+          "xmlns:a": "http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/",
+          width: "16px",
+          height: "16px",
+          viewBox: "0 0 42 42",
+          "xml:space": "preserve"
+        },
+        /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " })
+      )), classInfo ? /* @__PURE__ */ k("a", { href: subjects.classInfo.url, className: "widget-subjects-class" }, subjects.classInfo.name) : null, /* @__PURE__ */ k("div", { className: "widget-subjects-list" }, subjects.subjects.map((item, index) => /* @__PURE__ */ k(
         SubjectRow,
         {
           key: `${item.name}-${index}`,
@@ -1240,7 +1280,24 @@
       )));
     }
     function Subjects41() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", style: { transform: "translateY(-1px)" } }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M6.31317 12.463C6.20006 9.29213 8.60976 6.6252 11.701 6.5C14.7923 6.6252 17.202 9.29213 17.0889 12.463C17.0889 13.78 18.4841 15.063 18.525 16.383C18.525 16.4017 18.525 16.4203 18.525 16.439C18.5552 17.2847 17.9124 17.9959 17.0879 18.029H13.9757C13.9786 18.677 13.7404 19.3018 13.3098 19.776C12.8957 20.2372 12.3123 20.4996 11.701 20.4996C11.0897 20.4996 10.5064 20.2372 10.0923 19.776C9.66161 19.3018 9.42346 18.677 9.42635 18.029H6.31317C5.48869 17.9959 4.84583 17.2847 4.87602 16.439C4.87602 16.4203 4.87602 16.4017 4.87602 16.383C4.91795 15.067 6.31317 13.781 6.31317 12.463Z", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M9.42633 17.279C9.01212 17.279 8.67633 17.6148 8.67633 18.029C8.67633 18.4432 9.01212 18.779 9.42633 18.779V17.279ZM13.9757 18.779C14.3899 18.779 14.7257 18.4432 14.7257 18.029C14.7257 17.6148 14.3899 17.279 13.9757 17.279V18.779ZM12.676 5.25C13.0902 5.25 13.426 4.91421 13.426 4.5C13.426 4.08579 13.0902 3.75 12.676 3.75V5.25ZM10.726 3.75C10.3118 3.75 9.97601 4.08579 9.97601 4.5C9.97601 4.91421 10.3118 5.25 10.726 5.25V3.75ZM9.42633 18.779H13.9757V17.279H9.42633V18.779ZM12.676 3.75H10.726V5.25H12.676V3.75Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Przedmioty"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k(
+        "svg",
+        {
+          version: "1.1",
+          id: "Icons",
+          xmlns: "http://www.w3.org/2000/svg",
+          "xmlns:xlink": "http://www.w3.org/1999/xlink",
+          viewBox: "0 0 32 32",
+          "xml:space": "preserve",
+          stroke: "currentColor",
+          fill: "none",
+          width: "28px",
+          height: "28px"
+        },
+        /* @__PURE__ */ k("polygon", { class: "st0", points: "4,11 15,18 28,9 17,2 ", stroke: "currentColor" }),
+        /* @__PURE__ */ k("path", { class: "st0", d: "M4,11v6l11,7l13-9l0,0c-1.2-1.2-1.5-3-0.7-4.5L28,9", stroke: "currentColor" }),
+        /* @__PURE__ */ k("path", { class: "st0", d: "M4,17v6l11,7l13-9l0,0c-1.2-1.2-1.5-3-0.7-4.5L28,15", stroke: "currentColor" })
+      )), /* @__PURE__ */ k("h1", null, "Przedmioty"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
@@ -1381,7 +1438,7 @@
       )));
     }
     function Schedule41() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", style: { transform: "translateY(-1px)" } }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M6.31317 12.463C6.20006 9.29213 8.60976 6.6252 11.701 6.5C14.7923 6.6252 17.202 9.29213 17.0889 12.463C17.0889 13.78 18.4841 15.063 18.525 16.383C18.525 16.4017 18.525 16.4203 18.525 16.439C18.5552 17.2847 17.9124 17.9959 17.0879 18.029H13.9757C13.9786 18.677 13.7404 19.3018 13.3098 19.776C12.8957 20.2372 12.3123 20.4996 11.701 20.4996C11.0897 20.4996 10.5064 20.2372 10.0923 19.776C9.66161 19.3018 9.42346 18.677 9.42635 18.029H6.31317C5.48869 17.9959 4.84583 17.2847 4.87602 16.439C4.87602 16.4203 4.87602 16.4017 4.87602 16.383C4.91795 15.067 6.31317 13.781 6.31317 12.463Z", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M9.42633 17.279C9.01212 17.279 8.67633 17.6148 8.67633 18.029C8.67633 18.4432 9.01212 18.779 9.42633 18.779V17.279ZM13.9757 18.779C14.3899 18.779 14.7257 18.4432 14.7257 18.029C14.7257 17.6148 14.3899 17.279 13.9757 17.279V18.779ZM12.676 5.25C13.0902 5.25 13.426 4.91421 13.426 4.5C13.426 4.08579 13.0902 3.75 12.676 3.75V5.25ZM10.726 3.75C10.3118 3.75 9.97601 4.08579 9.97601 4.5C9.97601 4.91421 10.3118 5.25 10.726 5.25V3.75ZM9.42633 18.779H13.9757V17.279H9.42633V18.779ZM12.676 3.75H10.726V5.25H12.676V3.75Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Plan Lekcji"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M4 9L20 9M8 9V20M6.2 20H17.8C18.9201 20 19.4802 20 19.908 19.782C20.2843 19.5903 20.5903 19.2843 20.782 18.908C21 18.4802 21 17.9201 21 16.8V7.2C21 6.0799 21 5.51984 20.782 5.09202C20.5903 4.71569 20.2843 4.40973 19.908 4.21799C19.4802 4 18.9201 4 17.8 4H6.2C5.0799 4 4.51984 4 4.09202 4.21799C3.71569 4.40973 3.40973 4.71569 3.21799 5.09202C3 5.51984 3 6.07989 3 7.2V16.8C3 17.9201 3 18.4802 3.21799 18.908C3.40973 19.2843 3.71569 19.5903 4.09202 19.782C4.51984 20 5.07989 20 6.2 20Z", stroke: "currentColor", "stroke-width": "1", "stroke-linecap": "round", "stroke-linejoin": "round" }))), /* @__PURE__ */ k("h1", null, "Plan Lekcji"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
@@ -1404,10 +1461,50 @@
       )));
     }
     function Schedule25() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "1rem" } }, /* @__PURE__ */ k("h1", null, "Plan Lekcji")), /* @__PURE__ */ k(ScheduleGrid, { scheduleData: schedule, mode: "today" }));
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Plan Lekcji"), /* @__PURE__ */ k(
+        "svg",
+        {
+          className: "titleArrow",
+          fill: "currentColor",
+          version: "1.1",
+          baseProfile: "tiny",
+          id: "Layer_1",
+          "xmlns:x": "&ns_extend;",
+          "xmlns:i": "&ns_ai;",
+          "xmlns:graph": "&ns_graphs;",
+          xmlns: "http://www.w3.org/2000/svg",
+          "xmlns:xlink": "http://www.w3.org/1999/xlink",
+          "xmlns:a": "http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/",
+          width: "16px",
+          height: "16px",
+          viewBox: "0 0 42 42",
+          "xml:space": "preserve"
+        },
+        /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " })
+      )), /* @__PURE__ */ k(ScheduleGrid, { scheduleData: schedule, mode: "today" }));
     }
     function Schedule46() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "1rem" } }, /* @__PURE__ */ k("h1", null, "Plan Lekcji")), /* @__PURE__ */ k(ScheduleGrid, { scheduleData: schedule, mode: "all" }));
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Plan Lekcji"), /* @__PURE__ */ k(
+        "svg",
+        {
+          className: "titleArrow",
+          fill: "currentColor",
+          version: "1.1",
+          baseProfile: "tiny",
+          id: "Layer_1",
+          "xmlns:x": "&ns_extend;",
+          "xmlns:i": "&ns_ai;",
+          "xmlns:graph": "&ns_graphs;",
+          xmlns: "http://www.w3.org/2000/svg",
+          "xmlns:xlink": "http://www.w3.org/1999/xlink",
+          "xmlns:a": "http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/",
+          width: "16px",
+          height: "16px",
+          viewBox: "0 0 42 42",
+          "xml:space": "preserve"
+        },
+        /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " })
+      )), /* @__PURE__ */ k(ScheduleGrid, { scheduleData: schedule, mode: "all" }));
     }
     const gradeVariants = {
       "21": Schedule21,
@@ -1458,7 +1555,27 @@
           style: { width: `${previewWidth}px`, height: `${previewHeight}px` },
           className: "widget-content-container"
         },
-        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Og\u0142oszenia Przedmiotowe")),
+        /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Og\u0142oszenia Przedmiotowe"), /* @__PURE__ */ k(
+          "svg",
+          {
+            className: "titleArrow",
+            fill: "currentColor",
+            version: "1.1",
+            baseProfile: "tiny",
+            id: "Layer_1",
+            "xmlns:x": "&ns_extend;",
+            "xmlns:i": "&ns_ai;",
+            "xmlns:graph": "&ns_graphs;",
+            xmlns: "http://www.w3.org/2000/svg",
+            "xmlns:xlink": "http://www.w3.org/1999/xlink",
+            "xmlns:a": "http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/",
+            width: "16px",
+            height: "16px",
+            viewBox: "0 0 42 42",
+            "xml:space": "preserve"
+          },
+          /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " })
+        )),
         visibleNews.map((item, index) => /* @__PURE__ */ k(
           NewsRow,
           {
@@ -1499,7 +1616,7 @@
       )));
     }
     function Announcements41() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", style: { transform: "translateY(-1px)" } }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M6.31317 12.463C6.20006 9.29213 8.60976 6.6252 11.701 6.5C14.7923 6.6252 17.202 9.29213 17.0889 12.463C17.0889 13.78 18.4841 15.063 18.525 16.383C18.525 16.4017 18.525 16.4203 18.525 16.439C18.5552 17.2847 17.9124 17.9959 17.0879 18.029H13.9757C13.9786 18.677 13.7404 19.3018 13.3098 19.776C12.8957 20.2372 12.3123 20.4996 11.701 20.4996C11.0897 20.4996 10.5064 20.2372 10.0923 19.776C9.66161 19.3018 9.42346 18.677 9.42635 18.029H6.31317C5.48869 17.9959 4.84583 17.2847 4.87602 16.439C4.87602 16.4203 4.87602 16.4017 4.87602 16.383C4.91795 15.067 6.31317 13.781 6.31317 12.463Z", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M9.42633 17.279C9.01212 17.279 8.67633 17.6148 8.67633 18.029C8.67633 18.4432 9.01212 18.779 9.42633 18.779V17.279ZM13.9757 18.779C14.3899 18.779 14.7257 18.4432 14.7257 18.029C14.7257 17.6148 14.3899 17.279 13.9757 17.279V18.779ZM12.676 5.25C13.0902 5.25 13.426 4.91421 13.426 4.5C13.426 4.08579 13.0902 3.75 12.676 3.75V5.25ZM10.726 3.75C10.3118 3.75 9.97601 4.08579 9.97601 4.5C9.97601 4.91421 10.3118 5.25 10.726 5.25V3.75ZM9.42633 18.779H13.9757V17.279H9.42633V18.779ZM12.676 3.75H10.726V5.25H12.676V3.75Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Og\u0142oszenia Przedmiotowe"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "24px", height: "24px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M11.9426 1.25C9.63423 1.24999 7.82519 1.24998 6.41371 1.43975C4.96897 1.63399 3.82895 2.03933 2.93414 2.93414C2.03933 3.82895 1.63399 4.96897 1.43975 6.41371C1.24998 7.82519 1.24999 9.63423 1.25 11.9426V12.0574C1.24999 14.3658 1.24998 16.1748 1.43975 17.5863C1.63399 19.031 2.03933 20.1711 2.93414 21.0659C3.82895 21.9607 4.96897 22.366 6.41371 22.5603C7.82519 22.75 9.63423 22.75 11.9426 22.75H12.0574C14.3658 22.75 16.1748 22.75 17.5863 22.5603C19.031 22.366 20.1711 21.9607 21.0659 21.0659C21.9607 20.1711 22.366 19.031 22.5603 17.5863C22.75 16.1748 22.75 14.3658 22.75 12.0574V10.5C22.75 10.0858 22.4142 9.75 22 9.75C21.5858 9.75 21.25 10.0858 21.25 10.5V12C21.25 14.3782 21.2484 16.0864 21.0736 17.3864C20.9018 18.6648 20.5749 19.4355 20.0052 20.0052C19.4355 20.5749 18.6648 20.9018 17.3864 21.0736C16.0864 21.2484 14.3782 21.25 12 21.25C9.62178 21.25 7.91356 21.2484 6.61358 21.0736C5.33517 20.9018 4.56445 20.5749 3.9948 20.0052C3.42514 19.4355 3.09825 18.6648 2.92637 17.3864C2.75159 16.0864 2.75 14.3782 2.75 12C2.75 9.62178 2.75159 7.91356 2.92637 6.61358C3.09825 5.33517 3.42514 4.56445 3.9948 3.9948C4.56445 3.42514 5.33517 3.09825 6.61358 2.92637C7.91356 2.75159 9.62178 2.75 12 2.75H13.5C13.9142 2.75 14.25 2.41421 14.25 2C14.25 1.58579 13.9142 1.25 13.5 1.25H11.9426Z", fill: "currentColor" }), /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M19 1.25C16.9289 1.25 15.25 2.92893 15.25 5C15.25 7.07107 16.9289 8.75 19 8.75C21.0711 8.75 22.75 7.07107 22.75 5C22.75 2.92893 21.0711 1.25 19 1.25ZM16.75 5C16.75 3.75736 17.7574 2.75 19 2.75C20.2426 2.75 21.25 3.75736 21.25 5C21.25 6.24264 20.2426 7.25 19 7.25C17.7574 7.25 16.75 6.24264 16.75 5Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Og\u0142oszenia Przedmiotowe"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
@@ -1784,7 +1901,27 @@
       let usableData = attendance.slice(0, limit);
       const seeMoreHref = attendance[0]?.seeMoreUrl;
       const shouldShowSeeMore = showMore && seeMoreHref && seeMoreHref !== "mogData";
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "var(--padding-1)" } }, /* @__PURE__ */ k("h1", null, "Obecno\u015B\u0107")), /* @__PURE__ */ k("div", { className: "attendance-grid", style: { width: width2 } }, usableData.map((item, index) => /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Obecno\u015Bci"), /* @__PURE__ */ k(
+        "svg",
+        {
+          className: "titleArrow",
+          fill: "currentColor",
+          version: "1.1",
+          baseProfile: "tiny",
+          id: "Layer_1",
+          "xmlns:x": "&ns_extend;",
+          "xmlns:i": "&ns_ai;",
+          "xmlns:graph": "&ns_graphs;",
+          xmlns: "http://www.w3.org/2000/svg",
+          "xmlns:xlink": "http://www.w3.org/1999/xlink",
+          "xmlns:a": "http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/",
+          width: "16px",
+          height: "16px",
+          viewBox: "0 0 42 42",
+          "xml:space": "preserve"
+        },
+        /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " })
+      )), /* @__PURE__ */ k("div", { className: "attendance-grid", style: { width: width2 } }, usableData.map((item, index) => /* @__PURE__ */ k(
         AttendanceRow,
         {
           key: `${item.subjectUrl}-${index}`,
@@ -1870,7 +2007,7 @@
       )));
     }
     function Attendance41() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", style: { transform: "translateY(-1px)" } }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M6.31317 12.463C6.20006 9.29213 8.60976 6.6252 11.701 6.5C14.7923 6.6252 17.202 9.29213 17.0889 12.463C17.0889 13.78 18.4841 15.063 18.525 16.383C18.525 16.4017 18.525 16.4203 18.525 16.439C18.5552 17.2847 17.9124 17.9959 17.0879 18.029H13.9757C13.9786 18.677 13.7404 19.3018 13.3098 19.776C12.8957 20.2372 12.3123 20.4996 11.701 20.4996C11.0897 20.4996 10.5064 20.2372 10.0923 19.776C9.66161 19.3018 9.42346 18.677 9.42635 18.029H6.31317C5.48869 17.9959 4.84583 17.2847 4.87602 16.439C4.87602 16.4203 4.87602 16.4017 4.87602 16.383C4.91795 15.067 6.31317 13.781 6.31317 12.463Z", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M9.42633 17.279C9.01212 17.279 8.67633 17.6148 8.67633 18.029C8.67633 18.4432 9.01212 18.779 9.42633 18.779V17.279ZM13.9757 18.779C14.3899 18.779 14.7257 18.4432 14.7257 18.029C14.7257 17.6148 14.3899 17.279 13.9757 17.279V18.779ZM12.676 5.25C13.0902 5.25 13.426 4.91421 13.426 4.5C13.426 4.08579 13.0902 3.75 12.676 3.75V5.25ZM10.726 3.75C10.3118 3.75 9.97601 4.08579 9.97601 4.5C9.97601 4.91421 10.3118 5.25 10.726 5.25V3.75ZM9.42633 18.779H13.9757V17.279H9.42633V18.779ZM12.676 3.75H10.726V5.25H12.676V3.75Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Obecno\u015B\u0107"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M11.5195 1.86795C10.9156 1.46761 10.3263 1.35183 9.67724 1.45583C9.1236 1.54455 8.52424 1.79812 7.88107 2.07022L7.81371 2.09871C7.19223 2.36147 6.59398 2.68338 6.02762 3.0618C4.2598 4.24303 2.88194 5.92195 2.0683 7.88625C1.25466 9.85056 1.04177 12.012 1.45656 14.0973C1.87135 16.1826 2.89519 18.0981 4.39861 19.6015C5.90202 21.1049 7.81749 22.1287 9.90278 22.5435C11.9881 22.9583 14.1495 22.7454 16.1138 21.9318C18.0782 21.1182 19.7571 19.7403 20.9383 17.9725C21.3167 17.4061 21.6386 16.8079 21.9014 16.1864L21.9299 16.1191C22.202 15.4759 22.4555 14.8765 22.5443 14.3229C22.6483 13.6738 22.5325 13.0845 22.1322 12.4806C21.7022 11.8321 21.1171 11.5185 20.4065 11.3765C19.7731 11.2499 18.9813 11.25 18.0711 11.2501L16 11.2501C15.036 11.2501 14.3884 11.2485 13.9054 11.1836C13.4439 11.1215 13.2464 11.0143 13.1161 10.884C12.9858 10.7537 12.8786 10.5562 12.8165 10.0947C12.7516 9.61167 12.75 8.96411 12.75 8.0001L12.75 5.92901C12.7501 5.01878 12.7502 4.22701 12.6236 3.59364C12.4816 2.88305 12.168 2.29786 11.5195 1.86795ZM8.39784 3.4803C9.13201 3.1699 9.56231 2.99338 9.91457 2.93694C10.1907 2.89269 10.3996 2.92526 10.6907 3.11818C10.9371 3.28153 11.0709 3.47861 11.1527 3.88759C11.2466 4.35736 11.25 4.99772 11.25 6.0001L11.25 8.05209C11.25 8.95056 11.2499 9.6998 11.3299 10.2946C11.4143 10.9224 11.6 11.4892 12.0555 11.9446C12.5109 12.4001 13.0777 12.5858 13.7055 12.6702C14.3003 12.7502 15.0495 12.7501 15.948 12.7501L18 12.7501C19.0024 12.7501 19.6427 12.7535 20.1125 12.8474C20.5215 12.9292 20.7186 13.063 20.8819 13.3094C21.0748 13.6005 21.1074 13.8094 21.0632 14.0855C21.0067 14.4378 20.8302 14.8681 20.5198 15.6023C20.2937 16.137 20.0167 16.6518 19.6911 17.1391C18.6747 18.6603 17.23 19.8459 15.5398 20.546C13.8496 21.2461 11.9897 21.4293 10.1954 21.0724C8.40109 20.7154 6.7529 19.8345 5.45927 18.5408C4.16563 17.2472 3.28465 15.599 2.92774 13.8047C2.57083 12.0104 2.75401 10.1505 3.45412 8.46028C4.15423 6.77006 5.33982 5.32541 6.86098 4.30901C7.34832 3.98337 7.86308 3.70639 8.39784 3.4803Z", fill: "currentColor" }), /* @__PURE__ */ k("path", { d: "M14.6869 1.58859C14.2858 1.48535 13.8769 1.72684 13.7737 2.12798C13.6704 2.52912 13.9119 2.938 14.3131 3.04125C17.5624 3.87758 20.1223 6.43743 20.9586 9.68682C21.0619 10.088 21.4708 10.3295 21.8719 10.2262C22.273 10.123 22.5145 9.71407 22.4113 9.31293C21.4387 5.53429 18.4656 2.56115 14.6869 1.58859Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Obecno\u015B\u0107"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
@@ -1960,7 +2097,21 @@
       )));
     }
     function Messages41() {
-      return /* @__PURE__ */ k("div", { onClick: () => window.open("/internal_messages", "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", style: { transform: "translateY(-1px)" } }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M6.31317 12.463C6.20006 9.29213 8.60976 6.6252 11.701 6.5C14.7923 6.6252 17.202 9.29213 17.0889 12.463C17.0889 13.78 18.4841 15.063 18.525 16.383C18.525 16.4017 18.525 16.4203 18.525 16.439C18.5552 17.2847 17.9124 17.9959 17.0879 18.029H13.9757C13.9786 18.677 13.7404 19.3018 13.3098 19.776C12.8957 20.2372 12.3123 20.4996 11.701 20.4996C11.0897 20.4996 10.5064 20.2372 10.0923 19.776C9.66161 19.3018 9.42346 18.677 9.42635 18.029H6.31317C5.48869 17.9959 4.84583 17.2847 4.87602 16.439C4.87602 16.4203 4.87602 16.4017 4.87602 16.383C4.91795 15.067 6.31317 13.781 6.31317 12.463Z", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M9.42633 17.279C9.01212 17.279 8.67633 17.6148 8.67633 18.029C8.67633 18.4432 9.01212 18.779 9.42633 18.779V17.279ZM13.9757 18.779C14.3899 18.779 14.7257 18.4432 14.7257 18.029C14.7257 17.6148 14.3899 17.279 13.9757 17.279V18.779ZM12.676 5.25C13.0902 5.25 13.426 4.91421 13.426 4.5C13.426 4.08579 13.0902 3.75 12.676 3.75V5.25ZM10.726 3.75C10.3118 3.75 9.97601 4.08579 9.97601 4.5C9.97601 4.91421 10.3118 5.25 10.726 5.25V3.75ZM9.42633 18.779H13.9757V17.279H9.42633V18.779ZM12.676 3.75H10.726V5.25H12.676V3.75Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Wiadomo\u015Bci"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { onClick: () => window.open("/internal_messages", "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k(
+        "svg",
+        {
+          fill: "currentColor",
+          version: "1.1",
+          id: "Capa_1",
+          xmlns: "http://www.w3.org/2000/svg",
+          "xmlns:xlink": "http://www.w3.org/1999/xlink",
+          width: "20px",
+          height: "20px",
+          viewBox: "0 0 50.215 50.215",
+          "xml:space": "preserve"
+        },
+        /* @__PURE__ */ k("g", null, /* @__PURE__ */ k("path", { d: "M25.108,0C11.357,0,0.171,9.396,0.171,20.946c0,6.226,3.339,12.146,9.01,16.104c-0.18,3.082-2.679,7.061-3.664,8.358\n		c-0.686,0.903-0.803,2.121-0.301,3.14c0.506,1.02,1.545,1.666,2.683,1.666c6.839,0,14.323-5.353,17.957-8.33\n		c13.403-0.334,24.188-9.599,24.188-20.938C50.044,9.396,38.858,0,25.108,0z M25.12,35.906h-0.003\n		c-0.82-0.057-1.662,0.168-2.291,0.707c-2.559,2.191-5.783,4.473-8.912,5.96c0.938-2.38,1.565-5.128,1.1-7.738\n		c-0.15-0.846-0.659-1.587-1.395-2.032c-4.742-2.877-7.463-7.199-7.463-11.856c0-8.249,8.502-14.961,18.952-14.961\n		c10.449,0,18.951,6.712,18.951,14.961S35.56,35.906,25.12,35.906z" }))
+      )), /* @__PURE__ */ k("h1", null, "Wiadomo\u015Bci"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
@@ -2040,7 +2191,7 @@
       )));
     }
     function Messages41() {
-      return /* @__PURE__ */ k("div", { onClick: () => window.open("/public_calendar/" + schoolNR, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", style: { transform: "translateY(-1px)" } }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M6.31317 12.463C6.20006 9.29213 8.60976 6.6252 11.701 6.5C14.7923 6.6252 17.202 9.29213 17.0889 12.463C17.0889 13.78 18.4841 15.063 18.525 16.383C18.525 16.4017 18.525 16.4203 18.525 16.439C18.5552 17.2847 17.9124 17.9959 17.0879 18.029H13.9757C13.9786 18.677 13.7404 19.3018 13.3098 19.776C12.8957 20.2372 12.3123 20.4996 11.701 20.4996C11.0897 20.4996 10.5064 20.2372 10.0923 19.776C9.66161 19.3018 9.42346 18.677 9.42635 18.029H6.31317C5.48869 17.9959 4.84583 17.2847 4.87602 16.439C4.87602 16.4203 4.87602 16.4017 4.87602 16.383C4.91795 15.067 6.31317 13.781 6.31317 12.463Z", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M9.42633 17.279C9.01212 17.279 8.67633 17.6148 8.67633 18.029C8.67633 18.4432 9.01212 18.779 9.42633 18.779V17.279ZM13.9757 18.779C14.3899 18.779 14.7257 18.4432 14.7257 18.029C14.7257 17.6148 14.3899 17.279 13.9757 17.279V18.779ZM12.676 5.25C13.0902 5.25 13.426 4.91421 13.426 4.5C13.426 4.08579 13.0902 3.75 12.676 3.75V5.25ZM10.726 3.75C10.3118 3.75 9.97601 4.08579 9.97601 4.5C9.97601 4.91421 10.3118 5.25 10.726 5.25V3.75ZM9.42633 18.779H13.9757V17.279H9.42633V18.779ZM12.676 3.75H10.726V5.25H12.676V3.75Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Nadchodz\u0105ce Wydarzenia"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { onClick: () => window.open("/public_calendar/" + schoolNR, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "24px", height: "24px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12V14C22 17.7712 22 19.6569 20.8284 20.8284C20.1752 21.4816 19.3001 21.7706 18 21.8985", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }), /* @__PURE__ */ k("path", { d: "M7 4V2.5", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }), /* @__PURE__ */ k("path", { d: "M17 4V2.5", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }), /* @__PURE__ */ k("path", { d: "M21.5 9H16.625H10.75M2 9H5.875", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }), /* @__PURE__ */ k("path", { d: "M18 17C18 17.5523 17.5523 18 17 18C16.4477 18 16 17.5523 16 17C16 16.4477 16.4477 16 17 16C17.5523 16 18 16.4477 18 17Z", fill: "currentColor" }), /* @__PURE__ */ k("path", { d: "M18 13C18 13.5523 17.5523 14 17 14C16.4477 14 16 13.5523 16 13C16 12.4477 16.4477 12 17 12C17.5523 12 18 12.4477 18 13Z", fill: "currentColor" }), /* @__PURE__ */ k("path", { d: "M13 17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17C11 16.4477 11.4477 16 12 16C12.5523 16 13 16.4477 13 17Z", fill: "currentColor" }), /* @__PURE__ */ k("path", { d: "M13 13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13C11 12.4477 11.4477 12 12 12C12.5523 12 13 12.4477 13 13Z", fill: "currentColor" }), /* @__PURE__ */ k("path", { d: "M8 17C8 17.5523 7.55228 18 7 18C6.44772 18 6 17.5523 6 17C6 16.4477 6.44772 16 7 16C7.55228 16 8 16.4477 8 17Z", fill: "currentColor" }), /* @__PURE__ */ k("path", { d: "M8 13C8 13.5523 7.55228 14 7 14C6.44772 14 6 13.5523 6 13C6 12.4477 6.44772 12 7 12C7.55228 12 8 12.4477 8 13Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Nadchodz\u0105ce Wydarzenia"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
@@ -2120,7 +2271,7 @@
       )));
     }
     function Messages41() {
-      return /* @__PURE__ */ k("div", { onClick: () => window.open(reviewsHref, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", style: { transform: "translateY(-1px)" } }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M6.31317 12.463C6.20006 9.29213 8.60976 6.6252 11.701 6.5C14.7923 6.6252 17.202 9.29213 17.0889 12.463C17.0889 13.78 18.4841 15.063 18.525 16.383C18.525 16.4017 18.525 16.4203 18.525 16.439C18.5552 17.2847 17.9124 17.9959 17.0879 18.029H13.9757C13.9786 18.677 13.7404 19.3018 13.3098 19.776C12.8957 20.2372 12.3123 20.4996 11.701 20.4996C11.0897 20.4996 10.5064 20.2372 10.0923 19.776C9.66161 19.3018 9.42346 18.677 9.42635 18.029H6.31317C5.48869 17.9959 4.84583 17.2847 4.87602 16.439C4.87602 16.4203 4.87602 16.4017 4.87602 16.383C4.91795 15.067 6.31317 13.781 6.31317 12.463Z", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M9.42633 17.279C9.01212 17.279 8.67633 17.6148 8.67633 18.029C8.67633 18.4432 9.01212 18.779 9.42633 18.779V17.279ZM13.9757 18.779C14.3899 18.779 14.7257 18.4432 14.7257 18.029C14.7257 17.6148 14.3899 17.279 13.9757 17.279V18.779ZM12.676 5.25C13.0902 5.25 13.426 4.91421 13.426 4.5C13.426 4.08579 13.0902 3.75 12.676 3.75V5.25ZM10.726 3.75C10.3118 3.75 9.97601 4.08579 9.97601 4.5C9.97601 4.91421 10.3118 5.25 10.726 5.25V3.75ZM9.42633 18.779H13.9757V17.279H9.42633V18.779ZM12.676 3.75H10.726V5.25H12.676V3.75Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Ostatnie Recenzje"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { onClick: () => window.open(reviewsHref, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "24px", height: "24px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M5 8C5 5.17157 5 3.75736 5.87868 2.87868C6.75736 2 8.17157 2 11 2H13C15.8284 2 17.2426 2 18.1213 2.87868C19 3.75736 19 5.17157 19 8V16C19 18.8284 19 20.2426 18.1213 21.1213C17.2426 22 15.8284 22 13 22H11C8.17157 22 6.75736 22 5.87868 21.1213C5 20.2426 5 18.8284 5 16V8Z", stroke: "currentColor", "stroke-width": "1.5" }), /* @__PURE__ */ k("path", { d: "M5 4.07617C4.02491 4.17208 3.36857 4.38885 2.87868 4.87873C2 5.75741 2 7.17163 2 10.0001V14.0001C2 16.8285 2 18.2427 2.87868 19.1214C3.36857 19.6113 4.02491 19.828 5 19.9239", stroke: "currentColor", "stroke-width": "1.5" }), /* @__PURE__ */ k("path", { d: "M19 4.07617C19.9751 4.17208 20.6314 4.38885 21.1213 4.87873C22 5.75741 22 7.17163 22 10.0001V14.0001C22 16.8285 22 18.2427 21.1213 19.1214C20.6314 19.6113 19.9751 19.828 19 19.9239", stroke: "currentColor", "stroke-width": "1.5" }), /* @__PURE__ */ k("path", { d: "M9 13H15", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }), /* @__PURE__ */ k("path", { d: "M9 9H15", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }), /* @__PURE__ */ k("path", { d: "M9 17H12", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }))), /* @__PURE__ */ k("h1", null, "Ostatnie Recenzje"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
@@ -2200,7 +2351,7 @@
       )));
     }
     function Messages41() {
-      return /* @__PURE__ */ k("div", { onClick: () => window.open(homeworkHref, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "28px", height: "28px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", style: { transform: "translateY(-1px)" } }, /* @__PURE__ */ k("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M6.31317 12.463C6.20006 9.29213 8.60976 6.6252 11.701 6.5C14.7923 6.6252 17.202 9.29213 17.0889 12.463C17.0889 13.78 18.4841 15.063 18.525 16.383C18.525 16.4017 18.525 16.4203 18.525 16.439C18.5552 17.2847 17.9124 17.9959 17.0879 18.029H13.9757C13.9786 18.677 13.7404 19.3018 13.3098 19.776C12.8957 20.2372 12.3123 20.4996 11.701 20.4996C11.0897 20.4996 10.5064 20.2372 10.0923 19.776C9.66161 19.3018 9.42346 18.677 9.42635 18.029H6.31317C5.48869 17.9959 4.84583 17.2847 4.87602 16.439C4.87602 16.4203 4.87602 16.4017 4.87602 16.383C4.91795 15.067 6.31317 13.781 6.31317 12.463Z", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M9.42633 17.279C9.01212 17.279 8.67633 17.6148 8.67633 18.029C8.67633 18.4432 9.01212 18.779 9.42633 18.779V17.279ZM13.9757 18.779C14.3899 18.779 14.7257 18.4432 14.7257 18.029C14.7257 17.6148 14.3899 17.279 13.9757 17.279V18.779ZM12.676 5.25C13.0902 5.25 13.426 4.91421 13.426 4.5C13.426 4.08579 13.0902 3.75 12.676 3.75V5.25ZM10.726 3.75C10.3118 3.75 9.97601 4.08579 9.97601 4.5C9.97601 4.91421 10.3118 5.25 10.726 5.25V3.75ZM9.42633 18.779H13.9757V17.279H9.42633V18.779ZM12.676 3.75H10.726V5.25H12.676V3.75Z", fill: "currentColor" }))), /* @__PURE__ */ k("h1", null, "Praca Domowa"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { onClick: () => window.open(homeworkHref, "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k("svg", { width: "24px", height: "24px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M18.18 8.03933L18.6435 7.57589C19.4113 6.80804 20.6563 6.80804 21.4241 7.57589C22.192 8.34374 22.192 9.58868 21.4241 10.3565L20.9607 10.82M18.18 8.03933C18.18 8.03933 18.238 9.02414 19.1069 9.89309C19.9759 10.762 20.9607 10.82 20.9607 10.82M18.18 8.03933L13.9194 12.2999C13.6308 12.5885 13.4865 12.7328 13.3624 12.8919C13.2161 13.0796 13.0906 13.2827 12.9882 13.4975C12.9014 13.6797 12.8368 13.8732 12.7078 14.2604L12.2946 15.5L12.1609 15.901M20.9607 10.82L16.7001 15.0806C16.4115 15.3692 16.2672 15.5135 16.1081 15.6376C15.9204 15.7839 15.7173 15.9094 15.5025 16.0118C15.3203 16.0986 15.1268 16.1632 14.7396 16.2922L13.5 16.7054L13.099 16.8391M13.099 16.8391L12.6979 16.9728C12.5074 17.0363 12.2973 16.9867 12.1553 16.8447C12.0133 16.7027 11.9637 16.4926 12.0272 16.3021L12.1609 15.901M13.099 16.8391L12.1609 15.901", stroke: "currentColor", "stroke-width": "1.5" }), /* @__PURE__ */ k("path", { d: "M8 13H10.5", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }), /* @__PURE__ */ k("path", { d: "M8 9H14.5", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }), /* @__PURE__ */ k("path", { d: "M8 17H9.5", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }), /* @__PURE__ */ k("path", { d: "M3 14V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157M21 14C21 17.7712 21 19.6569 19.8284 20.8284M4.17157 20.8284C5.34315 22 7.22876 22 11 22H13C16.7712 22 18.6569 22 19.8284 20.8284M19.8284 20.8284C20.7715 19.8853 20.9554 18.4796 20.9913 16", stroke: "currentColor", "stroke-width": "1.5", "stroke-linecap": "round" }))), /* @__PURE__ */ k("h1", null, "Praca Domowa"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
