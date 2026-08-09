@@ -4,9 +4,10 @@ import { Header } from "./components/header.jsx";
 import { MainContent } from "./components/mainContent.jsx";
 import { Footer } from "./components/footer.jsx";
 
-window.replaceHeader = function replaceHeader() {
+window.replaceHeader = function replaceHeader(data = {}) {
 	const oldHeader = document.querySelector("#top");
 	if (!oldHeader) return false;
+	const semesterScope = data.semesterScope || null;
 	let accountHref
 	if (document.querySelector("#account")) {
 		accountHref = document.querySelector("#account").children[0].href;
@@ -16,7 +17,14 @@ window.replaceHeader = function replaceHeader() {
 	const mountPoint = document.createElement("div");
 	mountPoint.id = "idu-header-root";
 	oldHeader.replaceWith(mountPoint);
-	render(<Header accountHref={accountHref}/>, mountPoint);
+	render(
+		<Header
+			accountHref={accountHref}
+			messagesHref={data.messagesUrl || ''}
+			semesterScope={semesterScope}
+		/>,
+		mountPoint
+	);
 
 	return true;
 };

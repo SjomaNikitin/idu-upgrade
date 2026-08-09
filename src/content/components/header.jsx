@@ -2,10 +2,39 @@
 import { h } from "preact";
 import { useState } from "preact/hooks";
 
-export function Header({accountHref}) {
+function MessagesButton({ href, size }) {
+	if (!href) return null;
+
+	return (
+		<a href={href} className="header-icon-button" aria-label="Wiadomości">
+			<svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M4 18L9 12M20 18L15 12M3 8L10.225 12.8166C10.8665 13.2443 11.1872 13.4582 11.5339 13.5412C11.8403 13.6147 12.1597 13.6147 12.4661 13.5412C12.8128 13.4582 13.1335 13.2443 13.775 12.8166L21 8M6.2 19H17.8C18.9201 19 19.4802 19 19.908 18.782C20.2843 18.5903 20.5903 18.2843 20.782 17.908C21 17.4802 21 16.9201 21 15.8V8.2C21 7.0799 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V15.8C3 16.9201 3 17.4802 3.21799 17.908C3.40973 18.2843 3.71569 18.5903 4.09202 18.782C4.51984 19 5.07989 19 6.2 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</a>
+	);
+}
+
+function HeaderActions({ accountHref, size }) {
+	return (
+		<div className="header-actions">
+			<button type="button" className="header-icon-button header-search-button" aria-label="Szukaj">
+				<svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M14.9536 14.9458L21 21M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</button>
+			<a href={accountHref} className="header-icon-button" aria-label="Konto">
+				<svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</a>
+		</div>
+	);
+}
+
+export function Header({accountHref, messagesHref, semesterScope}) {
 	let color = getComputedStyle(root).getPropertyValue('--idu-logo').trim();
 	let currentTheme = localStorage.getItem("theme");
-	let svgSize = 36;
+	let svgSize = 28;
 	let menuStrokeWidth = 4;
 	let panelIconStrokeWidth = 2.5;
 	let panelIconColor = "currentColor";
@@ -51,7 +80,7 @@ export function Header({accountHref}) {
 		setEditMode(!editMode);
 	}
 
-	if (window.location.pathname === "/" || window.location.pathname === "/users/sign_in") {
+	if (window.location.pathname === "/") {
 		return (
 			<header id="top" className="idu-custom-header">
 				<div className="header-menu">
@@ -59,21 +88,13 @@ export function Header({accountHref}) {
 						className="header-menu-button"
 						onClick={() => setMenuOpen(!menuOpen)}
 					>
-						<svg width={svgSize + 4} height={svgSize + 4} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M4 12H20M4 8H20M4 16H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+						<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
 					</a>
+					<MessagesButton href={messagesHref} size={svgSize}/>
 
 					<div className={`header-menu-panel ${menuOpen ? "open" : ""}`}>
-						{!window.__IDU_MOCK_DATA ? <a href={accountHref} className="header-panel-link">
-							<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} viewBox="0 0 24 24">
-								<g fill="none" stroke="currentColor" stroke-width="2">
-									<path stroke-linejoin="round" d="M4 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
-									<circle cx="12" cy="7" r="3"/>
-								</g>
-							</svg>
-						</a> : null}
-
 						<a onClick={() => openSettings()} className="header-panel-link">
 							<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path fillRule="evenodd" clipRule="evenodd" d="M12 8.25C9.92894 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92894 15.75 12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25ZM9.75 12C9.75 10.7574 10.7574 9.75 12 9.75C13.2426 9.75 14.25 10.7574 14.25 12C14.25 13.2426 13.2426 14.25 12 14.25C10.7574 14.25 9.75 13.2426 9.75 12Z" fill={panelIconColor}/>
@@ -88,22 +109,15 @@ export function Header({accountHref}) {
 					</div>
 				</div>
 				<a className="header-logo-link" href="/">
-					<svg className="header-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 75" width="150" height="48">
+					<svg className="header-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 75" width="100" height="32">
 						<path d="M0 0 C27.11111111 0 27.11111111 0 36.3125 6.25 C43.01477426 13.10814111 44.28837728 20.68188086 44.3190918 29.99975586 C44.17553983 37.69136285 42.38122426 45.26760454 37.6875 51.5 C26.47705734 61.92831875 16.25130168 59 0 59 C0 39.53 0 20.06 0 0 Z M12 9 C12 22.86 12 36.72 12 51 C20.70565579 50.36888152 20.70565579 50.36888152 27 46 C32.46135334 38.47313482 32.59520724 31.02730988 32 22 C30.82103747 16.29502031 27.59613457 13.25559532 23 10 C19.26213521 8.57836298 19.26213521 8.57836298 12 9 Z " fill={color} transform="translate(43,7)"/>
 						<path d="M0 0 C3.96 0 7.92 0 12 0 C12.00410889 1.33699951 12.00821777 2.67399902 12.01245117 4.05151367 C12.03424542 9.01853836 12.08853883 13.98477123 12.15258789 18.95141602 C12.17576522 21.09977624 12.19016297 23.24825004 12.19555664 25.39672852 C12.20484791 28.48786173 12.24584351 31.57720912 12.29296875 34.66796875 C12.2890361 35.62648239 12.28510345 36.58499603 12.28105164 37.57255554 C12.38213016 42.20659503 12.47613492 44.32470224 15.3918457 48.08325195 C18.18217732 50.13388319 19.5444055 51 23 51 C27.04234961 49.70644812 28.60049458 48.73265351 30.64770508 44.97827148 C32.43217602 40.48664698 32.47620984 36.13055762 32.51171875 31.34765625 C32.52966995 30.44752304 32.54762115 29.54738983 32.56611633 28.61997986 C32.61995245 25.76753309 32.65402888 22.91525107 32.6875 20.0625 C32.72069668 18.11911783 32.7551885 16.17575733 32.79101562 14.23242188 C32.87566341 9.48840064 32.94260136 4.744426 33 0 C36.63 0 40.26 0 44 0 C44.09924314 6.54699332 44.17164631 13.09354394 44.21972656 19.64111328 C44.23978046 21.86612582 44.26703065 24.09108607 44.30175781 26.31591797 C44.35054934 29.52324365 44.37303162 32.72986951 44.390625 35.9375 C44.41127014 36.92427734 44.43191528 37.91105469 44.45318604 38.92773438 C44.45516041 45.07304735 43.6745456 49.93592685 40 55 C34.22596433 59.59566104 29.49629138 60.22538854 22.3125 60.3125 C21.53455078 60.34150391 20.75660156 60.37050781 19.95507812 60.40039062 C14.20196873 60.46276796 9.76372678 59.31892109 5 56 C1.09633418 51.19548822 -0.130206 47.39498358 -0.11352539 41.32324219 C-0.11341209 39.94226349 -0.11341209 39.94226349 -0.11329651 38.53338623 C-0.10813522 37.54783752 -0.10297394 36.56228882 -0.09765625 35.546875 C-0.0962413 34.53151672 -0.09482635 33.51615845 -0.09336853 32.47003174 C-0.08777516 29.22999108 -0.07522385 25.99001975 -0.0625 22.75 C-0.05748414 20.55208433 -0.05292139 18.35416758 -0.04882812 16.15625 C-0.0378079 10.77080666 -0.02054778 5.38541508 0 0 Z " fill={color} transform="translate(94,7)"/>
 						<path d="M0 0 C3.94211019 3.10336334 5.31134915 5.48402546 6.390625 10.359375 C7.72546791 23.61881461 -4.0914371 37.85590565 -11.0625 48.3125 C-4.1325 48.6425 2.7975 48.9725 9.9375 49.3125 C9.9375 51.9525 9.9375 54.5925 9.9375 57.3125 C-2.9325 57.3125 -15.8025 57.3125 -29.0625 57.3125 C-27.93749179 51.68745897 -27.93749179 51.68745897 -26.09375 48.81640625 C-25.6915625 48.1819458 -25.289375 47.54748535 -24.875 46.89379883 C-24.441875 46.22759521 -24.00875 45.5613916 -23.5625 44.875 C-23.1190625 44.17850342 -22.675625 43.48200684 -22.21875 42.7644043 C-19.99023635 39.27166814 -17.72997867 35.79973527 -15.46875 32.328125 C-15.06333984 31.70349365 -14.65792969 31.0788623 -14.24023438 30.43530273 C-13.12430377 28.71999896 -11.99989485 27.01021967 -10.875 25.30078125 C-7.7622039 20.16869286 -6.50105204 16.37613795 -7.0625 10.3125 C-7.96007556 8.16469923 -7.96007556 8.16469923 -10.0625 7.3125 C-14.11169215 7.38612168 -16.2751588 7.5251588 -19.1875 10.4375 C-19.80625 11.05625 -20.425 11.675 -21.0625 12.3125 C-24.52836985 12.3125 -25.78433395 11.56059405 -28.375 9.25 C-28.931875 8.610625 -29.48875 7.97125 -30.0625 7.3125 C-29.40334272 4.67587087 -28.72418551 2.83093401 -26.546875 1.125 C-18.63632381 -3.55254331 -8.3515074 -4.27369248 0 0 Z " fill={color} transform="translate(174.0625,8.6875)"/>
 						<path d="M0 0 C3.63 0 7.26 0 11 0 C11 19.47 11 38.94 11 59 C7.04 59 3.08 59 -1 59 C-1.02255549 51.45501411 -1.04091769 43.91004069 -1.05181217 36.36502934 C-1.05703989 32.86191115 -1.0641355 29.35881715 -1.07543945 25.85571289 C-1.08834206 21.83219159 -1.09322912 17.80869586 -1.09765625 13.78515625 C-1.10539818 11.88987938 -1.10539818 11.88987938 -1.11329651 9.95631409 C-1.11337204 8.795186 -1.11344757 7.63405792 -1.11352539 6.43774414 C-1.11685631 4.8955294 -1.11685631 4.8955294 -1.12025452 3.32215881 C-1 1 -1 1 0 0 Z " fill={color} transform="translate(21,7)"/>
 					</svg>
 				</a>
-				{/*<div className="header-actions">*/}
-				{/*	<a onClick={() => {switchEditMode()}} className={`header-icon-button ${editMode ? "active" : ""}`}>*/}
-				{/*		<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
-				{/*			<path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>*/}
-				{/*			<path d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>*/}
-				{/*		</svg>*/}
-				{/*	</a>*/}
-				{/*</div>*/}
-				<Settings open = {settingsOpen} setOpen={setSettingsOpen}/>
+				<HeaderActions accountHref={accountHref} size={svgSize}/>
+				<Settings open={settingsOpen} setOpen={setSettingsOpen} semesterScope={semesterScope}/>
 			</header>
 		);
 	} else {
@@ -114,21 +128,21 @@ export function Header({accountHref}) {
 						className="header-menu-button"
 						onClick={() => setMenuOpen(!menuOpen)}
 					>
-						<svg width={svgSize + 4} height={svgSize + 4} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M4 12H20M4 8H20M4 16H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+						<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
 					</a>
-					<a onClick={() => {window.open("/", "_self")}} className={`header-home-icon-button`}>
-						<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 20H7C5.89543 20 5 19.1046 5 18V10.9199C5 10.336 5.25513 9.78132 5.69842 9.40136L10.6984 5.11564C11.4474 4.47366 12.5526 4.47366 13.3016 5.11564L18.3016 9.40136C18.7449 9.78132 19 10.336 19 10.9199V18C19 19.1046 18.1046 20 17 20H15M9 20V14C9 13.4477 9.44772 13 10 13H14C14.5523 13 15 13.4477 15 14V20M9 20H15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					<a onClick={() => window.open("/", "_self")} className="header-home-icon-button" aria-label="Strona główna">
+						<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M5 9.77746V16.2C5 17.8802 5 18.7203 5.32698 19.362C5.6146 19.9265 6.07354 20.3854 6.63803 20.673C7.27976 21 8.11984 21 9.8 21H14.2C15.8802 21 16.7202 21 17.362 20.673C17.9265 20.3854 18.3854 19.9265 18.673 19.362C19 18.7203 19 17.8802 19 16.2V5.00002M21 12L15.5668 5.96399C14.3311 4.59122 13.7133 3.90484 12.9856 3.65144C12.3466 3.42888 11.651 3.42893 11.0119 3.65159C10.2843 3.90509 9.66661 4.59157 8.43114 5.96452L3 12M14 21V15H10V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
 					</a>
 
-
-
 					<div className={`header-menu-panel ${menuOpen ? "open" : ""}`}>
-						<a href={accountHref} className="header-panel-link">
-							<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} viewBox="0 0 24 24">
-								<g fill="none" stroke="currentColor" stroke-width="2">
-									<path stroke-linejoin="round" d="M4 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
+						<a href={accountHref} className="header-panel-link" aria-label="Konto">
+							<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} viewBox="0 0 24 24" aria-hidden="true">
+								<g fill="none" stroke="currentColor" strokeWidth="2">
+									<path strokeLinejoin="round" d="M4 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
 									<circle cx="12" cy="7" r="3"/>
 								</g>
 							</svg>
@@ -146,30 +160,72 @@ export function Header({accountHref}) {
 						</a>
 					</div>
 				</div>
-				<div className="header-actions">
-					<a onClick={() => {switchEditMode()}} className={`header-icon-button ${editMode ? "active" : ""}`}>
-						<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-							<path d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-						</svg>
-					</a>
-				</div>
-				<Settings open = {settingsOpen} setOpen={setSettingsOpen}/>
+				<Settings open={settingsOpen} setOpen={setSettingsOpen} semesterScope={semesterScope}/>
 			</header>
 		);
 	}
 
 }
 
-export function Settings ({ open, setOpen }) {
+export function Settings ({ open, setOpen, semesterScope }) {
 	let svgSize = 36;
 	return (
 		<div className={`settings-container ${open ? "open" : ""}`}>
-			<SettingsDots />
+			<div className="settings-content">
+				<section className="settings-section">
+					<h2>Motyw</h2>
+					<SettingsDots />
+				</section>
+				{semesterScope ? <SemesterScopeForm semesterScope={semesterScope}/> : null}
+			</div>
 			<a className={"header-icon-button-settings"} onClick={() => setOpen(false)}>
 				<svg width={svgSize} height={svgSize} viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"/></svg>
 			</a>
 		</div>
+	);
+}
+
+export function SemesterScopeForm({ semesterScope }) {
+	const storageKey = 'iduSemesterScope';
+	const storedValue = localStorage.getItem(storageKey) || '';
+	const hasOption = (value) => semesterScope.options.some((option) => option.value === value);
+	const initialValue = semesterScope.selectedValue && hasOption(semesterScope.selectedValue)
+		? semesterScope.selectedValue
+		: hasOption(storedValue) ? storedValue : '';
+	const [selectedValue, setSelectedValue] = useState(initialValue);
+
+	return (
+		<section className="settings-section">
+			<h2>Semestr</h2>
+			<form
+				className="semester-scope-form"
+				action={semesterScope.action}
+				method="post"
+				acceptCharset="UTF-8"
+			>
+				{semesterScope.hiddenFields.map((field) => (
+					<input key={field.name} type="hidden" name={field.name} value={field.value}/>
+				))}
+				<label htmlFor="idu-semester-id">Wybierz semestr</label>
+				<select
+					id="idu-semester-id"
+					name="semester_id"
+					value={selectedValue}
+					onChange={(event) => {
+						const select = event.currentTarget;
+						localStorage.setItem(storageKey, select.value);
+						setSelectedValue(select.value);
+						select.form?.submit();
+					}}
+				>
+					{semesterScope.options.map((option) => (
+						<option key={option.value || 'empty'} value={option.value}>
+							{option.label}
+						</option>
+					))}
+				</select>
+			</form>
+		</section>
 	);
 }
 

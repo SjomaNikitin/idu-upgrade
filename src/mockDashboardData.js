@@ -115,6 +115,7 @@ export function buildExampleDashboardData() {
 	return {
 		homeworkUrl: '#',
 		reviewsUrl: '#',
+		messagesUrl: '#',
 		attendance: [
 			{
 				subject: 'Matematyka',

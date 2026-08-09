@@ -47,9 +47,25 @@ export function Grades({ widgetId, moveWidget, data }) {
 		return '...';
 	}
 
+	function shortageNames(name) {
+		const names = ['ang', 'angielski', 'pol', 'polski', 'biol', 'biologia', 'his', 'historia', 'biz', 'biznes', 'kul', 'kultura', 'wiedza', 'wos', 'fizyczne', 'wf'];
+		for (let i = 0; i < names.length / 2; i += 2) {
+			if (name.includes(names[i])) {
+				return names[i + 1];
+			}
+		}
+		return name;
+	}
+
+	function truncateSubject(name, maxLength = 10) {
+		return name.length > maxLength
+			? `${name.slice(0, maxLength)}...`
+			: name;
+	}
+
 	const preparedGrades = gradesData.map((item) => ({
 		value: normalizeGrade(item.grade),
-		subject: item.subject.split(' ')[0],
+		subject: shortageNames(item.subject || ''),
 		subjectUrl: item.subjectUrl,
 		description: item.description,
 		gradeDescriptionUrl: item.gradeDescriptionUrl,
@@ -97,8 +113,10 @@ export function Grades({ widgetId, moveWidget, data }) {
 
 		return (
 			<div className={`widget-grade-box ${isLast ? 'last' : ''}`}>
-				<p>{item.value}</p>
-				<a href={item.subjectUrl}> | {item.subject}</a>
+				<div className={'widget-grade-box-value'}>
+					<span>{item.value}</span>
+				</div>
+				<a href={item.subjectUrl} title={item.subject}>{item.subject}</a>
 				{showDescription && (
 					<a
 						ref={descriptionLinkRef}
@@ -122,7 +140,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 				style={{ width: `${previewWidth}px`, height: `${previewHeight}px` }}
 				className="widget-content-container"
 			>
-				<div className="widget-title-box">
+				<div className="widget-title-box" style={{marginBottom: 'var(--padding-1)'}}>
 					<h1>Oceny</h1>
 					<svg className={"titleArrow"} fill="currentColor" version="1.1" baseProfile="tiny" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
 					     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
@@ -175,12 +193,8 @@ export function Grades({ widgetId, moveWidget, data }) {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
 			<div className={"small-title-box"}>
 				<div className={"titleIcon"}>
-					<svg fill="currentColor" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-						<rect x="0" fill="none" width="24" height="24"/>
-						<g>
-							<path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V5h14v14zM9 17H7v-5h2v5zm4 0h-2v-7h2v7zm4 0h-2V7h2v10z"/>
-						</g>
-
+					<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M8 8H8.01M16 8H16.01M12 12H12.01M16 16H16.01M8 16H8.01M7.2 20H16.8C17.9201 20 18.4802 20 18.908 19.782C19.2843 19.5903 19.5903 19.2843 19.782 18.908C20 18.4802 20 17.9201 20 16.8V7.2C20 6.0799 20 5.51984 19.782 5.09202C19.5903 4.71569 19.2843 4.40973 18.908 4.21799C18.4802 4 17.9201 4 16.8 4H7.2C6.0799 4 5.51984 4 5.09202 4.21799C4.71569 4.40973 4.40973 4.71569 4.21799 5.09202C4 5.51984 4 6.07989 4 7.2V16.8C4 17.9201 4 18.4802 4.21799 18.908C4.40973 19.2843 4.71569 19.5903 5.09202 19.782C5.51984 20 6.07989 20 7.2 20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 					</svg>
 				</div>
 				<h1>Oceny</h1>

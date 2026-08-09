@@ -205,3 +205,25 @@ function extractReviewsUrl () {
 function extractHomeWorkUrl () {
 	return document.querySelector('#unique-id191 .see-more a')?.getAttribute('href') || '';
 }
+
+function extractMessagesUrl() {
+	return document.querySelector('#messages a')?.getAttribute('href') || '';
+}
+
+function extractSemesterScope(form = document.querySelector('#set_semester_scope')) {
+	const select = form?.querySelector('#semester_id');
+	if (!form || !select) return null;
+
+	return {
+		action: form.getAttribute('action') || '/set_semester_scope',
+		hiddenFields: Array.from(form.querySelectorAll('input[type="hidden"]')).map((input) => ({
+			name: input.name,
+			value: input.value,
+		})),
+		options: Array.from(select.options).map((option) => ({
+			label: option.textContent.trim(),
+			value: option.value,
+		})),
+		selectedValue: select.value,
+	};
+}

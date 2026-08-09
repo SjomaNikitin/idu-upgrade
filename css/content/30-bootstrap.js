@@ -6,12 +6,14 @@ window.addEventListener("DOMContentLoaded", function () {
 		const pageData = mockData || {
 			homeworkUrl: extractHomeWorkUrl(),
 			reviewsUrl: extractReviewsUrl(),
+			messagesUrl: extractMessagesUrl(),
 			attendance: extractAttendance(document.querySelector("#unique-id15")),
 			news: extractNews(document.querySelector("#unique-id14")),
 			grades: extractGrades(document.querySelector("#unique-id12")),
 			subjects: extractSubjects(document.querySelector("#unique-id192")),
 			schedule: getScheduleLessons(),
-			subjectAnnouncements: extractSubjectAnnouncements(document.querySelector("#unique-id11"))
+			subjectAnnouncements: extractSubjectAnnouncements(document.querySelector("#unique-id11")),
+			semesterScope: extractSemesterScope()
 		};
 		if (
 			window.webkit &&
@@ -24,7 +26,7 @@ window.addEventListener("DOMContentLoaded", function () {
 			});
 			console.log("Synced schedule to app");
 		}
-		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader();
+		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader(pageData);
 		console.log("Custom header loaded:", customHeaderLoaded)
 		const customFooterLoaded = typeof replaceFooter === "function" && replaceFooter();
 		console.log("Custom footer loaded:", customFooterLoaded)
