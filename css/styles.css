@@ -634,6 +634,17 @@
 
 	}
 
+
+	table.message-table {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+		table-layout: fixed;
+		td:not([class]){
+			display: none;
+		}
+	}
+
 	body[path="/users/sign_in"] {
 		/*height: 100vh;*/
 	}
