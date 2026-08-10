@@ -1609,42 +1609,16 @@
 	/*	column-gap: var(--padding-2);*/
 	/*}*/
 
-	#scheduleWidget .schedule-grid.today {
-		display: grid;
-		border-top: 2px solid #222;
-		border-left: 2px solid #222;
-		font-size: 1rem;
-		overflow-x: auto;
-		min-height: 0;
-		width: 100%;
-	}
-
-	#scheduleWidget .schedule-grid.today > div {
-		border-right: 2px solid #222;
-		border-bottom: 2px solid #222;
-		padding: 8px;
-		box-sizing: border-box;
-	}
-
-	#scheduleWidget .schedule-grid.today .schedule-head {
-		font-weight: 700;
-		background-color: var(--schedule-table-header-color);
-		color: var(--module-color);
-	}
-
-	#scheduleWidget .schedule-grid.today .lesson-cell {
-		width: 100%;
-		background-color: var(--schedule-lesson-color);
-	}
-
-	#scheduleWidget.w4.h6 .widget-content-container {
+	#scheduleWidget.w4.h6 .widget-content-container,
+	#scheduleWidget.w2.h5 .widget-content-container {
 		display: flex;
 		flex-direction: column;
 		flex-wrap: nowrap;
 		align-items: stretch;
 	}
 
-	#scheduleWidget.w4.h6 .widget-title-box {
+	#scheduleWidget.w4.h6 .widget-title-box,
+	#scheduleWidget.w2.h5 .widget-title-box {
 		width: 100%;
 		margin: 0 0 var(--padding-2);
 		padding: 0;
@@ -1652,7 +1626,8 @@
 		flex: 0 0 auto;
 	}
 
-	#scheduleWidget .schedule-grid.weekly {
+	#scheduleWidget .schedule-grid.weekly,
+	#scheduleWidget .schedule-grid.today {
 		display: flex;
 		flex-direction: column;
 		gap: var(--padding-1);
@@ -1661,6 +1636,15 @@
 		overflow: auto;
 		font-size: 0.9rem;
 		scrollbar-width: thin;
+	}
+
+	#scheduleWidget.w2.h5 .schedule-grid.today {
+		flex: 1 1 auto;
+		overflow-x: hidden;
+		overflow-y: auto;
+		overscroll-behavior-y: contain;
+		touch-action: pan-y;
+		-webkit-overflow-scrolling: touch;
 	}
 
 	#scheduleWidget .schedule-days-header {

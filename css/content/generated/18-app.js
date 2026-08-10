@@ -1491,8 +1491,16 @@
       }
       if (mode === "today") {
         const day = scheduleDays[0];
-        const firstLesson = Object.values(scheduleData?.[day] || {})[0];
-        return /* @__PURE__ */ k("div", { className: "schedule-grid today" }, /* @__PURE__ */ k("div", { className: "schedule-head" }, firstLesson?.day || day), visibleTimes.map((time) => /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell today" }, shortenLessonName(scheduleData?.[day]?.[time]?.subject || ""))));
+        return /* @__PURE__ */ k("div", { className: "schedule-grid today" }, visibleTimes.map((time) => /* @__PURE__ */ k(
+          "div",
+          {
+            key: `${day}-${time}`,
+            className: "schedule-row",
+            style: { gridTemplateColumns: "42px minmax(0, 1fr)" }
+          },
+          /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])),
+          /* @__PURE__ */ k("div", { className: "lesson-cell" }, shortenLessonName(scheduleData?.[day]?.[time]?.subject || ""))
+        )));
       }
       return /* @__PURE__ */ k("div", { className: "schedule-grid weekly" }, /* @__PURE__ */ k(
         "div",

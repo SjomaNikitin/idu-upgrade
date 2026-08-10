@@ -149,14 +149,22 @@ export function Schedule({ widgetId, moveWidget, data }) {
 
 		if (mode === 'today') {
 			const day = scheduleDays[0];
-			const firstLesson = Object.values(scheduleData?.[day] || {})[0];
 
 			return (
 				<div className="schedule-grid today">
-					<div className="schedule-head">{firstLesson?.day || day}</div>
 					{visibleTimes.map((time) => (
-						<div key={`${day}-${time}`} className="lesson-cell today">
-							{shortenLessonName(scheduleData?.[day]?.[time]?.subject || '')}
+						<div
+							key={`${day}-${time}`}
+							className="schedule-row"
+							style={{ gridTemplateColumns: '42px minmax(0, 1fr)' }}
+						>
+							<div className="time-cell">
+								<span>{time.split('-')[0]}</span>
+								<span>{time.split('-')[1]}</span>
+							</div>
+							<div className="lesson-cell">
+								{shortenLessonName(scheduleData?.[day]?.[time]?.subject || '')}
+							</div>
 						</div>
 					))}
 				</div>
