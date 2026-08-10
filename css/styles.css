@@ -9,34 +9,34 @@
 	--ios-safe-top: 0px;
 
 	/* The "White" Base - Using Apple-style neutrals */
-	--mc: #434343;
+	--mc: #0B5F5D;
 	/* Cards/Modules background */
-	--background-color: #e2e2e2;
+	--background-color: #E5F8F2;
 	/* Light grey-white for the main page */
-	--form-background-color: #ffffff;
-	--input-field-color: #ffffff;
+	--form-background-color: #69D2BD;
+	--input-field-color: #69D2BD;
 
 	/* The "Black/Grey" Accents */
 	--mg: #1d1d1f;
 	/* Deep "Eerie Black" for main headers */
 	--topmg: #121212;
 	/* Darkest grey for the very top */
-	--module-color: #ffffff;
+	--module-color: #69D2BD;
 	/* Keep modules white for a 'card' look */
-	--module-border-color: #d2d2d7;
+	--module-border-color: #189e8a7e;
 	/* Soft border to define shapes */
 	--module-shadow-color: rgba(0, 0, 0, 0.117);
 	/* Very subtle shadow */
 
 	/* Text & Navigation */
-	--main-text-color: #1d1d1f;
+	--main-text-color: #0B5F5D;
 	/* High-contrast dark grey */
 	--gradient-text-color: #ffffff;
 	--actionbtn-text-color: #ffffff;
-	--location-text-color: #424242;
+	--location-text-color: #0B5F5D;
 	/* Muted grey for breadcrumbs */
 	--breadcrumbs-text: #000000;
-	--footer-text-color: #6e6e73;
+	--footer-text-color: #0B5F5D;
 	--akcent-color: #000000;
 	/* Pure black for specific highlights */
 
@@ -44,7 +44,7 @@
 	--idu-logo: #000000;
 	--underline: 2px solid rgb(130 130 130 / 0.54);
 	/* Thin, sharp black underlines */
-	--icon-background-color: #f5f5f7;
+	--icon-background-color: #0c79651d;
 	/* Light grey circles for icons */
 
 	/* Schedule & Tables - Clean & Linear */
@@ -55,16 +55,16 @@
 	--chedule-time-color: #000000;
 	--shorted-gradient-color: #333333;
 	--darker-messages-color: #f5f5f7;
-	--attendance-wheel-color: #555555;
-	--upsent-wheel-color: #2f2f2f;
-	--latency-wheel-color: #5e5e5e;
-	--attendance-text-color: green;
-	--absence-text-color: red;
-	--lateness-text-color: orange;
-	--news-date-bg: #d2d2d7;
-	--title-icon-bg: #f5f5f7;
-	--subjects-bg: #f5f5f7;
-	--grades-box-bg: rgb(3, 25, 38);
+	--attendance-wheel-color: #0B5F5D;
+	--upsent-wheel-color: #189e8a7e;
+	--latency-wheel-color: #0c79651d;
+	--attendance-text-color: #0B5F5D;
+	--absence-text-color: #0B5F5D;
+	--lateness-text-color: #0B5F5D;
+	--news-date-bg: #189e8a44;
+	--title-icon-bg: #189e8a7e;
+	--subjects-bg: #189e8a44;
+	--grades-box-bg: #0c79651d;
 }
 
 :root[data-theme="Ocean"] {
