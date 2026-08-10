@@ -231,7 +231,7 @@ export function SemesterScopeForm({ semesterScope }) {
 
 export function SettingsDots() {
 	const themes = ["Default", "Ocean", "Dzaga", "Besties"];
-	const dots = ["#69D2BD", "#242A32", "#DBA67A", "#F6CCCD"];
+	const dots = ["#99EADB", "#242A32", "#DBA67A", "#F6CCCD"];
 
 	const currentTheme = localStorage.getItem("theme") || "Default";
 	const [selectedDot, setSelectedDot] = useState(
