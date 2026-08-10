@@ -49,7 +49,7 @@
 
 	/* Schedule & Tables - Clean & #69D2BDLinear */
 	--schedule-table-header-color: #189e8a44;
-	--schedule-table-time-color: #189e8a7e;
+	--schedule-table-time-color: #189e8a7ew;
 	--schedule-lesson-color: #189e8a7e;
 	/* Almost white for lesson cells */
 	--chedule-time-color: #000000;
@@ -139,10 +139,10 @@
 	--attendance-text-color: #5B3119;
 	--absence-text-color: #5B3119;
 	--lateness-text-color: #5B3119;
-	--news-date-bg: #5b311949;
+	--news-date-bg: #5b311928;
 	--title-icon-bg: #5b311949;
 	--subjects-bg: #5b311949;
-	--grades-box-bg: #5b311920;
+	--grades-box-bg: #5b311916;
 }
 
 :root[data-theme="Besties"] {
@@ -158,7 +158,7 @@
 	--module-border-color: #be69795f;
 	--main-text-color: #851A36;
 	--input-field-color: #ea6a8234;
-	--darker-messages-color: #851A36rgba(252, 196, 183);
+	--darker-messages-color: #F6CCCD;
 	--form-background-color: #F6CCCD;
 	--akcent-color: #851A36;
 	--icon-background-color: rgba(254, 222, 211);
