@@ -1665,7 +1665,7 @@
 
 	#scheduleWidget .schedule-days-header {
 		display: grid;
-		margin-left: calc(82px + var(--padding-1));
+		margin-left: calc(42px + var(--padding-1));
 		min-height: 40px;
 		border: 1px solid var(--module-border-color);
 		border-radius: var(--padding-1);
@@ -1706,7 +1706,10 @@
 	}
 
 	#scheduleWidget .schedule-row .time-cell {
-		font-size: 0.72rem;
+		flex-direction: column;
+		gap: 2px;
+		font-size: 0.62rem;
+		line-height: 1;
 		white-space: nowrap;
 		color: var(--main-text-color);
 	}

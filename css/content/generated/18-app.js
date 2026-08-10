@@ -1372,6 +1372,67 @@
   }
 
   // src/content/components/widgets/schedule.jsx
+  var LESSON_ABBREVIATIONS = [
+    { abbreviation: "ang", aliases: ["j\u0119zyk angielski", "angielski", "english"] },
+    { abbreviation: "pol", aliases: ["j\u0119zyk polski", "polski"] },
+    { abbreviation: "nie", aliases: ["j\u0119zyk niemiecki", "niemiecki"] },
+    { abbreviation: "his", aliases: ["j\u0119zyk hiszpa\u0144ski", "hiszpa\u0144ski"] },
+    { abbreviation: "fra", aliases: ["j\u0119zyk francuski", "francuski"] },
+    { abbreviation: "w\u0142o", aliases: ["j\u0119zyk w\u0142oski", "w\u0142oski"] },
+    { abbreviation: "ros", aliases: ["j\u0119zyk rosyjski", "rosyjski"] },
+    { abbreviation: "ukr", aliases: ["j\u0119zyk ukrai\u0144ski", "ukrai\u0144ski"] },
+    { abbreviation: "\u0142ac", aliases: ["j\u0119zyk \u0142aci\u0144ski", "\u0142aci\u0144ski", "\u0142acina"] },
+    { abbreviation: "mat", aliases: ["matematyka"] },
+    { abbreviation: "inf", aliases: ["informatyka", "technologia informacyjna", "technologie informacyjne"] },
+    { abbreviation: "bio", aliases: ["biologia"] },
+    { abbreviation: "geo", aliases: ["geografia"] },
+    { abbreviation: "che", aliases: ["chemia"] },
+    { abbreviation: "fiz", aliases: ["fizyka"] },
+    { abbreviation: "his", aliases: ["historia"] },
+    { abbreviation: "wos", aliases: ["wiedza o spo\u0142ecze\u0144stwie"] },
+    { abbreviation: "biz", aliases: ["biznes i zarz\u0105dzanie", "biznes"] },
+    { abbreviation: "prz", aliases: ["podstawy przedsi\u0119biorczo\u015Bci", "przedsi\u0119biorczo\u015B\u0107", "przyroda"] },
+    { abbreviation: "wf", aliases: ["wychowanie fizyczne", "w-f", "wf"] },
+    { abbreviation: "edb", aliases: ["edukacja dla bezpiecze\u0144stwa"] },
+    { abbreviation: "rel", aliases: ["religia"] },
+    { abbreviation: "ety", aliases: ["etyka"] },
+    { abbreviation: "fil", aliases: ["filozofia"] },
+    { abbreviation: "psy", aliases: ["psychologia"] },
+    { abbreviation: "soc", aliases: ["socjologia"] },
+    { abbreviation: "muz", aliases: ["muzyka"] },
+    { abbreviation: "pla", aliases: ["plastyka"] },
+    { abbreviation: "tec", aliases: ["technika"] },
+    { abbreviation: "kul", aliases: ["wiedza o kulturze", "kultura"] },
+    { abbreviation: "wyc", aliases: ["godzina wychowawcza", "zaj\u0119cia z wychowawc\u0105", "wychowawcza"] },
+    { abbreviation: "edu", aliases: ["edukacja wczesnoszkolna"] },
+    { abbreviation: "eko", aliases: ["ekonomia"] },
+    { abbreviation: "pra", aliases: ["prawo"] },
+    { abbreviation: "sta", aliases: ["statystyka"] },
+    { abbreviation: "ast", aliases: ["astronomia"] },
+    { abbreviation: "med", aliases: ["edukacja zdrowotna", "medycyna"] },
+    { abbreviation: "pie", aliases: ["pierwsza pomoc"] },
+    { abbreviation: "dor", aliases: ["doradztwo zawodowe"] },
+    { abbreviation: "log", aliases: ["logopedia"] },
+    { abbreviation: "rew", aliases: ["zaj\u0119cia rewalidacyjne", "rewalidacja"] },
+    { abbreviation: "ter", aliases: ["terapia pedagogiczna"] },
+    { abbreviation: "bib", aliases: ["zaj\u0119cia biblioteczne"] },
+    { abbreviation: "zaw", aliases: ["przedmiot zawodowy", "zaj\u0119cia zawodowe"] }
+  ];
+  function normalizeLessonName(name) {
+    return name.toLocaleLowerCase("pl-PL").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l").replace(/[._/\\-]+/g, " ").replace(/\s+/g, " ").trim();
+  }
+  function shortenLessonName(name) {
+    const trimmedName = name.trim();
+    if (!trimmedName) return "";
+    const normalizedName = normalizeLessonName(trimmedName);
+    const matchedSubject = LESSON_ABBREVIATIONS.find(
+      ({ aliases }) => aliases.some((alias) => normalizedName.includes(normalizeLessonName(alias)))
+    );
+    if (matchedSubject) return matchedSubject.abbreviation;
+    const languageName = normalizedName.match(/(?:^|\s)jezyk\s+([a-z]+)/)?.[1];
+    if (languageName) return languageName.slice(0, 3);
+    return Array.from(trimmedName.toLocaleLowerCase("pl-PL")).slice(0, 3).join("");
+  }
   function Schedule({ widgetId, moveWidget: moveWidget2, data }) {
     const schedule = data.schedule;
     const possibleLayout = [
@@ -1394,15 +1455,6 @@
     function formatTodayKey() {
       const weekdayKeys = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
       return weekdayKeys[(/* @__PURE__ */ new Date()).getDay()];
-    }
-    function shortageNames(name) {
-      const names = ["ang", "angielski", "pol", "polski", "biol", "biologia", "his", "historia", "biz", "biznes", "kul", "kultura", "wiedza", "wos", "fizyczne", "wf"];
-      for (let i3 = 0; i3 < names.length / 2; i3 += 2) {
-        if (name.includes(names[i3])) {
-          return names[i3 + 1];
-        }
-      }
-      return name;
     }
     function compareTimes(left, right) {
       const leftStart = left.split("-")[0];
@@ -1440,7 +1492,7 @@
       if (mode === "today") {
         const day = scheduleDays[0];
         const firstLesson = Object.values(scheduleData?.[day] || {})[0];
-        return /* @__PURE__ */ k("div", { className: "schedule-grid today" }, /* @__PURE__ */ k("div", { className: "schedule-head" }, firstLesson?.day || day), visibleTimes.map((time) => /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell today" }, shortageNames(scheduleData?.[day]?.[time]?.subject || ""))));
+        return /* @__PURE__ */ k("div", { className: "schedule-grid today" }, /* @__PURE__ */ k("div", { className: "schedule-head" }, firstLesson?.day || day), visibleTimes.map((time) => /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell today" }, shortenLessonName(scheduleData?.[day]?.[time]?.subject || ""))));
       }
       return /* @__PURE__ */ k("div", { className: "schedule-grid weekly" }, /* @__PURE__ */ k(
         "div",
@@ -1458,12 +1510,12 @@
         {
           key: time,
           className: "schedule-row",
-          style: { gridTemplateColumns: `82px repeat(${scheduleDays.length}, minmax(0, 1fr))` }
+          style: { gridTemplateColumns: `42px repeat(${scheduleDays.length}, minmax(0, 1fr))` }
         },
-        /* @__PURE__ */ k("div", { className: "time-cell" }, time.replace("-", "\u2013")),
+        /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])),
         scheduleDays.map((day) => {
           const lesson = scheduleData?.[day]?.[time];
-          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell" }, shortageNames(lesson?.subject || ""));
+          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell" }, shortenLessonName(lesson?.subject || ""));
         })
       )));
     }
@@ -1899,7 +1951,7 @@
       const number = Number(value);
       return Number.isFinite(number) ? number : 0;
     }
-    function normalizeLessonName(lessonName) {
+    function normalizeLessonName2(lessonName) {
       let names = ["fizyczne", "WF", "godzina", "GW", "biznes", "BIZ", "kultura", "kultura"];
       for (let i3 = 0; i3 < names.length; i3 += 2) {
         if (lessonName.includes(names[i3])) {
@@ -1947,13 +1999,13 @@
       return summary;
     }
     function AttendanceRow({ item, rowWidth }) {
-      return /* @__PURE__ */ k("div", { className: "attendance-row", style: { width: rowWidth } }, /* @__PURE__ */ k("div", { className: "attendance-row-subject" }, normalizeLessonName(item.subject)), /* @__PURE__ */ k("div", { className: `attendance-row-value ${item.presence ? "ob" : ""} ${item.absence ? "nob" : ""} ${item.lateness ? "sp" : ""}` }, item.presence ? `OB` : "", " ", item.absence ? `NOB` : "", " ", item.lateness ? `SP` : ""));
+      return /* @__PURE__ */ k("div", { className: "attendance-row", style: { width: rowWidth } }, /* @__PURE__ */ k("div", { className: "attendance-row-subject" }, normalizeLessonName2(item.subject)), /* @__PURE__ */ k("div", { className: `attendance-row-value ${item.presence ? "ob" : ""} ${item.absence ? "nob" : ""} ${item.lateness ? "sp" : ""}` }, item.presence ? `OB` : "", " ", item.absence ? `NOB` : "", " ", item.lateness ? `SP` : ""));
     }
     function AttendanceGrid({ limit, width: width2 = "100%", graph = false, rowWidth = "100%", showMore = false }) {
       let usableData = attendance.slice(0, limit);
       const seeMoreHref = attendance[0]?.seeMoreUrl;
       const shouldShowSeeMore = showMore && seeMoreHref && seeMoreHref !== "mogData";
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container", style: { gap: "8px" } }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Obecno\u015Bci"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px`, gap: "8px" }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Obecno\u015Bci"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
