@@ -31,7 +31,7 @@
 	/* Text & Navigation */
 	--main-text-color: #0B5F5D;
 	/* High-contrast dark grey */
-	--gradient-text-color: #ffffff;
+	--gradient-text-color: #0B5F5D;
 	--actionbtn-text-color: #ffffff;
 	--location-text-color: #0B5F5D;
 	/* Muted grey for breadcrumbs */
@@ -48,7 +48,7 @@
 	/* Light grey circles for icons */
 
 	/* Schedule & Tables - Clean & #69D2BDLinear */
-	--schedule-table-header-color: #1d1d1f;
+	--schedule-table-header-color: #189e8a44;
 	--schedule-table-time-color: #424245;
 	--schedule-lesson-color: #189e8a7e;
 	/* Almost white for lesson cells */
@@ -83,7 +83,7 @@
 	--form-background-color: #242A32;
 	--akcent-color: #7EEACC;
 	--icon-background-color: rgb(37, 62, 69);
-	--schedule-table-header-color: rgb(33, 55, 63);
+	--schedule-table-header-color: #2dd4be07;
 	--schedule-table-time-color: rgb(33, 55, 63);
 	--schedule-lesson-color: #2dd4be15;
 	--chedule-time-color: white;
@@ -109,7 +109,7 @@
 :root[data-theme="Dzaga"] {
 	--idu-logo: #ffffff;
 	--mg: rgb(3, 25, 38);
-	--gradient-text-color: rgb(244, 233, 205);
+	--gradient-text-color: #5B3119;
 	--mc: #5B3119;
 	--topmg: rgb(3, 25, 38);
 	--module-color: #DBA67A;
@@ -122,7 +122,7 @@
 	--form-background-color: #DBA67A;
 	--akcent-color: #5B3119;
 	--icon-background-color: rgb(244, 233, 205);
-	--schedule-table-header-color: rgb(70, 129, 137);
+	--schedule-table-header-color: #5b311920;
 	--schedule-table-time-color: rgb(70, 129, 137);
 	--schedule-lesson-color: #5b311949;
 	--schedule-time-color: rgb(244, 233, 205);
@@ -148,7 +148,7 @@
 :root[data-theme="Besties"] {
 	--idu-logo: #ffffff;
 	--mg: rgba(255, 103, 141);
-	--gradient-text-color: rgb(147, 67, 81);
+	--gradient-text-color: #851A36;
 	--mc: #851A36;
 	--topmg: rgba(255, 103, 141);
 	--module-color: #F6CCCD;
@@ -162,7 +162,7 @@
 	--form-background-color: #F6CCCD;
 	--akcent-color: #851A36;
 	--icon-background-color: rgba(254, 222, 211);
-	--schedule-table-header-color: rgba(240, 86, 114);
+	--schedule-table-header-color: #ea6a8220;
 	--schedule-table-time-color: rgba(240, 86, 114);
 	--schedule-lesson-color: #ea6a8234;
 	--schedule-time-color: rgba(253, 237, 222);
