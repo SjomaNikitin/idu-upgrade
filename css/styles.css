@@ -593,7 +593,6 @@
 		background-color: var(--darker-messages-color) !important;
 		width: 100%;
 		overflow: hidden;
-
 	}
 
 	.odd {
@@ -634,13 +633,44 @@
 
 	}
 
+	table.message-table {
+		width: 100% !important;
+		table-layout: auto !important;
+	}
+
+	table.message-table > tbody > tr.odd > td.select,
+	table.message-table > tbody > tr.even > td.select {
+		width: 28px !important;
+		min-width: 28px !important;
+		max-width: 28px !important;
+		padding: 4px !important;
+		box-sizing: border-box;
+	}
+
+	.message-table td.select {
+		width: 1%;
+		white-space: nowrap;
+		padding-inline: 4px;
+	}
+
+	.message-table td.user {
+		width: 28%;
+	}
+
+	div.current{
+		border-radius: var(--padding-1);
+	}
+
+	.message-table td.unread {
+		width: 47%;
+	}
 
 	table.message-table {
 		width: 100% !important;
 		max-width: 100% !important;
 		min-width: 0 !important;
 		table-layout: fixed;
-		td:not([class]){
+		td:last-child{
 			display: none;
 		}
 	}
