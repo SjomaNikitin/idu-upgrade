@@ -37,7 +37,7 @@
 	/* Muted grey for breadcrumbs */
 	--breadcrumbs-text: #000000;
 	--footer-text-color: #0B5F5D;
-	--akcent-color: #000000;
+	--akcent-color: #0B5F5D;
 	/* Pure black for specific highlights */
 
 	/* Functional Elements */
@@ -78,14 +78,14 @@
 	--module-shadow-color: rgba(0, 0, 0, 0);
 	--module-border-color: #2dd4be30;
 	--main-text-color: #7EEACC;
-	--input-field-color: rgb(33, 55, 63);
-	--darker-messages-color: rgb(33, 55, 63);
-	--form-background-color: rgb(33, 55, 63);
-	--akcent-color: rgb(94, 156, 170);
+	--input-field-color: #2dd4be15;
+	--darker-messages-color: #242A32;
+	--form-background-color: #242A32;
+	--akcent-color: #7EEACC;
 	--icon-background-color: rgb(37, 62, 69);
 	--schedule-table-header-color: rgb(33, 55, 63);
 	--schedule-table-time-color: rgb(33, 55, 63);
-	--schedule-lesson-color: rgb(48, 79, 85);
+	--schedule-lesson-color: #2dd4be15;
 	--chedule-time-color: white;
 	--actionbtn-text-color: rgb(255, 255, 255);
 	--location-text-color: rgb(255, 255, 255);
@@ -110,21 +110,21 @@
 	--idu-logo: #ffffff;
 	--mg: rgb(3, 25, 38);
 	--gradient-text-color: rgb(244, 233, 205);
-	--mc: rgb(70, 129, 137);
+	--mc: #5B3119;
 	--topmg: rgb(3, 25, 38);
-	--module-color: rgb(244, 233, 205);
-	--background-color: rgb(157, 190, 187);
+	--module-color: #DBA67A;
+	--background-color: #FCEDD6;
 	--module-shadow-color: rgba(0, 0, 0, 0.3);
-	--module-border-color: rgb(3, 25, 38);
-	--main-text-color: #000000;
-	--input-field-color: rgb(244, 233, 205);
-	--darker-messages-color: #cdcdcd;
-	--form-background-color: rgb(157, 190, 187);
-	--akcent-color: rgb(3, 25, 38);
+	--module-border-color: #5b31197c;
+	--main-text-color: #5B3119;
+	--input-field-color: #5b311949;
+	--darker-messages-color: #DBA67A;
+	--form-background-color: #DBA67A;
+	--akcent-color: #5B3119;
 	--icon-background-color: rgb(244, 233, 205);
 	--schedule-table-header-color: rgb(70, 129, 137);
 	--schedule-table-time-color: rgb(70, 129, 137);
-	--schedule-lesson-color: rgb(157, 190, 187);
+	--schedule-lesson-color: #5b311949;
 	--schedule-time-color: rgb(244, 233, 205);
 	--actionbtn-text-color: rgb(244, 233, 205);
 	--location-text-color: rgb(3, 25, 38);
@@ -133,13 +133,16 @@
 	--underline: 2px solid rgb(3 25 38 / 0.55);
 	--h3-margin: 0;
 	--footer-text-color: var(--main-text-color);
-	--attendance-wheel-color: rgb(70, 129, 137);
-	--upsent-wheel-color: rgb(3, 25, 38);
-	--latency-wheel-color: rgb(157, 190, 187);
-	--news-date-bg: rgb(3, 25, 38);
-	--title-icon-bg: rgb(3, 25, 38);
-	--subjects-bg: rgb(3, 25, 38);
-	--grades-box-bg: rgb(3, 25, 38);
+	--attendance-wheel-color: #5B3119;
+	--upsent-wheel-color: #5b31197c;
+	--latency-wheel-color: #5b311920;
+	--attendance-text-color: #5B3119;
+	--absence-text-color: #5B3119;
+	--lateness-text-color: #5B3119;
+	--news-date-bg: #5b311949;
+	--title-icon-bg: #5b311949;
+	--subjects-bg: #5b311949;
+	--grades-box-bg: #5b311920;
 }
 
 :root[data-theme="Besties"] {
@@ -157,7 +160,7 @@
 	--input-field-color: #ea6a8234;
 	--darker-messages-color: #851A36rgba(252, 196, 183);
 	--form-background-color: #F6CCCD;
-	--akcent-color: rgb(147, 67, 81);
+	--akcent-color: #851A36;
 	--icon-background-color: rgba(254, 222, 211);
 	--schedule-table-header-color: rgba(240, 86, 114);
 	--schedule-table-time-color: rgba(240, 86, 114);
