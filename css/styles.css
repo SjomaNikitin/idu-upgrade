@@ -1233,7 +1233,8 @@
 		will-change: transform;
 	}
 
-	#idu-header-root.is-scroll-hidden {
+	#idu-header-root.is-scroll-hidden,
+	#idu-header-root.is-edit-hidden {
 		transform: translateY(-100%);
 		pointer-events: none;
 	}
