@@ -1,4 +1,4 @@
-import { h, Fragment } from 'preact';
+import { h } from 'preact';
 import { useEffect, useRef, useState} from 'preact/hooks';
 import { useWidgetResize } from './widgetResize.js';
 import { useWidgetDragging } from './widgetDragging.js';
@@ -48,6 +48,20 @@ export function Schedule({ widgetId, moveWidget, data }) {
 		return leftHour * 60 + leftMinute - (rightHour * 60 + rightMinute);
 	}
 
+	function formatDayLabel(day, label) {
+		const dayLabels = {
+			monday: 'Pon',
+			tuesday: 'Wt',
+			wednesday: 'Śr',
+			thursday: 'Czw',
+			friday: 'Pt',
+			saturday: 'Sob',
+			sunday: 'Niedz',
+		};
+
+		return dayLabels[day] || label;
+	}
+
 	function ScheduleGrid({ scheduleData, mode = 'today' }) {
 		const allDays = Object.keys(scheduleData || {});
 		const todayKey = formatTodayKey();
@@ -68,47 +82,54 @@ export function Schedule({ widgetId, moveWidget, data }) {
 			return null;
 		}
 
-			return (
-				<div
-						className={mode !== 'today' ? 'schedule-grid' : 'schedule-grid today'}
-						style={{
-							gridTemplateColumns: mode === 'today'
-								? '1fr'
-								: `72px repeat(${scheduleDays.length}, 1fr)`,
-						}}
-					>
-					{mode === 'today' ? null : <div className="schedule-head"></div>}
+		if (mode === 'today') {
+			const day = scheduleDays[0];
+			const firstLesson = Object.values(scheduleData?.[day] || {})[0];
 
+			return (
+				<div className="schedule-grid today">
+					<div className="schedule-head">{firstLesson?.day || day}</div>
+					{visibleTimes.map((time) => (
+						<div key={`${day}-${time}`} className="lesson-cell today">
+							{shortageNames(scheduleData?.[day]?.[time]?.subject || '')}
+						</div>
+					))}
+				</div>
+			);
+		}
+
+		return (
+			<div className="schedule-grid weekly">
+				<div
+					className="schedule-days-header"
+					style={{ gridTemplateColumns: `repeat(${scheduleDays.length}, minmax(0, 1fr))` }}
+				>
 					{scheduleDays.map((day) => {
 						const firstLesson = Object.values(scheduleData?.[day] || {})[0];
 						const label = firstLesson?.day || day;
 
-					return (
-					<div key={day} className="schedule-head">
-						{label}
-					</div>
-					);
-				})}
+						return <div key={day} className="schedule-head">{formatDayLabel(day, label)}</div>;
+					})}
+				</div>
 
-					{visibleTimes.map((time) => (
-						<Fragment key={time}>
-							{mode === 'today' ? null : (
-								<div className="time-cell">
-									<span>{time.split('-')[0]}</span>
-									<span>{time.split('-')[1]}</span>
-								</div>
-							)}
+				{visibleTimes.map((time) => (
+					<div
+						key={time}
+						className="schedule-row"
+						style={{ gridTemplateColumns: `82px repeat(${scheduleDays.length}, minmax(0, 1fr))` }}
+					>
+						<div className="time-cell">{time.replace('-', '–')}</div>
 
 						{scheduleDays.map((day) => {
 							const lesson = scheduleData?.[day]?.[time];
 
 							return (
-								<div key={`${day}-${time}`} className={mode !== 'today' ? 'lesson-cell' : 'lesson-cell today'}>
+								<div key={`${day}-${time}`} className="lesson-cell">
 									{shortageNames(lesson?.subject || '')}
 								</div>
 							);
 						})}
-					</Fragment>
+					</div>
 				))}
 			</div>
 		);
