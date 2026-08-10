@@ -1223,8 +1223,27 @@
 		align-items: center;      /* vertical center */
 		justify-content: center;  /* horizontal center */
 	}
+	#idu-header-root {
+		position: sticky;
+		top: 0;
+		z-index: 1000;
+		width: 100%;
+		background: var(--background-color);
+		transition: transform 220ms ease;
+		will-change: transform;
+	}
+
+	#idu-header-root.is-scroll-hidden {
+		transform: translateY(-100%);
+		pointer-events: none;
+	}
+
+	html[data-app-platform="ios"] #idu-header-root {
+		padding-top: var(--ios-safe-top, 0px);
+	}
+
 	html[data-app-platform="ios"] .idu-custom-header {
-		margin-top: var(--ios-safe-top, 0px) !important;
+		margin-top: 0 !important;
 	}
 	.idu-custom-header {
 		height: var(--header-height) !important;
@@ -1247,6 +1266,12 @@
 
 	.idu-custom-header.mini{
 		height: var(--small-header-height) !important;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		#idu-header-root {
+			transition: none;
+		}
 	}
 
 	.header-home {

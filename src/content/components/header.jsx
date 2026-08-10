@@ -1,6 +1,6 @@
 // src/content/components/Header.jsx
 import { h } from "preact";
-import { useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 function MessagesButton({ href, size }) {
 	if (!href) return null;
@@ -32,6 +32,7 @@ function HeaderActions({ accountHref, size }) {
 }
 
 export function Header({accountHref, messagesHref, semesterScope}) {
+	const headerRef = useRef(null);
 	let color = getComputedStyle(root).getPropertyValue('--idu-logo').trim();
 	let currentTheme = localStorage.getItem("theme");
 	let svgSize = 28;
@@ -51,6 +52,55 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 	}
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [settingsOpen, setSettingsOpen] = useState(false)
+	useEffect(() => {
+		const header = headerRef.current;
+		const stickyHeader = header?.parentElement?.id === "idu-header-root"
+			? header.parentElement
+			: header;
+		if (!stickyHeader) return undefined;
+
+		let lastScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+		let animationFrame = null;
+		const scrollThreshold = 6;
+		const topRevealPoint = 12;
+
+		const updateHeader = () => {
+			const currentScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+			const scrollDelta = currentScrollY - lastScrollY;
+
+			if (currentScrollY <= topRevealPoint || menuOpen || settingsOpen) {
+				stickyHeader.classList.remove("is-scroll-hidden");
+				lastScrollY = currentScrollY;
+			} else if (scrollDelta > scrollThreshold) {
+				stickyHeader.classList.add("is-scroll-hidden");
+				lastScrollY = currentScrollY;
+			} else if (scrollDelta < -scrollThreshold) {
+				stickyHeader.classList.remove("is-scroll-hidden");
+				lastScrollY = currentScrollY;
+			}
+
+			animationFrame = null;
+		};
+
+		const handleScroll = () => {
+			if (animationFrame === null) {
+				animationFrame = window.requestAnimationFrame(updateHeader);
+			}
+		};
+
+		if (menuOpen || settingsOpen) {
+			stickyHeader.classList.remove("is-scroll-hidden");
+		}
+
+		window.addEventListener("scroll", handleScroll, { passive: true });
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+			if (animationFrame !== null) {
+				window.cancelAnimationFrame(animationFrame);
+			}
+		};
+	}, [menuOpen, settingsOpen]);
+
 	function openSettings () {
 		setSettingsOpen(true);
 		setMenuOpen(false);
@@ -82,7 +132,7 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 
 	if (window.location.pathname === "/") {
 		return (
-			<header id="top" className="idu-custom-header">
+			<header ref={headerRef} id="top" className="idu-custom-header">
 				<div className="header-menu">
 					<a
 						className="header-menu-button"
@@ -122,7 +172,7 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 		);
 	} else {
 		return (
-			<header id="top" className="idu-custom-header mini">
+			<header ref={headerRef} id="top" className="idu-custom-header mini">
 				<div className="header-menu">
 					<a
 						className="header-menu-button"
@@ -140,11 +190,8 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 
 					<div className={`header-menu-panel ${menuOpen ? "open" : ""}`}>
 						<a href={accountHref} className="header-panel-link" aria-label="Konto">
-							<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} viewBox="0 0 24 24" aria-hidden="true">
-								<g fill="none" stroke="currentColor" strokeWidth="2">
-									<path strokeLinejoin="round" d="M4 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
-									<circle cx="12" cy="7" r="3"/>
-								</g>
+							<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 							</svg>
 						</a>
 						<a onClick={() => openSettings()} className="header-panel-link">
