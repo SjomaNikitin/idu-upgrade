@@ -41,7 +41,7 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 	let actionIconStrokeWidth = 2.2;
 	let [editMode, setEditMode] = useState(false);
 	if (currentTheme === "Ocean") {
-		color = "#91dba4"
+		color = "#7EEACC"
 	} else if (currentTheme === "Besties") {
 		color = "#ffe2df"
 	} else if (currentTheme === "Dzaga") {
