@@ -71,12 +71,12 @@
 	--idu-logo: #ffffff;
 	--mg: rgb(42, 69, 75);
 	--gradient-text-color: rgb(255, 255, 255);
-	--mc: rgb(58, 187, 117);
+	--mc: #7EEACC;
 	--topmg: rgb(14, 28, 38);
-	--module-color: rgb(42, 69, 75);
-	--background-color: rgb(19, 35, 44);
+	--module-color: #242A32;
+	--background-color: #1A1F25;
 	--module-shadow-color: rgba(0, 0, 0, 0);
-	--module-border-color: rgb(45 101 90);
+	--module-border-color: #2dd4be30;
 	--main-text-color: #7EEACC;
 	--input-field-color: rgb(33, 55, 63);
 	--darker-messages-color: rgb(33, 55, 63);
@@ -94,13 +94,16 @@
 	--underline: 2px solid rgb(145 219 164 / 0.52);
 	--h3-margin: 0;
 	--footer-text-color: var(--main-text-color);
-	--attendance-wheel-color: rgb(145, 219, 164);
-	--upsent-wheel-color: rgb(14, 28, 38);
-	--latency-wheel-color: rgb(53 90 97);
-	--news-date-bg: rgb(43 87 94);
-	--title-icon-bg: rgb(43 87 94);
-	--subjects-bg: rgb(44 74 80);
-	--grades-box-bg: rgb(44 74 80);
+	--attendance-wheel-color: #7EEACC;
+	--upsent-wheel-color: #2dd4be15;
+	--latency-wheel-color:  #2dd4be30;
+	--attendance-text-color: #7EEACC;
+	--absence-text-color: #7EEACC;
+	--lateness-text-color: #7EEACC;
+	--news-date-bg: #2dd4be15;
+	--title-icon-bg: #2dd4be15;
+	--subjects-bg: #2dd4be15;
+	--grades-box-bg: #2dd4be07;
 }
 
 :root[data-theme="Dzaga"] {
