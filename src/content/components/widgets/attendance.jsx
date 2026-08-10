@@ -111,7 +111,7 @@ export function Attendance({ widgetId, moveWidget, data }) {
 		let usableData = attendance.slice(0, limit);
 		const seeMoreHref = attendance[0]?.seeMoreUrl;
 		const shouldShowSeeMore = showMore && seeMoreHref && seeMoreHref !== 'mogData';
-		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
+		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container" style={{gap: "8px"}}>
 			<div className="widget-title-box">
 				<h1>Obecności</h1>
 				<svg className={"titleArrow"} fill="currentColor" version="1.1" baseProfile="tiny" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
