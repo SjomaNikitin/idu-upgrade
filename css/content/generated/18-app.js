@@ -422,11 +422,11 @@
     if (currentTheme === "Ocean") {
       color = "#7EEACC";
     } else if (currentTheme === "Besties") {
-      color = "#ffe2df";
+      color = "#851A36";
     } else if (currentTheme === "Dzaga") {
-      color = "#f4e9cd";
+      color = "#5B3119";
     } else if (currentTheme === "Default") {
-      color = "#ffffff";
+      color = "#0B5F5D";
     }
     const [menuOpen, setMenuOpen] = d2(false);
     const [settingsOpen, setSettingsOpen] = d2(false);
@@ -520,8 +520,8 @@
     ));
   }
   function SettingsDots() {
-    const themes = ["Default", "Dzaga", "Ocean", "Besties"];
-    const dots = ["#000000", "#468189FF", "#3ABB75FF", "#FF678DFF"];
+    const themes = ["Default", "Ocean", "Dzaga", "Besties"];
+    const dots = ["#69D2BD", "#242A32", "#DBA67A", "#F6CCCD"];
     const currentTheme = localStorage.getItem("theme") || "Default";
     const [selectedDot, setSelectedDot] = d2(
       Math.max(0, themes.indexOf(currentTheme))
