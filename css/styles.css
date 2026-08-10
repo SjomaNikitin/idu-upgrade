@@ -591,13 +591,13 @@
 
 	.even {
 		background-color: var(--darker-messages-color) !important;
-		width: calc(100% - var(--padding-1));
+		width: 100%;
 		overflow: hidden;
 
 	}
 
 	.odd {
-		width: calc(100% - var(--padding-1));
+		width: 100%;
 		overflow: hidden;
 		background-color: var(--schedule-lesson-color) !important;
 	}
