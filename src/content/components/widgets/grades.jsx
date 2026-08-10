@@ -214,7 +214,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 	}
 
 	function Grades46 () {
-		return <GradesList limit={7} lastLine={2} showDescription={true} allHref={true}/>;
+		return <GradesList limit={6} lastLine={2} showDescription={true} allHref={true}/>;
 	}
 
 	const gradeVariants = {
