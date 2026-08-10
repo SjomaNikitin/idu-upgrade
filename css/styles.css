@@ -1609,57 +1609,115 @@
 	/*	column-gap: var(--padding-2);*/
 	/*}*/
 
-	.schedule-grid {
+	#scheduleWidget .schedule-grid.today {
 		display: grid;
 		border-top: 2px solid #222;
 		border-left: 2px solid #222;
 		font-size: 1rem;
 		overflow-x: auto;
 		min-height: 0;
-
-	}
-
-	.schedule-grid.today {
 		width: 100%;
 	}
 
-	.schedule-grid > div {
+	#scheduleWidget .schedule-grid.today > div {
 		border-right: 2px solid #222;
 		border-bottom: 2px solid #222;
 		padding: 8px;
 		box-sizing: border-box;
 	}
 
-	.schedule-head {
+	#scheduleWidget .schedule-grid.today .schedule-head {
 		font-weight: 700;
 		background-color: var(--schedule-table-header-color);
 		color: var(--module-color);
-
 	}
 
-	.time-cell {
-		font-weight: 700;
+	#scheduleWidget .schedule-grid.today .lesson-cell {
+		width: 100%;
+		background-color: var(--schedule-lesson-color);
+	}
+
+	#scheduleWidget.w4.h6 .widget-content-container {
 		display: flex;
 		flex-direction: column;
-		align-items: flex-start;
-		justify-content: center;
-		white-space: normal;
-		line-height: 1.1;
-		background-color: var(--schedule-table-time-color);
-		color: var(--module-color);
-		padding-right: 0.7rem;
+		flex-wrap: nowrap;
+		align-items: stretch;
 	}
 
-	.time-cell span {
-		font-size: 0.8rem;
-	}
-
-	.lesson-cell.today {
+	#scheduleWidget.w4.h6 .widget-title-box {
 		width: 100%;
+		margin: 0 0 var(--padding-2);
+		padding: 0;
+		align-items: center;
+		flex: 0 0 auto;
 	}
 
-	.lesson-cell{
+	#scheduleWidget .schedule-grid.weekly {
+		display: flex;
+		flex-direction: column;
+		gap: var(--padding-1);
+		width: 100%;
+		min-height: 0;
+		overflow: auto;
+		font-size: 0.9rem;
+		scrollbar-width: thin;
+	}
+
+	#scheduleWidget .schedule-days-header {
+		display: grid;
+		margin-left: calc(82px + var(--padding-1));
+		min-height: 40px;
+		border: 1px solid var(--module-border-color);
+		border-radius: var(--padding-1);
+		overflow: hidden;
+		background-color: var(--schedule-table-header-color);
+	}
+
+	#scheduleWidget .schedule-days-header .schedule-head {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 0;
+		padding: var(--padding-1);
+		box-sizing: border-box;
+		font-weight: 700;
+		color: var(--gradient-text-color);
+	}
+
+	:root[data-theme="Ocean"] #scheduleWidget .schedule-days-header .schedule-head {
+		color: var(--main-text-color);
+	}
+
+	#scheduleWidget .schedule-row {
+		display: grid;
+		gap: var(--padding-1);
+		min-height: 40px;
+	}
+
+	#scheduleWidget .schedule-row .time-cell,
+	#scheduleWidget .schedule-row .lesson-cell {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 0;
+		box-sizing: border-box;
+		font-weight: 600;
+		text-align: center;
+	}
+
+	#scheduleWidget .schedule-row .time-cell {
+		font-size: 0.72rem;
+		white-space: nowrap;
+		color: var(--main-text-color);
+	}
+
+	#scheduleWidget .schedule-row .lesson-cell {
+		padding: var(--padding-1);
+		border: 1px solid var(--module-border-color);
+		border-radius: var(--padding-1);
 		background-color: var(--schedule-lesson-color);
+		color: var(--main-text-color);
+		overflow: hidden;
 	}
 
 	.widget-title-box{

@@ -1411,6 +1411,18 @@
       const [rightHour, rightMinute] = rightStart.split(":").map(Number);
       return leftHour * 60 + leftMinute - (rightHour * 60 + rightMinute);
     }
+    function formatDayLabel(day, label) {
+      const dayLabels = {
+        monday: "Pon",
+        tuesday: "Wt",
+        wednesday: "\u015Ar",
+        thursday: "Czw",
+        friday: "Pt",
+        saturday: "Sob",
+        sunday: "Niedz"
+      };
+      return dayLabels[day] || label;
+    }
     function ScheduleGrid({ scheduleData, mode = "today" }) {
       const allDays = Object.keys(scheduleData || {});
       const todayKey = formatTodayKey();
@@ -1425,25 +1437,35 @@
       if (scheduleDays.length === 0 || visibleTimes.length === 0) {
         return null;
       }
-      return /* @__PURE__ */ k(
+      if (mode === "today") {
+        const day = scheduleDays[0];
+        const firstLesson = Object.values(scheduleData?.[day] || {})[0];
+        return /* @__PURE__ */ k("div", { className: "schedule-grid today" }, /* @__PURE__ */ k("div", { className: "schedule-head" }, firstLesson?.day || day), visibleTimes.map((time) => /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell today" }, shortageNames(scheduleData?.[day]?.[time]?.subject || ""))));
+      }
+      return /* @__PURE__ */ k("div", { className: "schedule-grid weekly" }, /* @__PURE__ */ k(
         "div",
         {
-          className: mode !== "today" ? "schedule-grid" : "schedule-grid today",
-          style: {
-            gridTemplateColumns: mode === "today" ? "1fr" : `72px repeat(${scheduleDays.length}, 1fr)`
-          }
+          className: "schedule-days-header",
+          style: { gridTemplateColumns: `repeat(${scheduleDays.length}, minmax(0, 1fr))` }
         },
-        mode === "today" ? null : /* @__PURE__ */ k("div", { className: "schedule-head" }),
         scheduleDays.map((day) => {
           const firstLesson = Object.values(scheduleData?.[day] || {})[0];
           const label = firstLesson?.day || day;
-          return /* @__PURE__ */ k("div", { key: day, className: "schedule-head" }, label);
-        }),
-        visibleTimes.map((time) => /* @__PURE__ */ k(S, { key: time }, mode === "today" ? null : /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])), scheduleDays.map((day) => {
+          return /* @__PURE__ */ k("div", { key: day, className: "schedule-head" }, formatDayLabel(day, label));
+        })
+      ), visibleTimes.map((time) => /* @__PURE__ */ k(
+        "div",
+        {
+          key: time,
+          className: "schedule-row",
+          style: { gridTemplateColumns: `82px repeat(${scheduleDays.length}, minmax(0, 1fr))` }
+        },
+        /* @__PURE__ */ k("div", { className: "time-cell" }, time.replace("-", "\u2013")),
+        scheduleDays.map((day) => {
           const lesson = scheduleData?.[day]?.[time];
-          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: mode !== "today" ? "lesson-cell" : "lesson-cell today" }, shortageNames(lesson?.subject || ""));
-        })))
-      );
+          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell" }, shortageNames(lesson?.subject || ""));
+        })
+      )));
     }
     function Schedule21() {
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("h1", null, "Plan Lekcji"), /* @__PURE__ */ k(
