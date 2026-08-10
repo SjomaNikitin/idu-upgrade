@@ -2,7 +2,8 @@ import WidgetKit
 import SwiftUI
 
 private enum WidgetConfig {
-    static let appGroupID = "group.com.IDU2.shared"
+    // Must match com.apple.security.application-groups in both target entitlements.
+    static let appGroupID = "group.idu"
     static let snapshotKey = "widget_snapshot"
     static let scheduleKey = "widget_schedule"
 }
@@ -485,7 +486,7 @@ struct FullScheduleEntry: TimelineEntry {
 
 struct FullScheduleProvider: TimelineProvider {
     func placeholder(in context: Context) -> FullScheduleEntry {
-        FullScheduleEntry(date: Date(), snapshot: mockSnapshot())
+        FullScheduleEntry(date: Date(), snapshot: unsynchronizedSnapshot())
     }
 
     func getSnapshot(in context: Context, completion: @escaping (FullScheduleEntry) -> Void) {
@@ -501,82 +502,15 @@ struct FullScheduleProvider: TimelineProvider {
     private func loadEntry(now: Date = Date()) -> FullScheduleEntry {
         let snapshot = WidgetStore.loadSchedule().map {
             ScheduleGridResolver.makeSnapshot(from: $0, now: now)
-        } ?? mockSnapshot()
+        } ?? unsynchronizedSnapshot()
 
         return FullScheduleEntry(date: now, snapshot: snapshot)
     }
 
-    private func mockSnapshot() -> FullScheduleSnapshot {
+    private func unsynchronizedSnapshot() -> FullScheduleSnapshot {
         FullScheduleSnapshot(
-            dayColumns: [
-                FullScheduleDayColumn(label: "pon 14", lessons: [
-                    mockLesson("Mat", "201"),
-                    mockLesson("Pol", "12"),
-                    mockLesson("His", "7"),
-                    mockLesson("Bio", "15"),
-                    mockLesson("Ang", "105"),
-                    mockLesson("WF", "S"),
-                    mockLesson("Inf", "18"),
-                    mockLesson("Hiszp", "11")
-                ]),
-                FullScheduleDayColumn(label: "wt 15", lessons: [
-                    mockLesson("Fiz", "14"),
-                    mockLesson("Mat", "12"),
-                    mockLesson("Chem", "7"),
-                    mockLesson("Ang", "105"),
-                    mockLesson("Geo", "9"),
-                    mockLesson("WF", "S"),
-                    mockLesson("Biz", "5")
-                ]),
-                FullScheduleDayColumn(label: "sr 16", lessons: [
-                    mockLesson("Pol", "12"),
-                    mockLesson("His", "7"),
-                    mockLesson("Mat", "201"),
-                    mockLesson("Inf", "18"),
-                    mockLesson("Bio", "15"),
-                    mockLesson("Plast", "6"),
-                    mockLesson("Hiszp", "11"),
-                    mockLesson("WF", "S")
-                ]),
-                FullScheduleDayColumn(label: "czw 17", lessons: [
-                    mockLesson("Chem", "7"),
-                    mockLesson("Geo", "9"),
-                    mockLesson("Ang", "105"),
-                    mockLesson("Mat", "201"),
-                    mockLesson("Fiz", "14"),
-                    mockLesson("Biz", "5"),
-                    mockLesson("His", "7"),
-                    mockLesson("Muz", "9")
-                ]),
-                FullScheduleDayColumn(label: "pt 18", lessons: [
-                    mockLesson("Pol", "12"),
-                    mockLesson("Mat", "201"),
-                    mockLesson("Bio", "15"),
-                    mockLesson("Ang", "105"),
-                    mockLesson("Inf", "18"),
-                    mockLesson("WF", "S"),
-                    mockLesson("Godz", "4"),
-                    mockLesson("Hiszp", "11")
-                ])
-            ],
-            updatedAt: Date()
-        )
-    }
-
-    private func mockLesson(_ subject: String, _ room: String) -> ScheduleLesson {
-        ScheduleLesson(
-            lessonNumber: "1",
-            time: "08:00-08:45",
-            start: "08:00",
-            end: "08:45",
-            day: "monday",
-            subject: subject,
-            subjectHref: "",
-            location: room,
-            locationHref: "",
-            note: "",
-            absence: false,
-            lateness: false
+            dayColumns: [],
+            updatedAt: .distantPast
         )
     }
 }
@@ -673,26 +607,37 @@ struct IDU2ScheduleWidgetEntryView: View {
     let entry: FullScheduleProvider.Entry
 
     var body: some View {
-        HStack(alignment: .top, spacing: 4) {
-            ForEach(Array(entry.snapshot.dayColumns.enumerated()), id: \.offset) { _, column in
-                VStack(spacing: 4) {
-                    Text(column.label)
-                        .font(.system(size: 10, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity)
+        Group {
+            if entry.snapshot.dayColumns.isEmpty {
+                Text("Otwórz aplikację, aby zsynchronizować plan")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.primary)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+            } else {
+                HStack(alignment: .top, spacing: 4) {
+                    ForEach(Array(entry.snapshot.dayColumns.enumerated()), id: \.offset) { _, column in
+                        VStack(spacing: 4) {
+                            Text(column.label)
+                                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity)
 
-                    ForEach(0..<maxLessonCount, id: \.self) { index in
-                        if index < column.lessons.count {
-                            ScheduleLessonCell(lesson: column.lessons[index])
-                        } else {
-                            ScheduleLessonSpacer()
+                            ForEach(0..<maxLessonCount, id: \.self) { index in
+                                if index < column.lessons.count {
+                                    ScheduleLessonCell(lesson: column.lessons[index])
+                                } else {
+                                    ScheduleLessonSpacer()
+                                }
+                            }
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .containerBackground(.clear, for: .widget)
     }
 

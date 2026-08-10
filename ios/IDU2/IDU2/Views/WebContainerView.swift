@@ -145,7 +145,8 @@ struct WebContainerView: UIViewRepresentable {
             do {
                 let data = try JSONSerialization.data(withJSONObject: message.body)
                 try SharedStore.saveScheduleMessageData(data)
-				WidgetCenter.shared.reloadTimelines(ofKind: "IDU2Widget")
+                WidgetCenter.shared.reloadTimelines(ofKind: "IDU2Widget")
+                WidgetCenter.shared.reloadTimelines(ofKind: "IDU2ScheduleWidget")
                 print("Saved schedule payload from web app")
             } catch {
                 print("Failed to save schedule payload: \(error.localizedDescription)")
