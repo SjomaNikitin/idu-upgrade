@@ -13,7 +13,7 @@
 	/* Cards/Modules background */
 	--background-color: #E5F8F2;
 	/* Light grey-white for the main page */
-	--form-background-color: #69D2BD;
+	--form-background-color: #99EADB;
 	--input-field-color: #189e8a44;
 
 	/* The "Black/Grey" Accents */
@@ -21,7 +21,7 @@
 	/* Deep "Eerie Black" for main headers */
 	--topmg: #121212;
 	/* Darkest grey for the very top */
-	--module-color: #69D2BD;
+	--module-color: #99EADB;
 	/* Keep modules white for a 'card' look */
 	--module-border-color: #189e8a7e;
 	/* Soft border to define shapes */
@@ -54,7 +54,7 @@
 	/* Almost white for lesson cells */
 	--chedule-time-color: #000000;
 	--shorted-gradient-color: #333333;
-	--darker-messages-color: #69D2BD;
+	--darker-messages-color: #99EADB;
 	--attendance-wheel-color: #0B5F5D;
 	--upsent-wheel-color: #189e8a7e;
 	--latency-wheel-color: #0c79651d;
