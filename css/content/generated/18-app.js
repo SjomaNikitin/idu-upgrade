@@ -420,7 +420,7 @@
     let actionIconStrokeWidth = 2.2;
     let [editMode, setEditMode] = d2(false);
     if (currentTheme === "Ocean") {
-      color = "#91dba4";
+      color = "#7EEACC";
     } else if (currentTheme === "Besties") {
       color = "#ffe2df";
     } else if (currentTheme === "Dzaga") {
@@ -1227,7 +1227,7 @@
       )));
     }
     function Grades46() {
-      return /* @__PURE__ */ k(GradesList, { limit: 7, lastLine: 2, showDescription: true, allHref: true });
+      return /* @__PURE__ */ k(GradesList, { limit: 6, lastLine: 2, showDescription: true, allHref: true });
     }
     const gradeVariants = {
       "22": Grades222,
@@ -1931,7 +1931,7 @@
       let usableData = attendance.slice(0, limit);
       const seeMoreHref = attendance[0]?.seeMoreUrl;
       const shouldShowSeeMore = showMore && seeMoreHref && seeMoreHref !== "mogData";
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Obecno\u015Bci"), /* @__PURE__ */ k(
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container", style: { gap: "8px" } }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Obecno\u015Bci"), /* @__PURE__ */ k(
         "svg",
         {
           className: "titleArrow",
