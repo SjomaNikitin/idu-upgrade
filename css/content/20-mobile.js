@@ -94,3 +94,60 @@ function makeModulesShorter(module) {
 	}
 
 }
+function upgradeNewsPage () {
+	const news = Array.from(
+		document.querySelectorAll(".profile-event.news")
+	);
+
+	news.forEach((newsItem, index) => {
+		const date = newsItem.querySelector(".date")
+			?.textContent.trim() || "";
+
+		const originalTitle = newsItem.querySelector(".name a");
+		if (!originalTitle) return;
+
+		const commentsElement = Array.from(
+			newsItem.querySelectorAll("span")
+		).find((span) =>
+			span.textContent.trim().startsWith("komentarze:")
+		);
+
+		const comments = commentsElement
+			?.textContent.replace("komentarze:", "").trim() || "";
+
+		const replacement = document.createElement("div");
+		const isLast = index === news.length - 1;
+
+		replacement.className =
+			`widget-news-box${isLast ? " last" : ""}`;
+
+		const dateBox = document.createElement("div");
+		dateBox.className = "widget-news-box-date";
+
+		const day = document.createElement("span");
+		day.className = "widget-news-box-date-day";
+		day.textContent = date.slice(0, 2);
+
+		const month = document.createElement("span");
+		month.className = "widget-news-box-date-month";
+		month.textContent = date.slice(3, 6);
+
+		dateBox.append(day, document.createElement("br"), month);
+
+		const title = document.createElement("a");
+		title.href = originalTitle.getAttribute("href") || "";
+		title.append(
+			document.createTextNode(originalTitle.textContent.trim()),
+			document.createElement("br")
+		);
+
+		const commentsLabel = document.createElement("span");
+		commentsLabel.className = "widget-news-box-comments";
+		commentsLabel.textContent = `komentarze: ${comments}`;
+
+		title.appendChild(commentsLabel);
+		replacement.append(dateBox, title);
+
+		newsItem.replaceWith(replacement);
+	});
+}

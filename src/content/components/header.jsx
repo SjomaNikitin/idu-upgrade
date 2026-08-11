@@ -14,14 +14,21 @@ function MessagesButton({ href, size }) {
 	);
 }
 
-function HeaderActions({ accountHref, size }) {
+function HeaderActions({ accountHref, size, searchOpen, onSearchToggle, searchAvailable }) {
 	return (
 		<div className="header-actions">
-			<button type="button" className="header-icon-button header-search-button" aria-label="Szukaj">
+			{searchAvailable && <button
+				type="button"
+				className={`header-icon-button header-search-button ${searchOpen ? "active" : ""}`}
+				aria-label="Szukaj"
+				aria-expanded={searchOpen}
+				aria-controls="header-search-popup"
+				onClick={onSearchToggle}
+			>
 				<svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path d="M14.9536 14.9458L21 21M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 				</svg>
-			</button>
+			</button>}
 			<a href={accountHref} className="header-icon-button" aria-label="Konto">
 				<svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -31,7 +38,79 @@ function HeaderActions({ accountHref, size }) {
 	);
 }
 
-export function Header({accountHref, messagesHref, semesterScope}) {
+function SearchPopup({ open, onClose, searchElement }) {
+	const contentRef = useRef(null);
+
+	useEffect(() => {
+		if (!searchElement || !contentRef.current) return undefined;
+
+		contentRef.current.appendChild(searchElement);
+		const replaceImageSize = () => {
+			searchElement.querySelectorAll("#users_search_result img").forEach((image) => {
+				["src", "srcset"].forEach((attribute) => {
+					const value = image.getAttribute(attribute);
+					if (value?.includes("/mini/")) {
+						image.setAttribute(attribute, value.replaceAll("/mini/", "/profile/"));
+					}
+				});
+			});
+		};
+
+		replaceImageSize();
+		const resultsObserver = new MutationObserver(replaceImageSize);
+		resultsObserver.observe(searchElement, {
+			attributes: true,
+			attributeFilter: ["src", "srcset"],
+			childList: true,
+			subtree: true,
+		});
+
+		return () => resultsObserver.disconnect();
+	}, [searchElement]);
+
+	useEffect(() => {
+		if (!open) return undefined;
+
+		const handleKeyDown = (event) => {
+			if (event.key === "Escape") onClose();
+		};
+		document.addEventListener("keydown", handleKeyDown);
+
+		const focusFrame = window.requestAnimationFrame(() => {
+			searchElement?.querySelector("#search_profile_by_name")?.focus();
+		});
+
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown);
+			window.cancelAnimationFrame(focusFrame);
+		};
+	}, [open, onClose, searchElement]);
+
+	if (!searchElement) return null;
+
+	return (
+		<section
+			id="header-search-popup"
+			className={`header-search-popup ${open ? "open" : ""}`}
+			role="dialog"
+			aria-modal="false"
+			aria-label="Wyszukiwanie użytkowników"
+			aria-hidden={!open}
+		>
+			<div className="header-search-popup-heading">
+				<h2>Wyszukaj użytkownika</h2>
+				<button type="button" className="header-search-close" onClick={onClose} aria-label="Zamknij wyszukiwanie">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+					</svg>
+				</button>
+			</div>
+			<div ref={contentRef} className="header-search-content"></div>
+		</section>
+	);
+}
+
+export function Header({accountHref, messagesHref, semesterScope, searchElement}) {
 	const headerRef = useRef(null);
 	let color = getComputedStyle(root).getPropertyValue('--idu-logo').trim();
 	let currentTheme = localStorage.getItem("theme");
@@ -52,6 +131,7 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 	}
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [settingsOpen, setSettingsOpen] = useState(false)
+	const [searchOpen, setSearchOpen] = useState(false);
 	useEffect(() => {
 		const header = headerRef.current;
 		const stickyHeader = header?.parentElement?.id === "idu-header-root"
@@ -70,7 +150,7 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 
 			if (editMode) {
 				lastScrollY = currentScrollY;
-			} else if (currentScrollY <= topRevealPoint || menuOpen || settingsOpen) {
+			} else if (currentScrollY <= topRevealPoint || menuOpen || settingsOpen || searchOpen) {
 				stickyHeader.classList.remove("is-scroll-hidden");
 				lastScrollY = currentScrollY;
 			} else if (scrollDelta > scrollThreshold) {
@@ -93,7 +173,7 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 		stickyHeader.classList.toggle("is-edit-hidden", editMode);
 		if (editMode) {
 			stickyHeader.classList.remove("is-scroll-hidden");
-		} else if (menuOpen || settingsOpen) {
+		} else if (menuOpen || settingsOpen || searchOpen) {
 			stickyHeader.classList.remove("is-scroll-hidden");
 		}
 
@@ -104,11 +184,17 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 				window.cancelAnimationFrame(animationFrame);
 			}
 		};
-	}, [editMode, menuOpen, settingsOpen]);
+	}, [editMode, menuOpen, searchOpen, settingsOpen]);
 
 	function openSettings () {
 		setSettingsOpen(true);
 		setMenuOpen(false);
+		setSearchOpen(false);
+	}
+	function toggleSearch () {
+		setMenuOpen(false);
+		setSettingsOpen(false);
+		setSearchOpen((open) => !open);
 	}
 	window.switchEditMode = function switchEditMode () {
 		window.editMode = !editMode;
@@ -141,7 +227,10 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 				<div className="header-menu">
 					<a
 						className="header-menu-button"
-						onClick={() => setMenuOpen(!menuOpen)}
+						onClick={() => {
+							setSearchOpen(false);
+							setMenuOpen(!menuOpen);
+						}}
 					>
 						<svg width={svgSize} height={svgSize} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -171,7 +260,14 @@ export function Header({accountHref, messagesHref, semesterScope}) {
 						<path d="M0 0 C3.63 0 7.26 0 11 0 C11 19.47 11 38.94 11 59 C7.04 59 3.08 59 -1 59 C-1.02255549 51.45501411 -1.04091769 43.91004069 -1.05181217 36.36502934 C-1.05703989 32.86191115 -1.0641355 29.35881715 -1.07543945 25.85571289 C-1.08834206 21.83219159 -1.09322912 17.80869586 -1.09765625 13.78515625 C-1.10539818 11.88987938 -1.10539818 11.88987938 -1.11329651 9.95631409 C-1.11337204 8.795186 -1.11344757 7.63405792 -1.11352539 6.43774414 C-1.11685631 4.8955294 -1.11685631 4.8955294 -1.12025452 3.32215881 C-1 1 -1 1 0 0 Z " fill={color} transform="translate(21,7)"/>
 					</svg>
 				</a>
-				<HeaderActions accountHref={accountHref} size={svgSize}/>
+				<HeaderActions
+					accountHref={accountHref}
+					size={svgSize}
+					searchOpen={searchOpen}
+					onSearchToggle={toggleSearch}
+					searchAvailable={Boolean(searchElement)}
+				/>
+				<SearchPopup open={searchOpen} onClose={() => setSearchOpen(false)} searchElement={searchElement}/>
 				<Settings open={settingsOpen} setOpen={setSettingsOpen} semesterScope={semesterScope}/>
 			</header>
 		);

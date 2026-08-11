@@ -224,14 +224,11 @@
 
 			textarea,
 			table {
-				max-width: 100%;
 				border-color: var(--module-border-color);
 			}
 
-			table {
-				width: 100% !important;
-				min-width: 0 !important;
-				table-layout: fixed;
+			.module:has(table){
+				overflow-x: auto;
 			}
 
 			table th,
@@ -994,6 +991,10 @@
 		position: relative;
 	}
 
+	table.presences_table{
+		width: 200% !important;
+	}
+
 	#breadcrumbs {
 		font-size: 1rem;
 		color: var(--breadcrumbs-text);
@@ -1506,7 +1507,178 @@
 
 	.header-search-button {
 		font: inherit;
-		cursor: default;
+		cursor: pointer;
+	}
+
+	.header-search-popup {
+		position: absolute;
+		left: 50%;
+		top: calc(100% + var(--padding-1));
+		z-index: 99;
+		width: calc(100% - var(--padding-4));
+		max-height: calc(100dvh - var(--header-height) - var(--padding-4));
+		padding: var(--padding-2);
+		box-sizing: border-box;
+		overflow-y: auto;
+		background: var(--module-color);
+		border: 1px solid var(--module-border-color);
+		border-radius: var(--padding-1);
+		box-shadow: 0 8px 20px var(--module-shadow-color);
+		opacity: 0;
+		transform: translateX(-50%) translateY(-16px) scaleY(0.96);
+		transform-origin: top;
+		pointer-events: none;
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	.header-search-popup.open {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0) scaleY(1);
+		pointer-events: auto;
+	}
+
+	.header-search-popup-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--padding-1);
+		margin-bottom: var(--padding-2);
+	}
+
+	.header-search-popup-heading h2 {
+		margin: 0;
+		color: var(--main-text-color);
+		font-size: 1.1rem;
+	}
+
+	.header-search-close {
+		width: 40px;
+		height: 40px;
+		padding: 0;
+		display: grid;
+		place-items: center;
+		flex: 0 0 auto;
+		border: 1px solid var(--module-border-color);
+		border-radius: 999px;
+		background: var(--input-field-color);
+		color: var(--main-text-color);
+	}
+
+	.header-search-content,
+	.header-search-content #unique-id26 {
+		display: block !important;
+		width: 100%;
+		min-width: 0;
+		margin: 0;
+		padding: 0;
+		float: none;
+		background: transparent;
+	}
+
+	.header-search-content #user_search {
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		background: transparent;
+		border: none;
+	}
+
+	.header-search-content #user_search .field {
+		display: grid;
+		gap: var(--padding-1);
+		width: 100%;
+		margin: 0;
+		background: transparent;
+	}
+
+	.header-search-content #user_search label {
+		width: auto;
+		margin: 0;
+		padding: 0;
+		float: none;
+		color: var(--main-text-color);
+	}
+
+	.header-search-content #search_profile_by_name {
+		width: 100%;
+		min-height: 44px;
+		margin: 0;
+		padding: 0 var(--padding-2);
+		float: none;
+		box-sizing: border-box;
+		border: 1px solid var(--module-border-color) !important;
+		border-radius: var(--padding-1);
+		background: var(--input-field-color) !important;
+		color: var(--main-text-color);
+		font: inherit;
+	}
+
+	.header-search-content #users_search_ajax_loader {
+		display: block;
+		max-width: 32px;
+		height: auto;
+		margin: var(--padding-1) auto;
+	}
+
+	.header-search-content #users_search_ajax_loader[style*="display: none"] {
+		display: none;
+	}
+
+	.header-search-content #users_search_result {
+		width: 100%;
+		margin-top: var(--padding-2);
+	}
+
+	#users_search_result .single_user {
+		height: auto !important;
+	}
+
+	.header-search-content #users_search_result table,
+	.header-search-content #users_search_result tbody {
+		display: block;
+		width: 100% !important;
+	}
+
+	.header-search-content #users_search_result tr {
+		display: grid;
+		grid-template-columns: repeat(1, minmax(0, 1fr));
+		width: 100%;
+		gap: var(--padding-1);
+	}
+
+	.header-search-content #users_search_result td {
+		display: block;
+		width: 100%;
+		min-width: 0;
+		padding: var(--padding-1);
+		border-radius: var(--padding-2);
+		border: 1px solid var(--module-border-color);
+	}
+
+	.header-search-content .single_user {
+		display: flex;
+		align-items: center;
+		gap: var(--padding-1);
+		min-width: 0;
+	}
+
+	.header-search-content .user_avatar {
+		flex: 0 0 40px;
+	}
+
+	.header-search-content .user_avatar img {
+		display: block;
+		width: 40px;
+		height: 40px;
+		object-fit: cover;
+		border-radius: 50%;
+	}
+
+	.header-search-content .user_name {
+		min-width: 0;
+		overflow-wrap: anywhere;
 	}
 
 	.settings-container{
@@ -2084,6 +2256,7 @@
 		border-radius: var(--padding-1);
 		margin-right: var(--padding-1);
 		margin-top: calc(var(--padding-1) * -1);
+		min-width: calc(var(--padding-2) * 3);
 		a {
 			line-height: var(--padding-2);
 

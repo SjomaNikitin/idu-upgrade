@@ -35,7 +35,6 @@ export function News({ widgetId, moveWidget, data }) {
 					<span className={"widget-news-box-date-month"}>{item.date.slice(3, 6)}</span>
 				</div>
 				<a href={item.titleUrl}>{item.title} <br></br> <span className={"widget-news-box-comments"}>komentarze: {item.comments}</span></a>
-
 			</div>
 		);
 	}

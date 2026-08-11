@@ -8,6 +8,10 @@ window.replaceHeader = function replaceHeader(data = {}) {
 	const oldHeader = document.querySelector("#top");
 	if (!oldHeader) return false;
 	const semesterScope = data.semesterScope || null;
+	const searchElement = window.location.pathname === "/"
+		? document.querySelector("#unique-id26")
+		: null;
+	searchElement?.remove();
 	let accountHref
 	if (document.querySelector("#account")) {
 		accountHref = document.querySelector("#account").children[0].href;
@@ -22,6 +26,7 @@ window.replaceHeader = function replaceHeader(data = {}) {
 			accountHref={accountHref}
 			messagesHref={data.messagesUrl || ''}
 			semesterScope={semesterScope}
+			searchElement={searchElement}
 		/>,
 		mountPoint
 	);

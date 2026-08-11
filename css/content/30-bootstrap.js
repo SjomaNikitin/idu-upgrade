@@ -73,9 +73,10 @@ window.addEventListener("DOMContentLoaded", function () {
 			document.querySelector("input#user_login").placeholder = "Login";
 			document.querySelector("input#user_password").placeholder = "Password";
 		}
-
+		upgradeNewsPage()
 		linkifyUrls()
 		replaceImages()
+
 		}
 	} finally {
 		if (!shouldWaitForAutoLogin) {
