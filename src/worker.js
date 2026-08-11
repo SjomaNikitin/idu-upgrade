@@ -18,6 +18,44 @@ const contentScripts = [
 	'css/content/30-bootstrap.js',
 ];
 
+const criticalLoaderHtml = `<script id="idu-theme-critical">
+	try {
+		const theme = localStorage.getItem("theme");
+		if (theme) document.documentElement.setAttribute("data-theme", theme);
+	} catch {}
+</script>
+<style id="idu-loader-critical">
+	html {
+		--idu-loader-color: #e5f8f2;
+	}
+
+	html[data-theme="Ocean"] {
+		--idu-loader-color: #1a1f25;
+	}
+
+	html[data-theme="Dzaga"] {
+		--idu-loader-color: #fcedd6;
+	}
+
+	html[data-theme="Besties"] {
+		--idu-loader-color: #fdf6f0;
+	}
+
+	html::before {
+		content: "";
+		position: fixed;
+		inset: 0;
+		width: 100vw;
+		height: 100dvh;
+		z-index: 2147483647;
+		background: var(--idu-loader-color);
+	}
+
+	html.idu-ready::before {
+		display: none;
+	}
+</style>`;
+
 async function getCssText() {
 	if (typeof CSS_TEXT === 'string') return CSS_TEXT;
 	if (!isWorkerRuntime) {
@@ -62,6 +100,7 @@ function renderCustomMainPage(data) {
 	return `<!doctype html>
 <html lang="pl">
 <head>
+	${criticalLoaderHtml}
 	<meta charset="utf-8">
 	<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no" name="viewport">
 	<title>IDU Demo</title>
@@ -206,6 +245,7 @@ export default {
 			return new HTMLRewriter()
 				.on('head', {
 					element(el) {
+						el.prepend(criticalLoaderHtml, { html: true });
 						el.append(metaViewport, { html: true });
 						el.append(cssJsLinksHtml, { html: true });
 					}
@@ -224,6 +264,7 @@ export default {
 			const html = await resp.text();
 			const { load } = await import('cheerio');
 			const $ = load(html);
+			$('head').prepend(criticalLoaderHtml);
 			$('head').append(metaViewport);
 			$('head').append(cssJsLinksHtml);
 			const $body = $('body');

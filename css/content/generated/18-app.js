@@ -840,6 +840,8 @@
     y2(() => {
       const widget = widgetRef.current;
       let activePointerId = null;
+      let editModePointerId = null;
+      const editModeMoveTolerance = 10;
       const detectScrollZoneHeight = 140;
       const autoScrollDelay = 180;
       const autoScrollStep = 18;
@@ -984,15 +986,27 @@
           startAutoScroll(direction);
         }, autoScrollDelay);
       }
+      function cancelEditModeActivation(e3) {
+        if (e3?.pointerId !== void 0 && editModePointerId !== null && e3.pointerId !== editModePointerId) {
+          return;
+        }
+        clearTimeout(editModeTimeOut);
+        editModeTimeOut = null;
+        editModePointerId = null;
+      }
       function startDragging(e3) {
+        cancelEditModeActivation();
         if (!window.editMode) {
-          editModeTimeOut = setTimeout(() => {
-            if (!window.editMode && pointerPosition.x === currentPointerPosition.x && pointerPosition.y === currentPointerPosition.y) {
-              window.switchEditMode();
-            }
-          }, 750);
+          const pointerId = e3.pointerId;
+          editModePointerId = pointerId;
           pointerPosition = { x: e3.clientX, y: e3.clientY };
           currentPointerPosition = { x: e3.clientX, y: e3.clientY };
+          editModeTimeOut = setTimeout(() => {
+            if (window.editMode || editModePointerId !== pointerId) return;
+            editModeTimeOut = null;
+            editModePointerId = null;
+            window.switchEditMode();
+          }, 750);
           return;
         }
         if (resizingZoneRef.current?.contains(e3.target)) return;
@@ -1017,13 +1031,16 @@
         }, 500);
       }
       function stopDragging(e3) {
-        clearTimeout(editModeTimeOut);
+        cancelEditModeActivation(e3);
         clearTimeout(widgetDragTimeOut);
         setDraggingMode(false);
         if (activePointerId !== null && e3.pointerId !== activePointerId) return;
         dragging = false;
         if (activePointerId !== null) {
-          widget.releasePointerCapture?.(activePointerId);
+          try {
+            widget.releasePointerCapture?.(activePointerId);
+          } catch {
+          }
           activePointerId = null;
         }
         if (widgetClone) {
@@ -1044,6 +1061,12 @@
       function updatePos(e3) {
         if (typeof e3.clientX === "number" && typeof e3.clientY === "number") {
           currentPointerPosition = { x: e3.clientX, y: e3.clientY };
+          if (editModePointerId === e3.pointerId && Math.hypot(
+            currentPointerPosition.x - pointerPosition.x,
+            currentPointerPosition.y - pointerPosition.y
+          ) > editModeMoveTolerance) {
+            cancelEditModeActivation(e3);
+          }
         }
         if (dragging) {
           if (activePointerId !== null && e3.pointerId !== activePointerId) return;
@@ -1059,13 +1082,20 @@
       widget.addEventListener("pointerdown", startDragging);
       document.addEventListener("pointermove", updatePos);
       document.addEventListener("pointerup", stopDragging);
+      document.addEventListener("pointercancel", stopDragging);
+      document.addEventListener("scroll", cancelEditModeActivation, true);
       document.addEventListener("touchmove", preventNativeScroll, { passive: false });
       return () => {
+        cancelEditModeActivation();
+        clearTimeout(widgetDragTimeOut);
+        clearTimeout(visualUpdateTimer);
         clearAutoScroll();
         setDraggingMode(false);
         widget.removeEventListener("pointerdown", startDragging);
         document.removeEventListener("pointermove", updatePos);
         document.removeEventListener("pointerup", stopDragging);
+        document.removeEventListener("pointercancel", stopDragging);
+        document.removeEventListener("scroll", cancelEditModeActivation, true);
         document.removeEventListener("touchmove", preventNativeScroll);
       };
     }, []);
