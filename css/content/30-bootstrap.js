@@ -75,7 +75,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		}
 
 		linkifyUrls()
-
+		replaceImages()
 		}
 	} finally {
 		if (!shouldWaitForAutoLogin) {

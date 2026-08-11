@@ -228,8 +228,29 @@
 				border-color: var(--module-border-color);
 			}
 
+			table {
+				width: 100% !important;
+				min-width: 0 !important;
+				table-layout: fixed;
+			}
+
+			table th,
 			table td {
+				min-width: 0;
 				border-color: var(--module-border-color);
+				overflow-wrap: anywhere;
+				word-break: break-word;
+				background-color: var(--background-color);
+			}
+
+			table th a,
+			table th span,
+			table td a,
+			table td span {
+				max-width: 100%;
+				white-space: normal !important;
+				overflow-wrap: anywhere;
+				word-break: break-word;
 			}
 
 			& #visual {
@@ -370,6 +391,10 @@
 						overflow-x: auto !important;
 
 						& table {
+							width: max-content !important;
+							min-width: 100% !important;
+							max-width: none;
+							table-layout: auto;
 
 							& tbody tr td:first-child,
 							& thead tr th:first-child {
@@ -617,6 +642,29 @@
 		color: var(--module-color) !important;
 	}
 
+	table:has(> tbody > tr.js-presences-details) {
+		width: 100% !important;
+		max-width: 100% !important;
+		table-layout: fixed;
+	}
+
+	table:has(> tbody > tr.js-presences-details) thead th:nth-child(1) {
+		width: 28%;
+	}
+
+	table:has(> tbody > tr.js-presences-details) thead th:nth-child(2),
+	table:has(> tbody > tr.js-presences-details) thead th:nth-child(3) {
+		width: 17%;
+	}
+
+	table:has(> tbody > tr.js-presences-details) thead th:nth-child(4) {
+		width: 14%;
+	}
+
+	table:has(> tbody > tr.js-presences-details) thead th:nth-child(5) {
+		width: 24%;
+	}
+
 	body[path="/users/sign_in"] .module {
 		position: absolute;
 		top: 50%;
@@ -686,6 +734,11 @@
 		padding: 0;
 	}
 
+	#student-card table{
+		width: 200% !important;
+		max-width: 200% !important;
+	}
+
 	#student-card .data {
 		color: var(--main-text-color);
 	}
@@ -744,15 +797,35 @@
 		color: var(--main-text-color);
 		margin-left: var(--h3-margin);
 		margin-right: var(--h3-margin);
-		text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
 	}
 
 	.action-module h3 {
-		border-bottom: var(--underline) !important;
 		color: var(--main-text-color);
 		margin-left: var(--h3-margin);
 		margin-right: var(--h3-margin);
-		text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
+	}
+
+	#school-select{
+		display: block;
+		float: none !important;
+		clear: both;
+		width: calc(100% - var(--padding-4));
+		margin: var(--padding-2);
+		padding: var(--padding-1);
+	}
+
+	div:has(#calendar){
+		overflow-x: auto;
+	}
+
+	#calendar div.fc-content{
+		width: 200%;
+	}
+
+	.fc-event{
+		padding: var(--padding-1);
+		border-radius: var(--padding-1);
+		margin-bottom: var(--padding-1);
 	}
 
 	body[path="/users/sign_in"] label {
@@ -1681,6 +1754,10 @@
 	/*	column-gap: var(--padding-2);*/
 	/*}*/
 
+	.send-message{
+		align-content: center;
+	}
+
 	#scheduleWidget.w4.h6 .widget-content-container,
 	#scheduleWidget.w2.h5 .widget-content-container {
 		display: flex;
@@ -1837,6 +1914,10 @@
 		}
 	}
 
+	h1{
+		border: none !important;
+	}
+
 	#subjectsWidget .widget-title-box{
 		padding-bottom: var(--padding-2);
 	}
@@ -1975,6 +2056,22 @@
 		height: calc(var(--padding-2) * 3);
 		margin: var(--padding-1);
 		margin-left: 0;
+	}
+
+	.data.teacher{
+		border: none !important;
+	}
+
+	.absence{
+		background-image: none !important;
+	}
+
+	.lateness{
+		background-image: none !important;
+	}
+
+	.teacher{
+		background-image: none !important;
 	}
 
 	.widget-news-box-date{

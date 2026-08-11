@@ -16,6 +16,7 @@ const contentScripts = [
 	"content/20-mobile.js",
 	"content/25-login.js",
 	"content/28-extracter.js",
+	"content/29-image-replace.js",
 	"content/30-bootstrap.js"
 ];
 
