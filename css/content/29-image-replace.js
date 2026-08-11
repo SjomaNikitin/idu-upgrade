@@ -10,4 +10,5 @@ function replaceImages () {
 			studentCard.querySelector("#photo").querySelector("img").style.width = "100%"
 		}
 	}
+
 }

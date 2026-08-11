@@ -21,6 +21,7 @@ const contentScripts = [
 
 const criticalLoaderHtml = `<script id="idu-theme-critical">
 	try {
+		window.__iduLoaderStartedAt = performance.now();
 		const theme = localStorage.getItem("theme");
 		if (theme) document.documentElement.setAttribute("data-theme", theme);
 	} catch {}
@@ -28,18 +29,22 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 <style id="idu-loader-critical">
 	html {
 		--idu-loader-color: #e5f8f2;
+		--idu-loader-spinner-color: #0b5f5d;
 	}
 
 	html[data-theme="Ocean"] {
 		--idu-loader-color: #1a1f25;
+		--idu-loader-spinner-color: #7eeacc;
 	}
 
 	html[data-theme="Dzaga"] {
 		--idu-loader-color: #fcedd6;
+		--idu-loader-spinner-color: #5b3119;
 	}
 
 	html[data-theme="Besties"] {
 		--idu-loader-color: #fdf6f0;
+		--idu-loader-spinner-color: #851a36;
 	}
 
 	html::before {
@@ -54,6 +59,72 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 
 	html.idu-ready::before {
 		display: none;
+	}
+
+	html::after {
+		content: "";
+		position: fixed;
+		left: 50%;
+		top: 50%;
+		z-index: 2147483647;
+		width: 48px;
+		height: 48px;
+		box-sizing: border-box;
+		border: 4px solid rgba(128, 128, 128, 0.25);
+		border-top-color: var(--idu-loader-spinner-color);
+		border-radius: 50%;
+		opacity: 0;
+		transform: translate(-50%, -50%) rotate(0deg);
+		animation:
+			idu-loader-spinner-show 150ms ease 1s forwards,
+			idu-loader-spinner-spin 750ms linear 1s infinite;
+	}
+
+	html.idu-ready::after {
+		display: none;
+	}
+
+	html.idu-loader-fading::before {
+		animation: idu-loader-fade-out 500ms ease forwards;
+	}
+
+	html.idu-loader-fading::after {
+		animation: idu-loader-spinner-fade-out 500ms ease forwards;
+	}
+
+	@keyframes idu-loader-spinner-show {
+		to { opacity: 1; }
+	}
+
+	@keyframes idu-loader-spinner-spin {
+		to { transform: translate(-50%, -50%) rotate(360deg); }
+	}
+
+	@keyframes idu-loader-fade-out {
+		from { opacity: 1; }
+		to { opacity: 0; }
+	}
+
+	@keyframes idu-loader-spinner-fade-out {
+		from {
+			opacity: 1;
+			transform: translate(-50%, -50%) rotate(0deg);
+		}
+		to {
+			opacity: 0;
+			transform: translate(-50%, -50%) rotate(180deg);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html::after {
+			animation: idu-loader-spinner-show 150ms ease 1s forwards;
+		}
+
+		html.idu-loader-fading::before,
+		html.idu-loader-fading::after {
+			animation-duration: 1ms;
+		}
 	}
 </style>`;
 
