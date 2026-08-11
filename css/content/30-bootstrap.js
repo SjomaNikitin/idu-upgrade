@@ -2,7 +2,15 @@ window.loadWebsiteTheme()
 let svgSize = "60%";
 window.addEventListener("DOMContentLoaded", function () {
 	const mockData = window.__IDU_MOCK_DATA;
-	if (window.innerWidth < window.innerHeight || mockData) {
+	const shouldWaitForAutoLogin =
+		localStorage.getItem("autoLogin") === "yes" &&
+		localStorage.getItem("login") &&
+		localStorage.getItem("password") &&
+		window.location.pathname === "/users/sign_in" &&
+		!mockData;
+
+	try {
+		if (window.innerWidth < window.innerHeight || mockData) {
 		const pageData = mockData || {
 			homeworkUrl: extractHomeWorkUrl(),
 			reviewsUrl: extractReviewsUrl(),
@@ -68,10 +76,10 @@ window.addEventListener("DOMContentLoaded", function () {
 
 		linkifyUrls()
 
-		if (localStorage.getItem("autoLogin") === "yes" && window.location.pathname === "/users/sign_in" && !window.__IDU_MOCK_DATA) {
-
-		} else {
-			document.getElementById("loader")?.remove();
+		}
+	} finally {
+		if (!shouldWaitForAutoLogin) {
+			window.hideVisualLoader?.();
 			console.log("Loaded");
 		}
 	}

@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { useWidgetResize } from './widgetResize.js';
 import { useWidgetDragging } from './widgetDragging.js';
 
+const attendanceStatsStorageKey = 'attendance.stats';
+
 
 export function Attendance({ widgetId, moveWidget, data }) {
 	const attendance = data.attendance;
@@ -67,7 +69,7 @@ export function Attendance({ widgetId, moveWidget, data }) {
 	}
 
 	async function fetchAttendanceStats() {
-		let attendanceData = loadData('attendance')
+		let attendanceData = loadData(attendanceStatsStorageKey)
 		if (attendanceData && attendanceData.date === new Date().getDate()) {
 			return attendanceData.summary;
 		}
@@ -96,7 +98,7 @@ export function Attendance({ widgetId, moveWidget, data }) {
 				summaryCells?.[2].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(',', '.')
 			),
 		};
-		localStorage.setItem('attendance', JSON.stringify({summary: summary, date: new Date().getDate()}));
+		localStorage.setItem(attendanceStatsStorageKey, JSON.stringify({summary: summary, date: new Date().getDate()}));
 		return summary;
 	}
 

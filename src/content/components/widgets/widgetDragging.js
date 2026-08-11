@@ -32,6 +32,8 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 	useEffect(() => {
 		const widget = widgetRef.current;
 		let activePointerId = null;
+		let editModePointerId = null;
+		const editModeMoveTolerance = 10;
 		const detectScrollZoneHeight = 140;
 		const autoScrollDelay = 180;
 		const autoScrollStep = 18;
@@ -206,15 +208,34 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			}, autoScrollDelay);
 		}
 
+		function cancelEditModeActivation(e) {
+			if (
+				e?.pointerId !== undefined &&
+				editModePointerId !== null &&
+				e.pointerId !== editModePointerId
+			) {
+				return;
+			}
+
+			clearTimeout(editModeTimeOut);
+			editModeTimeOut = null;
+			editModePointerId = null;
+		}
+
 		function startDragging(e){
+			cancelEditModeActivation();
 			if (!window.editMode) {
-				editModeTimeOut = setTimeout(() => {
-					if (!window.editMode && pointerPosition.x === currentPointerPosition.x && pointerPosition.y === currentPointerPosition.y) {
-						window.switchEditMode();
-					}
-				}, 750)
+				const pointerId = e.pointerId;
+				editModePointerId = pointerId;
 				pointerPosition = {x: e.clientX , y: e.clientY };
 				currentPointerPosition = {x: e.clientX , y: e.clientY };
+				editModeTimeOut = setTimeout(() => {
+					if (window.editMode || editModePointerId !== pointerId) return;
+
+					editModeTimeOut = null;
+					editModePointerId = null;
+					window.switchEditMode();
+				}, 750)
 				return;
 			}
 			if (resizingZoneRef.current?.contains(e.target)) return;
@@ -240,13 +261,15 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		}
 
 		function stopDragging (e) {
-			clearTimeout(editModeTimeOut);
+			cancelEditModeActivation(e);
 			clearTimeout(widgetDragTimeOut);
 			setDraggingMode(false);
 			if (activePointerId !== null && e.pointerId !== activePointerId) return;
 			dragging = false;
 			if (activePointerId !== null) {
-				widget.releasePointerCapture?.(activePointerId);
+				try {
+					widget.releasePointerCapture?.(activePointerId);
+				} catch {}
 				activePointerId = null;
 			}
 			if (widgetClone) {
@@ -269,6 +292,15 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		function updatePos (e) {
 			if (typeof e.clientX === "number" && typeof e.clientY === "number") {
 				currentPointerPosition = {x: e.clientX , y: e.clientY };
+				if (
+					editModePointerId === e.pointerId &&
+					Math.hypot(
+						currentPointerPosition.x - pointerPosition.x,
+						currentPointerPosition.y - pointerPosition.y
+					) > editModeMoveTolerance
+				) {
+					cancelEditModeActivation(e);
+				}
 			}
 			if (dragging) {
 				if (activePointerId !== null && e.pointerId !== activePointerId) return;
@@ -285,13 +317,20 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		widget.addEventListener('pointerdown', startDragging);
 		document.addEventListener("pointermove", updatePos)
 		document.addEventListener("pointerup", stopDragging)
+		document.addEventListener("pointercancel", stopDragging)
+		document.addEventListener("scroll", cancelEditModeActivation, true)
 		document.addEventListener("touchmove", preventNativeScroll, { passive: false })
 		return () => {
+			cancelEditModeActivation();
+			clearTimeout(widgetDragTimeOut);
+			clearTimeout(visualUpdateTimer);
 			clearAutoScroll();
 			setDraggingMode(false);
 			widget.removeEventListener('pointerdown', startDragging);
 			document.removeEventListener("pointermove", updatePos);
 			document.removeEventListener("pointerup", stopDragging);
+			document.removeEventListener("pointercancel", stopDragging);
+			document.removeEventListener("scroll", cancelEditModeActivation, true);
 			document.removeEventListener("touchmove", preventNativeScroll);
 		};
 	}, []);
