@@ -1953,6 +1953,7 @@
 		background-color: var(--grades-box-bg);
 		border-radius: var(--padding-1);
 		padding-top: var(--padding-1);
+		padding-right: var(--padding-1);
 		a {
 			font-size: 0.9rem;
 			white-space: wrap;
@@ -1964,6 +1965,9 @@
 		a[href] {
 			color: var(--main-text-color) !important;
 			font-weight: bold;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 		.widget-news-box-comments{
 			font-size: 0.8rem;
