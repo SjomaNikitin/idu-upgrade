@@ -613,7 +613,15 @@
   }
   function Settings({ open, setOpen, semesterScope }) {
     let svgSize = 36;
-    return /* @__PURE__ */ k("div", { className: `settings-container ${open ? "open" : ""}` }, /* @__PURE__ */ k("div", { className: "settings-content" }, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Motyw"), /* @__PURE__ */ k(SettingsDots, null)), semesterScope ? /* @__PURE__ */ k(SemesterScopeForm, { semesterScope }) : null), /* @__PURE__ */ k("a", { className: "header-icon-button-settings", onClick: () => setOpen(false) }, /* @__PURE__ */ k("svg", { width: svgSize, height: svgSize, viewBox: "0 0 1024 1024", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { fill: "currentColor", d: "M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z" }))));
+    return /* @__PURE__ */ k("div", { className: `settings-container ${open ? "open" : ""}` }, /* @__PURE__ */ k("div", { className: "settings-content" }, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Motyw"), /* @__PURE__ */ k(SettingsDots, null)), semesterScope ? /* @__PURE__ */ k(SemesterScopeForm, { semesterScope }) : null, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Widok"), /* @__PURE__ */ k(
+      "button",
+      {
+        type: "button",
+        className: "settings-original-view-button",
+        onClick: () => window.setIduOriginalView(true)
+      },
+      "Poka\u017C oryginaln\u0105 stron\u0119"
+    ))), /* @__PURE__ */ k("a", { className: "header-icon-button-settings", onClick: () => setOpen(false) }, /* @__PURE__ */ k("svg", { width: svgSize, height: svgSize, viewBox: "0 0 1024 1024", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { fill: "currentColor", d: "M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z" }))));
   }
   function SemesterScopeForm({ semesterScope }) {
     const storageKey = "iduSemesterScope";

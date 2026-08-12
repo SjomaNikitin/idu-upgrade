@@ -1,6 +1,27 @@
-window.loadWebsiteTheme()
+const iduOriginalViewEnabled = window.isIduOriginalViewEnabled?.() === true;
+
+if (!iduOriginalViewEnabled) {
+	window.loadWebsiteTheme();
+}
+
 let svgSize = "60%";
 window.addEventListener("DOMContentLoaded", function () {
+	if (iduOriginalViewEnabled) {
+		if (window.location.pathname === "/") {
+			const content = document.getElementById("content");
+			if (content && !document.getElementById("idu-restore-custom-view")) {
+				const restoreButton = document.createElement("button");
+				restoreButton.id = "idu-restore-custom-view";
+				restoreButton.type = "button";
+				restoreButton.textContent = "Przywróć widok IDU2";
+				restoreButton.addEventListener("click", () => window.setIduOriginalView(false));
+				content.prepend(restoreButton);
+			}
+		}
+		window.hideVisualLoader?.();
+		return;
+	}
+
 	const mockData = window.__IDU_MOCK_DATA;
 	const shouldWaitForAutoLogin =
 		localStorage.getItem("autoLogin") === "yes" &&

@@ -21,9 +21,14 @@ const contentScripts = [
 
 const criticalLoaderHtml = `<script id="idu-theme-critical">
 	try {
-		window.__iduLoaderStartedAt = performance.now();
-		const theme = localStorage.getItem("theme");
-		if (theme) document.documentElement.setAttribute("data-theme", theme);
+		window.__iduOriginalView = localStorage.getItem("iduOriginalView") === "true";
+		if (window.__iduOriginalView) {
+			document.documentElement.classList.add("idu-original-view", "idu-ready");
+		} else {
+			window.__iduLoaderStartedAt = performance.now();
+			const theme = localStorage.getItem("theme");
+			if (theme) document.documentElement.setAttribute("data-theme", theme);
+		}
 	} catch {}
 </script>
 <style id="idu-loader-critical">
@@ -174,9 +179,16 @@ function renderCustomMainPage(data) {
 <head>
 	${criticalLoaderHtml}
 	<meta charset="utf-8">
-	<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no" name="viewport">
+	<meta id="idu-custom-viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no" name="viewport">
 	<title>IDU Demo</title>
-	<link rel="stylesheet" href="/my-styles.css" />
+	<link id="idu-custom-styles" rel="stylesheet" href="/my-styles.css" />
+	<script>
+		if (window.__iduOriginalView) {
+			document.getElementById("idu-custom-styles")?.remove();
+			document.getElementById("idu-custom-viewport")?.remove();
+			document.getElementById("idu-loader-critical")?.remove();
+		}
+	</script>
 	<script>window.__IDU_MOCK_DATA = ${JSON.stringify(data)};</script>
 	<script type="module" src="/content.js"></script>
 </head>
@@ -309,8 +321,18 @@ export default {
 		// TODO: I removed references to path in CSS selectors and therefore, we may not need this logic at all.
 		const htmlPath = path; //path.includes('subjects') ? '/subjects' : path;
 		// noinspection HtmlUnknownTarget
-		const cssJsLinksHtml = '\n<link rel="stylesheet" href="/my-styles.css" />\n\n<script type="module" src="/content.js"></script>\n';
-		const metaViewport = `<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no" name="viewport">`;
+		const cssJsLinksHtml = `
+<link id="idu-custom-styles" rel="stylesheet" href="/my-styles.css" />
+<script>
+	if (window.__iduOriginalView) {
+		document.getElementById("idu-custom-styles")?.remove();
+		document.getElementById("idu-custom-viewport")?.remove();
+		document.getElementById("idu-loader-critical")?.remove();
+	}
+</script>
+<script type="module" src="/content.js"></script>
+`;
+		const metaViewport = `<meta id="idu-custom-viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no" name="viewport">`;
 
 		// If running on Cloudflare (HTMLRewriter available), do streaming rewrite
 		if (typeof HTMLRewriter !== 'undefined') {
