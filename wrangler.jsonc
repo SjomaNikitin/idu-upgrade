@@ -9,13 +9,7 @@
 	"compatibility_date": "2025-09-06",
 	"observability": {
 		"enabled": true
-	},
-	"analytics_engine_datasets": [
-		{
-			"binding": "IDU_ANALYTICS",
-			"dataset": "idu_usage"
-		}
-	]
+	}
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

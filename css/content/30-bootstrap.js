@@ -6,14 +6,6 @@ if (!iduOriginalViewEnabled) {
 
 let svgSize = "60%";
 window.addEventListener("DOMContentLoaded", function () {
-	const mockData = window.__IDU_MOCK_DATA;
-	if (!mockData) {
-		window.trackIduUsage?.("page_view", {
-			view: iduOriginalViewEnabled ? "original" : "custom",
-			theme: iduOriginalViewEnabled ? "Original" : localStorage.getItem("theme") || "Default",
-		});
-	}
-
 	if (iduOriginalViewEnabled) {
 		if (window.location.pathname === "/") {
 			const content = document.getElementById("content");
@@ -33,6 +25,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		return;
 	}
 
+	const mockData = window.__IDU_MOCK_DATA;
 	const shouldWaitForAutoLogin =
 		localStorage.getItem("autoLogin") === "yes" &&
 		localStorage.getItem("login") &&

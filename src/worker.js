@@ -7,9 +7,6 @@ import { buildExampleDashboardData } from './mockDashboardData.js';
 const isWorkerRuntime = typeof WebSocketPair !== 'undefined' && typeof caches !== 'undefined';
 
 const iduHostS35 = 's35.idu.edu.pl';
-const analyticsEvents = new Set(['page_view', 'theme_changed', 'view_changed']);
-const analyticsViews = new Set(['original', 'custom']);
-const analyticsThemes = new Set(['Original', 'Default', 'Ocean', 'Dzaga', 'Besties']);
 const contentScripts = [
 	'css/content/00-globals.js',
 	'css/content/10-theme.js',
@@ -210,41 +207,6 @@ export default {
 
 		if (path.endsWith('com.chrome.devtools.json')) {
 			return new Response('', { status: 404 });
-		}
-
-		if (path === '/__idu/analytics') {
-			if (request.method !== 'POST') {
-				return new Response('', { status: 405, headers: { allow: 'POST' } });
-			}
-
-			const origin = request.headers.get('origin');
-			if (origin && origin !== url.origin) {
-				return new Response('', { status: 403 });
-			}
-
-			try {
-				const payload = JSON.parse(await request.text());
-				const event = analyticsEvents.has(payload.event) ? payload.event : null;
-				const view = analyticsViews.has(payload.view) ? payload.view : null;
-				const theme = analyticsThemes.has(payload.theme) ? payload.theme : null;
-				const pathname = typeof payload.path === 'string' && payload.path.startsWith('/')
-					? payload.path.slice(0, 200)
-					: null;
-
-				if (!event || !view || !theme || !pathname) {
-					return new Response('', { status: 400 });
-				}
-
-				env?.IDU_ANALYTICS?.writeDataPoint({
-					indexes: [event],
-					blobs: [event, view, theme, pathname],
-					doubles: [1],
-				});
-
-				return new Response(null, { status: 204 });
-			} catch {
-				return new Response('', { status: 400 });
-			}
 		}
 
 		if (path === '/my-styles.css') {
