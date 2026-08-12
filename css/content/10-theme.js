@@ -14,6 +14,10 @@ function hideXmas() {
 
 window.loadWebsiteTheme = function (chooseTheme) {
 	if (chooseTheme) {
+		window.trackIduUsage?.("theme_changed", {
+			view: "custom",
+			theme: chooseTheme,
+		});
 
 		document.documentElement.setAttribute("data-theme", chooseTheme);
 		localStorage.setItem("theme", chooseTheme);
@@ -179,4 +183,3 @@ function addFooterSnow() {
 	}
 
 }
-
