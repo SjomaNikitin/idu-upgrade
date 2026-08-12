@@ -73,9 +73,14 @@ export function Grades({ widgetId, moveWidget, data }) {
 
 	function GradeRow({ item, isLast = false, showDescription = false }) {
 		const descriptionLinkRef = useRef(null);
+		const fancyboxHref = typeof item.gradeDescriptionUrl === 'string'
+			? item.gradeDescriptionUrl.trim()
+			: '';
+		const hasFancyboxHref = fancyboxHref.length > 0;
 
 		useEffect(() => {
 			if (!showDescription) return;
+			if (!hasFancyboxHref) return;
 			if (!descriptionLinkRef.current) return;
 			if (!window.jQuery?.fn?.fancybox) return;
 
@@ -109,7 +114,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 			};
 
 			window.jQuery(descriptionLinkRef.current).fancybox(options);
-		}, [showDescription, item.gradeDescriptionUrl]);
+		}, [hasFancyboxHref, showDescription, fancyboxHref]);
 
 		return (
 			<div className={`widget-grade-box ${showDescription ? 'with-description' : ''}`}>
@@ -122,14 +127,19 @@ export function Grades({ widgetId, moveWidget, data }) {
 						{item.subject}
 					</a>
 
-					{showDescription && (
+					{showDescription && hasFancyboxHref && (
 						<a
 							ref={descriptionLinkRef}
-							href={item.gradeDescriptionUrl}
-							className="grade-description fancybox"
+							href={fancyboxHref}
+							className="grade-description fancybox fancybox-text"
 						>
 							{item.description}
 						</a>
+					)}
+					{showDescription && !hasFancyboxHref && (
+						<span className="grade-description">
+							{item.description}
+						</span>
 					)}
 				</div>
 			</div>
