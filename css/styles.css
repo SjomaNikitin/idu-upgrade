@@ -895,6 +895,7 @@
 	body[path="/users/sign_in"] .remember-me input {
 		width: var(--padding-2);
 		aspect-ratio: 1 / 1;
+		accent-color: var(--main-text-color);
 	}
 
 	label[for="user_password"] {
