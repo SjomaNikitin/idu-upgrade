@@ -2735,18 +2735,20 @@
     const mountPoint = document.createElement("div");
     mountPoint.id = "idu-header-root";
     oldHeader.replaceWith(mountPoint);
-    R(
-      /* @__PURE__ */ k(
-        Header,
-        {
-          accountHref,
-          messagesHref: data.messagesUrl || "",
-          semesterScope,
-          searchElement
-        }
-      ),
-      mountPoint
-    );
+    if (window.location.pathname !== "/users/sign_in") {
+      R(
+        /* @__PURE__ */ k(
+          Header,
+          {
+            accountHref,
+            messagesHref: data.messagesUrl || "",
+            semesterScope,
+            searchElement
+          }
+        ),
+        mountPoint
+      );
+    }
     return true;
   };
   window.replaceMainContent = function replaceMainContent(data) {

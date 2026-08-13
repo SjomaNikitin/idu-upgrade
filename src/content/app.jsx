@@ -21,15 +21,17 @@ window.replaceHeader = function replaceHeader(data = {}) {
 	const mountPoint = document.createElement("div");
 	mountPoint.id = "idu-header-root";
 	oldHeader.replaceWith(mountPoint);
-	render(
-		<Header
-			accountHref={accountHref}
-			messagesHref={data.messagesUrl || ''}
-			semesterScope={semesterScope}
-			searchElement={searchElement}
-		/>,
-		mountPoint
-	);
+	if (window.location.pathname !== "/users/sign_in") {
+		render(
+			<Header
+				accountHref={accountHref}
+				messagesHref={data.messagesUrl || ''}
+				semesterScope={semesterScope}
+				searchElement={searchElement}
+			/>,
+			mountPoint
+		);
+	}
 
 	return true;
 };

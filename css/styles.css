@@ -676,16 +676,15 @@
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
-		width: 90%;
+		width: calc(100% - var(--padding-4));
 		display: grid;
 		place-items: center;
 		background-color: var(--module-color) !important;
 		border-color: var(--module-border-color) !important;
-		padding-bottom: 5%;
-		margin-left: 3%;
-		margin-right: 3%;
-		max-width: 94%;
-
+		padding-bottom: var(--padding-2);
+		margin-left: var(--padding-2);
+		margin-right: var(--padding-2);
+		border-radius: var(--padding-2);
 	}
 
 	table.message-table {
@@ -888,10 +887,13 @@
 		justify-content: center;
 		align-items: center;
 		font-size: 1rem;
+		padding: var(--padding-1);
+		border-radius: var(--padding-2);
+		border: 1px solid var(--module-border-color);
 	}
 
 	body[path="/users/sign_in"] .remember-me input {
-		width: 1rem;
+		width: var(--padding-2);
 		aspect-ratio: 1 / 1;
 	}
 
