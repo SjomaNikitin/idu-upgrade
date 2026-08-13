@@ -366,7 +366,7 @@
 								text-align: center;
 								border-radius: var(--padding-1);
 								box-shadow: 0 5px 10px var(--module-shadow-color);
-
+								padding: var(--padding-1);
 								a {
 									max-width: 100%;
 									box-sizing: border-box;
@@ -1837,6 +1837,8 @@
 		outline: 2px solid var(--mc);
 		outline-offset: 2px;
 	}
+
+
 
 	.widgets-grid {
 		--gap: 16px;

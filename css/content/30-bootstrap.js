@@ -58,13 +58,26 @@ window.addEventListener("DOMContentLoaded", function () {
 			});
 			console.log("Synced schedule to app");
 		}
-		const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader(pageData);
-		console.log("Custom header loaded:", customHeaderLoaded)
-		const customFooterLoaded = typeof replaceFooter === "function" && replaceFooter();
-		console.log("Custom footer loaded:", customFooterLoaded)
-		if (window.location.pathname === "/" || mockData) {
-			const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent(pageData)
-			console.log("Custom content loaded:", customContentLoaded)
+		if (!document.querySelector("a[href='/justify_absence_requests/new']")) {
+			const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader(pageData);
+			console.log("Custom header loaded:", customHeaderLoaded)
+			const customFooterLoaded = typeof replaceFooter === "function" && replaceFooter();
+			console.log("Custom footer loaded:", customFooterLoaded)
+			if (window.location.pathname === "/" || mockData) {
+				const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent(pageData)
+				console.log("Custom content loaded:", customContentLoaded)
+			}
+		} else {
+			const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader(pageData);
+			console.log("Custom header loaded:", customHeaderLoaded)
+			const customFooterLoaded = typeof replaceFooter === "function" && replaceFooter();
+			console.log("Custom footer loaded:", customFooterLoaded)
+			const news = document.querySelector("div.module:has(div#unique-id1)");
+			const lastContainer = document.querySelector("#content:last-child");
+			if (news && lastContainer) {
+				news.parentElement.removeChild(news);
+				lastContainer.appendChild(news);
+			}
 		}
 
 		if (document.getElementById("top-selection")) {
