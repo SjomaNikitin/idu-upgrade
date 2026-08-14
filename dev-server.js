@@ -63,10 +63,15 @@ app.use(async (req, res) => {
     const cfResponse = await worker.fetch(request, env, {});
 
     res.status(cfResponse.status);
+    const setCookies = typeof cfResponse.headers.getSetCookie === 'function'
+      ? cfResponse.headers.getSetCookie()
+      : [];
     cfResponse.headers.forEach((value, key) => {
       if (key.toLowerCase() === 'content-encoding') return; // avoid restricted headers
+      if (key.toLowerCase() === 'set-cookie' && setCookies.length > 0) return;
       res.setHeader(key, value);
     });
+    if (setCookies.length > 0) res.setHeader('set-cookie', setCookies);
 
     if (cfResponse.body) {
       const ab = await cfResponse.arrayBuffer();

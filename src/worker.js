@@ -6,7 +6,9 @@ import { buildExampleDashboardData } from './mockDashboardData.js';
 
 const isWorkerRuntime = typeof WebSocketPair !== 'undefined' && typeof caches !== 'undefined';
 
-const iduHostS35 = 's35.idu.edu.pl';
+const iduBaseHost = 'idu.edu.pl';
+const schoolCookieName = 'idu_school_prefix';
+const schoolHostPattern = /^(s\d+)\.idu\.edu\.pl$/i;
 const contentScripts = [
 	'css/content/00-globals.js',
 	'css/content/10-theme.js',
@@ -173,6 +175,83 @@ function replaceHost(url, newHost) {
 	return urlObj.toString();
 }
 
+function getCookie(cookieHeader, name) {
+	if (!cookieHeader) return null;
+
+	for (const cookie of cookieHeader.split(';')) {
+		const separatorIndex = cookie.indexOf('=');
+		if (separatorIndex === -1) continue;
+		if (cookie.slice(0, separatorIndex).trim() !== name) continue;
+
+		const value = cookie.slice(separatorIndex + 1).trim();
+		try {
+			return decodeURIComponent(value);
+		} catch {
+			return value;
+		}
+	}
+
+	return null;
+}
+
+function removeCookie(cookieHeader, name) {
+	if (!cookieHeader) return '';
+
+	return cookieHeader
+		.split(';')
+		.filter((cookie) => {
+			const separatorIndex = cookie.indexOf('=');
+			return separatorIndex === -1 || cookie.slice(0, separatorIndex).trim() !== name;
+		})
+		.map((cookie) => cookie.trim())
+		.filter(Boolean)
+		.join('; ');
+}
+
+function normalizeSchoolPrefix(prefix) {
+	return typeof prefix === 'string' && /^s\d+$/i.test(prefix)
+		? prefix.toLowerCase()
+		: null;
+}
+
+function schoolPrefixFromHost(hostname) {
+	return hostname.match(schoolHostPattern)?.[1]?.toLowerCase() || null;
+}
+
+export function getUpstreamHost(request, path) {
+	// Let IDU determine the school on every login attempt.
+	if (path === '/users/sign_in') return iduBaseHost;
+
+	const savedPrefix = normalizeSchoolPrefix(
+		getCookie(request.headers.get('cookie'), schoolCookieName)
+	);
+	return savedPrefix ? `${savedPrefix}.idu.edu.pl` : iduBaseHost;
+}
+
+function rewriteIduLocation(location, upstreamUrl, workerUrl) {
+	let redirectUrl;
+	try {
+		redirectUrl = new URL(location, upstreamUrl);
+	} catch {
+		return { location, schoolPrefix: null };
+	}
+
+	const schoolPrefix = schoolPrefixFromHost(redirectUrl.hostname);
+	const isIduHost = schoolPrefix !== null ||
+		redirectUrl.hostname === iduBaseHost ||
+		redirectUrl.hostname === `www.${iduBaseHost}`;
+	if (!isIduHost) return { location, schoolPrefix: null };
+
+	redirectUrl.protocol = workerUrl.protocol;
+	redirectUrl.hostname = workerUrl.hostname;
+	redirectUrl.port = workerUrl.port;
+	return { location: redirectUrl.toString(), schoolPrefix };
+}
+
+function schoolCookie(prefix, secure) {
+	return `${schoolCookieName}=${prefix}; Path=/; Max-Age=31536000; SameSite=Lax; HttpOnly${secure ? '; Secure' : ''}`;
+}
+
 function renderCustomMainPage(data) {
 	return `<!doctype html>
 <html lang="pl">
@@ -257,15 +336,19 @@ export default {
 			}
 		}
 		console.log('Request', request.method, url.pathname, url.search);
+		const upstreamHost = getUpstreamHost(request, path);
 		const clonedHeaders = Object.fromEntries(
 			[...headers]
 		);
-		clonedHeaders['host'] = iduHostS35;
+		clonedHeaders['host'] = upstreamHost;
 		if (clonedHeaders['origin'])
-			clonedHeaders['origin'] = replaceHost(clonedHeaders['origin'], iduHostS35);
+			clonedHeaders['origin'] = replaceHost(clonedHeaders['origin'], upstreamHost);
 		if (clonedHeaders['referer'])
-			clonedHeaders['referer'] = replaceHost(clonedHeaders['referer'], iduHostS35);
-		const requestUrl = replaceHost(request.url, iduHostS35);
+			clonedHeaders['referer'] = replaceHost(clonedHeaders['referer'], upstreamHost);
+		const upstreamCookies = removeCookie(clonedHeaders['cookie'], schoolCookieName);
+		if (upstreamCookies) clonedHeaders['cookie'] = upstreamCookies;
+		else delete clonedHeaders['cookie'];
+		const requestUrl = replaceHost(request.url, upstreamHost);
 		let res = await fetch(requestUrl, {
 			method: request.method,
 			headers: clonedHeaders,
@@ -283,27 +366,34 @@ export default {
 
 		// Rewrite Location to be relative to your Worker
 		const loc = resp.headers.get('Location');
+		let discoveredSchoolPrefix = null;
 		if (loc) {
-			const newLoc = loc
-				.replace('https://' + iduHostS35, url.origin)
-				.replace('http://' + iduHostS35, url.origin)
-				.replace('https://www.idu.edu.pl', url.origin)
-				.replace('http://www.idu.edu.pl', url.origin); // handles relative/absolute
-			console.log('Rewriting Location to', newLoc);
-			resp.headers.set('Location', newLoc);
+			const rewritten = rewriteIduLocation(loc, requestUrl, url);
+			discoveredSchoolPrefix = rewritten.schoolPrefix;
+			console.log('Rewriting Location to', rewritten.location);
+			resp.headers.set('Location', rewritten.location);
 		}
 		// Rewrite Set-Cookie domains and preserve multiple cookies
-		const cookieHeaders = [];
-		res.headers.forEach((value, key) => {
-			if (key.toLowerCase() === 'set-cookie') cookieHeaders.push(value);
-		});
+		let cookieHeaders = typeof res.headers.getSetCookie === 'function'
+			? res.headers.getSetCookie()
+			: [];
+		if (cookieHeaders.length === 0) {
+			res.headers.forEach((value, key) => {
+				if (key.toLowerCase() === 'set-cookie') cookieHeaders.push(value);
+			});
+		}
 		if (cookieHeaders.length > 0) {
 			resp.headers.delete('Set-Cookie');
 			for (let cookie of cookieHeaders) {
-				const rewritten = cookie.replace(iduHostS35, url.hostname)
-					.replace('.idu.edu.pl', url.hostname);
+				const rewritten = cookie.replace(/;\s*domain=[^;]+/ig, '');
 				resp.headers.append('Set-Cookie', rewritten);
 			}
+		}
+		if (discoveredSchoolPrefix) {
+			resp.headers.append(
+				'Set-Cookie',
+				schoolCookie(discoveredSchoolPrefix, url.protocol === 'https:')
+			);
 		}
 
 		const ct = resp.headers.get('content-type') || '';
