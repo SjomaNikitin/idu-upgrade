@@ -638,7 +638,6 @@
         acceptCharset: "UTF-8"
       },
       semesterScope.hiddenFields.map((field) => /* @__PURE__ */ k("input", { key: field.name, type: "hidden", name: field.name, value: field.value })),
-      /* @__PURE__ */ k("label", { htmlFor: "idu-semester-id" }, "Wybierz semestr"),
       /* @__PURE__ */ k(
         "select",
         {

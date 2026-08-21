@@ -368,7 +368,6 @@ export function SemesterScopeForm({ semesterScope }) {
 				{semesterScope.hiddenFields.map((field) => (
 					<input key={field.name} type="hidden" name={field.name} value={field.value}/>
 				))}
-				<label htmlFor="idu-semester-id">Wybierz semestr</label>
 				<select
 					id="idu-semester-id"
 					name="semester_id"

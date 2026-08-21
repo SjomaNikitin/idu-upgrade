@@ -30,6 +30,11 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 			window.__iduLoaderStartedAt = performance.now();
 			const theme = localStorage.getItem("theme");
 			if (theme) document.documentElement.setAttribute("data-theme", theme);
+			const storedIosSafeTop = localStorage.getItem("iduIosSafeTop");
+			const iosSafeTop = Number(storedIosSafeTop);
+			if (storedIosSafeTop !== null && Number.isFinite(iosSafeTop) && iosSafeTop >= 0 && iosSafeTop <= 200) {
+				document.documentElement.style.setProperty("--ios-safe-top", String(iosSafeTop) + "px");
+			}
 		}
 	} catch {}
 </script>
