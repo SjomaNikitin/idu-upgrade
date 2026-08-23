@@ -1,31 +1,66 @@
-function autoLogin() {
-	let login_input = document.getElementById("user_login");
-	let password_input = document.getElementById("user_password");
-	if (!login_input || !password_input) return;
-	let autoLoginInfo = localStorage.getItem("autoLogin");
-	let login = localStorage.getItem("login");
-	let password = localStorage.getItem("password");
-	if (autoLoginInfo === "yes" && login && password) {
-			login_input.value = login;
-			password_input.value = password;
-			document.querySelector("input[value = 'Zaloguj']").click();
-	} else {
-		document.querySelector("input[value = 'Zaloguj']").addEventListener("click", function() {
-			let rememberMe = document.getElementById("user_remember_me").checked;
-			if (rememberMe){
-				localStorage.setItem("autoLogin", "yes");
-				let login = document.getElementById("user_login").value;
-				let password = document.getElementById("user_password").value;
-				localStorage.setItem("login", login);
-				localStorage.setItem("password", password);
-				console.log("Auto login: " + login + " " + password);
-			} else {
-				localStorage.setItem("autoLogin", "no");
-			}
-		});
-	}
+const autoLoginAttemptStorageKey = "iduAutoLoginAttemptInProgress";
+
+function saveAutoLoginPreference(loginInput, passwordInput) {
+	const loginForm = loginInput.form || document.getElementById("new_user");
+	if (!loginForm) return;
+
+	loginForm.addEventListener("submit", function () {
+		const rememberMe = document.getElementById("user_remember_me")?.checked === true;
+		if (rememberMe) {
+			localStorage.setItem("autoLogin", "yes");
+			localStorage.setItem("login", loginInput.value);
+			localStorage.setItem("password", passwordInput.value);
+		} else {
+			localStorage.setItem("autoLogin", "no");
+		}
+	});
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-	autoLogin()
-})
+function autoLogin() {
+	const loginInput = document.getElementById("user_login");
+	const passwordInput = document.getElementById("user_password");
+
+	// Reaching a non-login page means the pending automatic attempt succeeded.
+	if (!loginInput || !passwordInput) {
+		sessionStorage.removeItem(autoLoginAttemptStorageKey);
+		return;
+	}
+
+	const login = localStorage.getItem("login");
+	const password = localStorage.getItem("password");
+	const autoLoginEnabled = localStorage.getItem("autoLogin") === "yes";
+	const previousAttemptReturnedToLogin =
+		sessionStorage.getItem(autoLoginAttemptStorageKey) === "yes";
+
+	if (previousAttemptReturnedToLogin) {
+		// The server returned another login form, so the saved credentials failed.
+		// Disable automatic login before bootstrap decides whether to hide the loader.
+		sessionStorage.removeItem(autoLoginAttemptStorageKey);
+		localStorage.setItem("autoLogin", "no");
+		loginInput.value = login || "";
+		passwordInput.value = "";
+		const rememberMe = document.getElementById("user_remember_me");
+		if (rememberMe) rememberMe.checked = false;
+		saveAutoLoginPreference(loginInput, passwordInput);
+		window.hideVisualLoader?.();
+		return;
+	}
+
+	if (autoLoginEnabled && login && password) {
+		const submitButton = document.querySelector("input[value='Zaloguj']");
+		if (submitButton) {
+			loginInput.value = login;
+			passwordInput.value = password;
+			sessionStorage.setItem(autoLoginAttemptStorageKey, "yes");
+			submitButton.click();
+			return;
+		}
+	}
+
+	saveAutoLoginPreference(loginInput, passwordInput);
+	window.hideVisualLoader?.();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+	autoLogin();
+});
