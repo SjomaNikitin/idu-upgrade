@@ -1,6 +1,11 @@
 // src/content/components/Header.jsx
 import { h } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
+import {
+	getSelectedScheduleYear,
+	SCHEDULE_YEAR_OPTIONS,
+	selectScheduleYear,
+} from "../scheduleYear.js";
 
 function MessagesButton({ href, size }) {
 	if (!href) return null;
@@ -328,6 +333,7 @@ export function Settings ({ open, setOpen, semesterScope }) {
 					<h2>Motyw</h2>
 					<SettingsDots />
 				</section>
+				<ScheduleYearForm />
 				{semesterScope ? <SemesterScopeForm semesterScope={semesterScope}/> : null}
 				<section className="settings-section">
 					<h2>Widok</h2>
@@ -344,6 +350,32 @@ export function Settings ({ open, setOpen, semesterScope }) {
 				<svg width={svgSize} height={svgSize} viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"/></svg>
 			</a>
 		</div>
+	);
+}
+
+export function ScheduleYearForm() {
+	const [selectedYear, setSelectedYear] = useState(getSelectedScheduleYear);
+
+	return (
+		<section className="settings-section">
+			<h2>Rocznik</h2>
+			<form className="schedule-year-form" onSubmit={(event) => event.preventDefault()}>
+				<select
+					id="idu-schedule-year"
+					aria-label="Rocznik"
+					value={selectedYear}
+					onChange={(event) => {
+						setSelectedYear(selectScheduleYear(event.currentTarget.value));
+					}}
+				>
+					{SCHEDULE_YEAR_OPTIONS.map((option) => (
+						<option key={option.value} value={option.value}>
+							{option.label}
+						</option>
+					))}
+				</select>
+			</form>
+		</section>
 	);
 }
 

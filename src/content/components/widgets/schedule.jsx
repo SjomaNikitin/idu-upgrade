@@ -2,6 +2,13 @@ import { h } from 'preact';
 import { useEffect, useRef, useState} from 'preact/hooks';
 import { useWidgetResize } from './widgetResize.js';
 import { useWidgetDragging } from './widgetDragging.js';
+import {
+	applyScheduleYearTimes,
+	getSelectedScheduleYear,
+	normalizeScheduleYear,
+	SCHEDULE_YEAR_CHANGE_EVENT,
+	SCHEDULE_YEAR_STORAGE_KEY,
+} from '../../scheduleYear.js';
 
 const LESSON_ABBREVIATIONS = [
 	{ abbreviation: 'ang', aliases: ['język angielski', 'angielski', 'english'] },
@@ -80,7 +87,8 @@ function shortenLessonName(name) {
 
 
 export function Schedule({ widgetId, moveWidget, data }) {
-	const schedule = data.schedule;
+	const [scheduleYear, setScheduleYear] = useState(getSelectedScheduleYear);
+	const schedule = applyScheduleYearTimes(data.schedule, scheduleYear);
 	const possibleLayout = [
 		{ w: 4, h: 6 },
 		{ w: 2, h: 1 },
@@ -98,6 +106,25 @@ export function Schedule({ widgetId, moveWidget, data }) {
 		resizingRef,
 	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, {w: 2, h: 1});
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
+
+	useEffect(() => {
+		const handleScheduleYearChange = (event) => {
+			setScheduleYear(normalizeScheduleYear(event.detail?.year));
+		};
+		const handleStorageChange = (event) => {
+			if (event.key === SCHEDULE_YEAR_STORAGE_KEY) {
+				setScheduleYear(normalizeScheduleYear(event.newValue));
+			}
+		};
+
+		window.addEventListener(SCHEDULE_YEAR_CHANGE_EVENT, handleScheduleYearChange);
+		window.addEventListener('storage', handleStorageChange);
+
+		return () => {
+			window.removeEventListener(SCHEDULE_YEAR_CHANGE_EVENT, handleScheduleYearChange);
+			window.removeEventListener('storage', handleStorageChange);
+		};
+	}, []);
 
 	function formatTodayKey() {
 		const weekdayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];

@@ -1772,7 +1772,8 @@
 		text-decoration: underline !important;
 	}
 
-	.semester-scope-form {
+	.semester-scope-form,
+	.schedule-year-form {
 		display: grid;
 		gap: var(--padding-1);
 		margin: 0;
@@ -1782,14 +1783,16 @@
 		border: none !important;
 	}
 
-	.semester-scope-form label {
+	.semester-scope-form label,
+	.schedule-year-form label {
 		width: auto;
 		margin: 0;
 		color: var(--footer-text-color);
 		font-size: 0.8rem;
 	}
 
-	.semester-scope-form select {
+	.semester-scope-form select,
+	.schedule-year-form select {
 		width: 100%;
 		min-height: 44px;
 		margin: 0;
@@ -1803,7 +1806,8 @@
 		font: inherit;
 	}
 
-	.semester-scope-form select:focus-visible {
+	.semester-scope-form select:focus-visible,
+	.schedule-year-form select:focus-visible {
 		outline: 2px solid var(--mc);
 		outline-offset: 2px;
 	}

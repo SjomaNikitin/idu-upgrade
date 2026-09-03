@@ -402,6 +402,99 @@
     return "function" == typeof t3 ? t3(n2) : t3;
   }
 
+  // src/content/scheduleYear.js
+  var SCHEDULE_YEAR_STORAGE_KEY = "iduScheduleYear";
+  var SCHEDULE_YEAR_CHANGE_EVENT = "idu-schedule-year-change";
+  var SCHEDULE_YEAR_OPTIONS = [
+    { value: "1", label: "Rocznik 1" },
+    { value: "2", label: "Rocznik 2" },
+    { value: "3", label: "Rocznik 3" },
+    { value: "4", label: "Rocznik 4" }
+  ];
+  var DEFAULT_SCHEDULE_YEAR = "1";
+  var SCHEDULE_TIMES_BY_YEAR = {
+    "1": {
+      0: "7:55-8:40",
+      1: "8:45-9:30",
+      2: "9:35-10:20",
+      3: "10:30-11:15",
+      4: "11:25-12:10",
+      5: "12:15-13:00",
+      6: "13:10-13:55",
+      7: "14:25-15:10",
+      8: "15:15-16:00"
+    },
+    "2": {
+      0: "7:55-8:40",
+      1: "8:45-9:30",
+      2: "9:35-10:20",
+      3: "10:30-11:15",
+      4: "11:25-12:10",
+      5: "12:20-13:05",
+      6: "13:30-14:15",
+      7: "14:25-15:10",
+      8: "15:15-16:00"
+    },
+    "3": {
+      0: "7:55-8:40",
+      1: "8:45-9:30",
+      2: "9:35-10:20",
+      3: "10:30-11:15",
+      4: "11:25-12:10",
+      5: "12:35-13:20",
+      6: "13:30-14:15",
+      7: "14:25-15:10",
+      8: "15:15-16:00"
+    },
+    "4": {
+      0: "7:55-8:40",
+      1: "8:45-9:30",
+      2: "9:35-10:20",
+      3: "10:30-11:15",
+      4: "11:25-12:10",
+      5: "12:30-13:15",
+      6: "13:25-14:10",
+      7: "14:30-15:15",
+      8: "15:20-16:05"
+    }
+  };
+  function normalizeScheduleYear(year) {
+    const normalizedYear = String(year || "");
+    return Object.prototype.hasOwnProperty.call(SCHEDULE_TIMES_BY_YEAR, normalizedYear) ? normalizedYear : DEFAULT_SCHEDULE_YEAR;
+  }
+  function getSelectedScheduleYear() {
+    return normalizeScheduleYear(localStorage.getItem(SCHEDULE_YEAR_STORAGE_KEY));
+  }
+  function selectScheduleYear(year) {
+    const selectedYear = normalizeScheduleYear(year);
+    localStorage.setItem(SCHEDULE_YEAR_STORAGE_KEY, selectedYear);
+    window.dispatchEvent(new CustomEvent(SCHEDULE_YEAR_CHANGE_EVENT, {
+      detail: { year: selectedYear }
+    }));
+    return selectedYear;
+  }
+  function applyScheduleYearTimes(schedule, year) {
+    const selectedTimes = SCHEDULE_TIMES_BY_YEAR[normalizeScheduleYear(year)];
+    return Object.fromEntries(
+      Object.entries(schedule || {}).map(([day, lessons]) => {
+        const remappedLessons = Object.fromEntries(
+          Object.entries(lessons || {}).map(([sourceTime, lesson]) => {
+            const lessonNumber = Number.parseInt(lesson?.lessonNumber, 10);
+            const time = selectedTimes[lessonNumber] || lesson?.time || sourceTime;
+            const [start, end] = time.split("-");
+            return [time, {
+              ...lesson,
+              time,
+              start,
+              end
+            }];
+          })
+        );
+        return [day, remappedLessons];
+      })
+    );
+  }
+
   // src/content/components/header.jsx
   function MessagesButton({ href, size }) {
     if (!href) return null;
@@ -616,7 +709,7 @@
   }
   function Settings({ open, setOpen, semesterScope }) {
     let svgSize = 36;
-    return /* @__PURE__ */ k("div", { className: `settings-container ${open ? "open" : ""}` }, /* @__PURE__ */ k("div", { className: "settings-content" }, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Motyw"), /* @__PURE__ */ k(SettingsDots, null)), semesterScope ? /* @__PURE__ */ k(SemesterScopeForm, { semesterScope }) : null, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Widok"), /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { className: `settings-container ${open ? "open" : ""}` }, /* @__PURE__ */ k("div", { className: "settings-content" }, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Motyw"), /* @__PURE__ */ k(SettingsDots, null)), /* @__PURE__ */ k(ScheduleYearForm, null), semesterScope ? /* @__PURE__ */ k(SemesterScopeForm, { semesterScope }) : null, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Widok"), /* @__PURE__ */ k(
       "button",
       {
         type: "button",
@@ -625,6 +718,21 @@
       },
       "Poka\u017C oryginaln\u0105 stron\u0119"
     ))), /* @__PURE__ */ k("a", { className: "header-icon-button-settings", onClick: () => setOpen(false) }, /* @__PURE__ */ k("svg", { width: svgSize, height: svgSize, viewBox: "0 0 1024 1024", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { fill: "currentColor", d: "M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z" }))));
+  }
+  function ScheduleYearForm() {
+    const [selectedYear, setSelectedYear] = d2(getSelectedScheduleYear);
+    return /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Rocznik"), /* @__PURE__ */ k("form", { className: "schedule-year-form", onSubmit: (event) => event.preventDefault() }, /* @__PURE__ */ k(
+      "select",
+      {
+        id: "idu-schedule-year",
+        "aria-label": "Rocznik",
+        value: selectedYear,
+        onChange: (event) => {
+          setSelectedYear(selectScheduleYear(event.currentTarget.value));
+        }
+      },
+      SCHEDULE_YEAR_OPTIONS.map((option) => /* @__PURE__ */ k("option", { key: option.value, value: option.value }, option.label))
+    )));
   }
   function SemesterScopeForm({ semesterScope }) {
     const storageKey = "iduSemesterScope";
@@ -1606,7 +1714,8 @@
     return Array.from(trimmedName.toLocaleLowerCase("pl-PL")).slice(0, 3).join("");
   }
   function Schedule({ widgetId, moveWidget: moveWidget2, data }) {
-    const schedule = data.schedule;
+    const [scheduleYear, setScheduleYear] = d2(getSelectedScheduleYear);
+    const schedule = applyScheduleYearTimes(data.schedule, scheduleYear);
     const possibleLayout = [
       { w: 4, h: 6 },
       { w: 2, h: 1 },
@@ -1624,6 +1733,22 @@
       resizingRef
     } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 2, h: 1 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    y2(() => {
+      const handleScheduleYearChange = (event) => {
+        setScheduleYear(normalizeScheduleYear(event.detail?.year));
+      };
+      const handleStorageChange = (event) => {
+        if (event.key === SCHEDULE_YEAR_STORAGE_KEY) {
+          setScheduleYear(normalizeScheduleYear(event.newValue));
+        }
+      };
+      window.addEventListener(SCHEDULE_YEAR_CHANGE_EVENT, handleScheduleYearChange);
+      window.addEventListener("storage", handleStorageChange);
+      return () => {
+        window.removeEventListener(SCHEDULE_YEAR_CHANGE_EVENT, handleScheduleYearChange);
+        window.removeEventListener("storage", handleStorageChange);
+      };
+    }, []);
     function formatTodayKey() {
       const weekdayKeys = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
       return weekdayKeys[(/* @__PURE__ */ new Date()).getDay()];

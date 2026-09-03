@@ -43,7 +43,7 @@ function buildDaySchedule(dayLabel, subjects) {
 			return [
 				[
 					`${start}-${end}`,
-					createLesson(index + 1, start, end, dayLabel, slot.subject, slot.room, slot.note || '')
+					createLesson(index, start, end, dayLabel, slot.subject, slot.room, slot.note || '')
 				]
 			];
 		})
