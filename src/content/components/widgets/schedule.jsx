@@ -163,7 +163,9 @@ export function Schedule({ widgetId, moveWidget, data }) {
 								<span>{time.split('-')[1]}</span>
 							</div>
 							<div className="lesson-cell">
-								{shortenLessonName(scheduleData?.[day]?.[time]?.subject || '')}
+								<a href={scheduleData?.[day]?.[time]?.subjectHref}>
+									{shortenLessonName(scheduleData?.[day]?.[time]?.subject || '')}
+								</a>
 							</div>
 						</div>
 					))}
@@ -201,7 +203,9 @@ export function Schedule({ widgetId, moveWidget, data }) {
 
 							return (
 								<div key={`${day}-${time}`} className="lesson-cell">
-									{shortenLessonName(lesson?.subject || '')}
+									<a href={lesson?.subjectHref}>
+										{shortenLessonName(lesson?.subject || '')}
+									</a>
 								</div>
 							);
 						})}

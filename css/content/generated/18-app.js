@@ -1671,7 +1671,7 @@
             style: { gridTemplateColumns: "42px minmax(0, 1fr)" }
           },
           /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])),
-          /* @__PURE__ */ k("div", { className: "lesson-cell" }, shortenLessonName(scheduleData?.[day]?.[time]?.subject || ""))
+          /* @__PURE__ */ k("div", { className: "lesson-cell" }, /* @__PURE__ */ k("a", { href: scheduleData?.[day]?.[time]?.subjectHref }, shortenLessonName(scheduleData?.[day]?.[time]?.subject || "")))
         )));
       }
       return /* @__PURE__ */ k("div", { className: "schedule-grid weekly" }, /* @__PURE__ */ k(
@@ -1695,7 +1695,7 @@
         /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])),
         scheduleDays.map((day) => {
           const lesson = scheduleData?.[day]?.[time];
-          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell" }, shortenLessonName(lesson?.subject || ""));
+          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell" }, /* @__PURE__ */ k("a", { href: lesson?.subjectHref }, shortenLessonName(lesson?.subject || "")));
         })
       )));
     }
