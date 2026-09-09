@@ -257,6 +257,35 @@ function schoolCookie(prefix, secure) {
 	return `${schoolCookieName}=${prefix}; Path=/; Max-Age=31536000; SameSite=Lax; HttpOnly${secure ? '; Secure' : ''}`;
 }
 
+/*
+function isLoginPageHtml(html) {
+	for (const match of html.matchAll(/<form\b([^>]*)>([\s\S]*?)<\/form>/gi)) {
+		const attributes = match[1];
+		const contents = match[2];
+		const inputs = [...contents.matchAll(/<input\b([^>]*)>/gi)]
+			.map((inputMatch) => inputMatch[1]);
+		const isSignInForm =
+			/\bid=["']new_user["']/i.test(attributes) &&
+			/\baction=["']\/users\/sign_in["']/i.test(attributes) &&
+			/\bmethod=["']post["']/i.test(attributes);
+		const hasLoginField = inputs.some((input) =>
+			/\bid=["']user_login["']/i.test(input) &&
+			/\bname=["']user\[login\]["']/i.test(input) &&
+			/\btype=["']text["']/i.test(input)
+		);
+		const hasPasswordField = inputs.some((input) =>
+			/\bid=["']user_password["']/i.test(input) &&
+			/\bname=["']user\[password\]["']/i.test(input) &&
+			/\btype=["']password["']/i.test(input)
+		);
+
+		if (isSignInForm && hasLoginField && hasPasswordField) return true;
+	}
+
+	return false;
+}
+*/
+
 function renderCustomMainPage(data) {
 	return `<!doctype html>
 <html lang="pl">
@@ -317,27 +346,26 @@ export default {
 
 		const needsBody = request.method !== 'GET' && request.method !== 'HEAD';
 		const headers = new Headers(request.headers);
-		let body;
-		if (needsBody) {
+		let body = needsBody ? request.body : undefined;
+		if (needsBody && (headers.get('content-type') || '').includes('application/x-www-form-urlencoded')) {
 			body = await request.arrayBuffer();
 
-			const contentType = headers.get('content-type') || '';
-			if (contentType.includes('application/x-www-form-urlencoded')) {
-				const text = new TextDecoder().decode(body);
-				const params = new URLSearchParams(text);
+			const text = new TextDecoder().decode(body);
+			const params = new URLSearchParams(text);
 
-					const login = params.get('user[login]');
-					const password = params.get('user[password]');
+			const login = params.get('user[login]');
+			const password = params.get('user[password]');
 
-					if (login === "AppleLogin" && password === "123") {
-						return new Response(renderCustomMainPage(buildExampleDashboardData()), {
-							status: 200,
-							headers: {
-								'content-type': 'text/html; charset=utf-8',
-								'cache-control': 'no-store'
-							}
-						});
+			// Deliberately available in production: Apple uses these fixed credentials
+			// to review the App Store demo without access to a real school account.
+			if (login === "AppleLogin" && password === "123") {
+				return new Response(renderCustomMainPage(buildExampleDashboardData()), {
+					status: 200,
+					headers: {
+						'content-type': 'text/html; charset=utf-8',
+						'cache-control': 'no-store'
 					}
+				});
 			}
 		}
 		console.log('Request', request.method, url.pathname, url.search);
@@ -345,7 +373,7 @@ export default {
 		const clonedHeaders = Object.fromEntries(
 			[...headers]
 		);
-		clonedHeaders['host'] = upstreamHost;
+		delete clonedHeaders['host'];
 		if (clonedHeaders['origin'])
 			clonedHeaders['origin'] = replaceHost(clonedHeaders['origin'], upstreamHost);
 		if (clonedHeaders['referer'])
@@ -354,12 +382,20 @@ export default {
 		if (upstreamCookies) clonedHeaders['cookie'] = upstreamCookies;
 		else delete clonedHeaders['cookie'];
 		const requestUrl = replaceHost(request.url, upstreamHost);
-		let res = await fetch(requestUrl, {
+		const upstreamRequest = {
 			method: request.method,
 			headers: clonedHeaders,
 			body,
-			redirect: 'manual'
-		});
+			redirect: 'manual',
+			cache: 'no-store',
+			cf: {
+				scrapeShield: false,
+			},
+		};
+		if (!isWorkerRuntime && body instanceof ReadableStream) {
+			upstreamRequest.duplex = 'half';
+		}
+		let res = await fetch(requestUrl, upstreamRequest);
 
 
 		// Clone upstream response into a mutable Response
@@ -403,6 +439,23 @@ export default {
 
 		const ct = resp.headers.get('content-type') || '';
 		if (!ct.includes('text/html')) return resp;
+
+		/*
+		// Disabled: the generic host may return login HTML at `/` even for a valid
+		// session, which makes this synthetic redirect loop with `/users/sign_in`.
+		if (request.method === 'GET' && path === '/') {
+			const html = await resp.clone().text();
+			if (isLoginPageHtml(html)) {
+				const redirectHeaders = new Headers(resp.headers);
+				redirectHeaders.delete('content-encoding');
+				redirectHeaders.delete('content-length');
+				redirectHeaders.set('cache-control', 'no-store');
+				redirectHeaders.set('location', new URL('/users/sign_in', url).toString());
+				return new Response(null, { status: 302, headers: redirectHeaders });
+			}
+		}
+		*/
+
 		resp.headers.delete('Content-Security-Policy-Report-Only');
 		// Set a more permissive CSP to allow third-party connections
 		resp.headers.set(

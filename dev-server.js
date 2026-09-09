@@ -1,15 +1,26 @@
 import express from 'express';
-import { build } from 'esbuild';
 import { mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
+import { Readable } from 'node:stream';
 import worker from './src/worker.js';
 
 const app = express();
 const PORT = process.env.PORT || 8787;
 const contentAppEntry = 'src/content/app.jsx';
 const contentAppOutfile = 'css/content/generated/18-app.js';
+const hopByHopHeaders = new Set([
+  'connection',
+  'keep-alive',
+  'proxy-authenticate',
+  'proxy-authorization',
+  'te',
+  'trailer',
+  'transfer-encoding',
+  'upgrade',
+]);
 
 async function buildContentApp() {
+  const { build } = await import('esbuild');
   await mkdir(dirname(resolve(contentAppOutfile)), { recursive: true });
 
   await build({
@@ -26,6 +37,10 @@ async function buildContentApp() {
   });
 }
 
+app.get('/healthz', (_req, res) => {
+  res.status(200).type('text').send('ok');
+});
+
 function toWebRequest(req) {
   const proto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
   const host = req.headers['x-forwarded-host'] || req.headers.host || `localhost:${PORT}`;
@@ -34,6 +49,7 @@ function toWebRequest(req) {
   const headers = new Headers();
   for (const [k, v] of Object.entries(req.headers)) {
     if (typeof v === 'undefined') continue;
+    if (hopByHopHeaders.has(k.toLowerCase())) continue;
     if (Array.isArray(v)) {
       for (const vv of v) headers.append(k, vv);
     } else {
@@ -66,16 +82,27 @@ app.use(async (req, res) => {
     const setCookies = typeof cfResponse.headers.getSetCookie === 'function'
       ? cfResponse.headers.getSetCookie()
       : [];
+    const omittedResponseHeaders = new Set([
+      ...hopByHopHeaders,
+      'content-encoding',
+      'content-length',
+    ]);
     cfResponse.headers.forEach((value, key) => {
-      if (key.toLowerCase() === 'content-encoding') return; // avoid restricted headers
-      if (key.toLowerCase() === 'set-cookie' && setCookies.length > 0) return;
+      const lowerKey = key.toLowerCase();
+      if (omittedResponseHeaders.has(lowerKey)) return;
+      if (lowerKey === 'set-cookie' && setCookies.length > 0) return;
       res.setHeader(key, value);
     });
     if (setCookies.length > 0) res.setHeader('set-cookie', setCookies);
 
     if (cfResponse.body) {
-      const ab = await cfResponse.arrayBuffer();
-      res.send(Buffer.from(ab));
+      const responseStream = Readable.fromWeb(cfResponse.body);
+      responseStream.on('error', (streamError) => {
+        console.error(streamError);
+        if (res.headersSent) res.destroy(streamError);
+        else res.status(500).end();
+      });
+      responseStream.pipe(res);
     } else {
       res.end();
     }
@@ -85,9 +112,13 @@ app.use(async (req, res) => {
   }
 });
 
-await buildContentApp();
+if (process.env.NODE_ENV !== 'production') {
+  await buildContentApp();
+}
 
 app.listen(PORT, () => {
-  console.log(`Built ${contentAppOutfile}`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`Built ${contentAppOutfile}`);
+  }
   console.log(`Dev server listening on http://localhost:${PORT}`);
 });

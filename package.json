@@ -3,25 +3,26 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"deploy": "node scripts/release.js && wrangler deploy",
+		"build:elastic-beanstalk": "bash scripts/build-elastic-beanstalk.sh",
 		"dev": "node dev-server.js",
 		"start": "node dev-server.js",
 		"dev:watch": "nodemon --ext js,css --watch src --watch css dev-server.js",
 		"release": "node scripts/release.js",
 		"test": "vitest"
 	},
+	"engines": {
+		"node": ">=24 <25"
+	},
 	"type": "module",
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.8.19",
 		"esbuild": "^0.24.0",
-		"nodemon": "^3.1.0"
+		"nodemon": "^3.1.0",
+		"preact": "^10.29.2",
+		"wrangler": "^4.130.0"
 	},
 	"dependencies": {
 		"cheerio": "1.1.2",
-		"express": "5.1.0",
-		"node-fetch-cookies": "2.1.1",
-		"preact": "^10.29.2",
-		"tough-cookie": "6.0.0",
-		"wrangler": "^4.130.0"
+		"express": "5.1.0"
 	}
 }

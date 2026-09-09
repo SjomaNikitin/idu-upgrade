@@ -32,7 +32,7 @@ describe('automatic school-prefix routing', () => {
 
 		const [upstreamUrl, options] = upstreamFetch.mock.calls[0];
 		expect(upstreamUrl).toBe('https://idu.edu.pl/users/sign_in');
-		expect(options.headers.host).toBe('idu.edu.pl');
+		expect(options.headers.host).toBeUndefined();
 		expect(options.headers.origin).toBe('https://idu.edu.pl/');
 		expect(options.headers.cookie).toBe('_idu_session=old');
 		expect(response.headers.get('location')).toBe('https://app.example/');
