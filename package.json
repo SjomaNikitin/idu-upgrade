@@ -3,7 +3,7 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"build:elastic-beanstalk": "bash scripts/build-elastic-beanstalk.sh",
+		"build": "bash scripts/build-elastic-beanstalk.sh",
 		"dev": "node dev-server.js",
 		"start": "node dev-server.js",
 		"dev:watch": "nodemon --ext js,css --watch src --watch css dev-server.js",

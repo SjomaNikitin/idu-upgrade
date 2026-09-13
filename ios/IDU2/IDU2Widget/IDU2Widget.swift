@@ -624,9 +624,11 @@ struct IDU2ScheduleWidgetEntryView: View {
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity)
 
-                            ForEach(0..<maxLessonCount, id: \.self) { index in
-                                if index < column.lessons.count {
-                                    ScheduleLessonCell(lesson: column.lessons[index])
+                            ForEach(scheduleStartTimes, id: \.self) { startTime in
+                                if let lesson = column.lessons.first(where: {
+                                    normalizedStartTime($0.start) == startTime
+                                }) {
+                                    ScheduleLessonCell(lesson: lesson)
                                 } else {
                                     ScheduleLessonSpacer()
                                 }
@@ -641,8 +643,44 @@ struct IDU2ScheduleWidgetEntryView: View {
         .containerBackground(.clear, for: .widget)
     }
 
-    private var maxLessonCount: Int {
-        max(entry.snapshot.dayColumns.map(\.lessons.count).max() ?? 0, 1)
+    private var scheduleStartTimes: [String] {
+        let startTimes = Set(
+            entry.snapshot.dayColumns
+                .flatMap(\.lessons)
+                .map { normalizedStartTime($0.start) }
+                .filter { !$0.isEmpty }
+        )
+
+        return startTimes.sorted { minutesSinceMidnight($0) < minutesSinceMidnight($1) }
+    }
+
+    private func normalizedStartTime(_ time: String) -> String {
+        let parts = time
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .split(separator: ":")
+
+        guard
+            parts.count == 2,
+            let hour = Int(parts[0]),
+            let minute = Int(parts[1])
+        else {
+            return time.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        return String(format: "%02d:%02d", hour, minute)
+    }
+
+    private func minutesSinceMidnight(_ time: String) -> Int {
+        let parts = time.split(separator: ":")
+        guard
+            parts.count == 2,
+            let hour = Int(parts[0]),
+            let minute = Int(parts[1])
+        else {
+            return Int.max
+        }
+
+        return hour * 60 + minute
     }
 }
 

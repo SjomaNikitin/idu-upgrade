@@ -22,15 +22,15 @@ function createLesson(lessonNumber, start, end, day, subject, room, note = '') {
 
 function buildDaySchedule(dayLabel, subjects) {
 	const timeSlots = [
-		['08:00', '08:45'],
-		['08:55', '09:40'],
-		['09:50', '10:35'],
-		['10:45', '11:30'],
-		['11:40', '12:25'],
-		['12:35', '13:20'],
-		['13:30', '14:15'],
+		['7:55', '8:40'],
+		['8:45', '9:30'],
+		['9:35', '10:20'],
+		['10:30', '11:15'],
+		['11:25', '12:10'],
+		['12:15', '13:00'],
+		['13:10', '13:55'],
 		['14:25', '15:10'],
-		['15:20', '16:05']
+		['15:15', '16:00']
 	];
 
 	return Object.fromEntries(
@@ -65,6 +65,8 @@ export function buildExampleDashboardData() {
 			{ subject: 'Hiszpanski', room: '11', note: 'Konwersacje' }
 		]),
 		tuesday: buildDaySchedule('Tuesday', [
+			null,
+			null,
 			{ subject: 'Fizyka', room: '16' },
 			{ subject: 'Matematyka', room: '12' },
 			{ subject: 'Chemia', room: '18' },
@@ -96,6 +98,7 @@ export function buildExampleDashboardData() {
 			{ subject: 'Hiszpanski', room: '11', note: 'Konwersacje' }
 		]),
 		friday: buildDaySchedule('Friday', [
+			null,
 			{ subject: 'Jezyk polski', room: '8' },
 			{ subject: 'Matematyka', room: '12' },
 			{ subject: 'Biologia', room: '15' },
@@ -103,8 +106,7 @@ export function buildExampleDashboardData() {
 			{ subject: 'Informatyka', room: '22' },
 			{ subject: 'WF', room: 'Sala A' },
 			{ subject: 'Godzina wychowawcza', room: '4' },
-			{ subject: 'Hiszpanski', room: '11' },
-			{ subject: 'Hiszpanski', room: '11', note: 'Konwersacje' }
+			{ subject: 'Hiszpanski', room: '11' }
 		])
 	};
 
