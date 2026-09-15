@@ -48,9 +48,13 @@ function autoLogin() {
 
 	if (autoLoginEnabled && login && password) {
 		const submitButton = document.querySelector("input[value='Zaloguj']");
-		if (submitButton) {
+		const notARobot = document.querySelector("input#not_a_robot");
+		if (submitButton && notARobot) {
 			loginInput.value = login;
 			passwordInput.value = password;
+			if (notARobot) {
+				notARobot.checked = true;
+			}
 			sessionStorage.setItem(autoLoginAttemptStorageKey, "yes");
 			submitButton.click();
 			return;

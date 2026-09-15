@@ -797,8 +797,10 @@
 	.action-module {
 		background-color: var(--background-color) !important;
 		border-color: var(--module-border-color) !important;
+	}
 
-
+	.security-notice{
+		display: none !important;
 	}
 
 	.module h3 {
