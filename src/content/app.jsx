@@ -5,6 +5,7 @@ import { MainContent } from "./components/mainContent.jsx";
 import { Footer } from "./components/footer.jsx";
 
 window.replaceHeader = function replaceHeader(data = {}) {
+	if (document.getElementById("idu-header-root")) return true;
 	const oldHeader = document.querySelector("#top");
 	if (!oldHeader) return false;
 	const isMockData = Boolean(window.__IDU_MOCK_DATA);
@@ -22,7 +23,7 @@ window.replaceHeader = function replaceHeader(data = {}) {
 	const mountPoint = document.createElement("div");
 	mountPoint.id = "idu-header-root";
 	oldHeader.replaceWith(mountPoint);
-	if (window.location.pathname !== "/users/sign_in") {
+	if (window.location.pathname !== "/users/sign_in" || isMockData) {
 		render(
 			<Header
 				accountHref={accountHref}

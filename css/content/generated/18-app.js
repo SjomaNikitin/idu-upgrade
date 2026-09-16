@@ -672,7 +672,7 @@
       window.dispatchEvent(new Event("idu-edit-mode-change"));
       setEditMode(!editMode);
     };
-    if (window.location.pathname === "/") {
+    if (window.location.pathname === "/" || isMockData) {
       return /* @__PURE__ */ k("header", { ref: headerRef, id: "top", className: "idu-custom-header" }, /* @__PURE__ */ k("div", { className: "header-menu" }, /* @__PURE__ */ k(
         "a",
         {
@@ -2848,6 +2848,7 @@
 
   // src/content/app.jsx
   window.replaceHeader = function replaceHeader(data = {}) {
+    if (document.getElementById("idu-header-root")) return true;
     const oldHeader = document.querySelector("#top");
     if (!oldHeader) return false;
     const isMockData = Boolean(window.__IDU_MOCK_DATA);
@@ -2863,7 +2864,7 @@
     const mountPoint = document.createElement("div");
     mountPoint.id = "idu-header-root";
     oldHeader.replaceWith(mountPoint);
-    if (window.location.pathname !== "/users/sign_in") {
+    if (window.location.pathname !== "/users/sign_in" || isMockData) {
       R(
         /* @__PURE__ */ k(
           Header,

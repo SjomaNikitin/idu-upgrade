@@ -226,7 +226,7 @@ export function Header({accountHref, messagesHref, semesterScope, searchElement,
 		setEditMode(!editMode);
 	}
 
-	if (window.location.pathname === "/") {
+	if (window.location.pathname === "/" || isMockData) {
 		return (
 			<header ref={headerRef} id="top" className="idu-custom-header">
 				<div className="header-menu">

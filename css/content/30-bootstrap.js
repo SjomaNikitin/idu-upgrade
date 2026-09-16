@@ -5,7 +5,9 @@ if (!iduOriginalViewEnabled) {
 }
 
 let svgSize = "60%";
-window.addEventListener("DOMContentLoaded", function () {
+if (!window.__iduContentBootstrapRegistered) {
+	window.__iduContentBootstrapRegistered = true;
+	window.addEventListener("DOMContentLoaded", function () {
 	if (iduOriginalViewEnabled) {
 		if (window.location.pathname === "/") {
 			const content = document.getElementById("content");
@@ -121,4 +123,5 @@ window.addEventListener("DOMContentLoaded", function () {
 			console.log("Loaded");
 		}
 	}
-})
+	})
+}
