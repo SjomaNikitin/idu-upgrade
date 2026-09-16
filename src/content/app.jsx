@@ -7,6 +7,7 @@ import { Footer } from "./components/footer.jsx";
 window.replaceHeader = function replaceHeader(data = {}) {
 	const oldHeader = document.querySelector("#top");
 	if (!oldHeader) return false;
+	const isMockData = Boolean(window.__IDU_MOCK_DATA);
 	const semesterScope = data.semesterScope || null;
 	const searchElement = window.location.pathname === "/"
 		? document.querySelector("#unique-id26")
@@ -28,6 +29,7 @@ window.replaceHeader = function replaceHeader(data = {}) {
 				messagesHref={data.messagesUrl || ''}
 				semesterScope={semesterScope}
 				searchElement={searchElement}
+				isMockData={isMockData}
 			/>,
 			mountPoint
 		);

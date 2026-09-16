@@ -115,7 +115,7 @@ function SearchPopup({ open, onClose, searchElement }) {
 	);
 }
 
-export function Header({accountHref, messagesHref, semesterScope, searchElement}) {
+export function Header({accountHref, messagesHref, semesterScope, searchElement, isMockData = false}) {
 	const headerRef = useRef(null);
 	let color = getComputedStyle(root).getPropertyValue('--idu-logo').trim();
 	let currentTheme = localStorage.getItem("theme");
@@ -241,7 +241,7 @@ export function Header({accountHref, messagesHref, semesterScope, searchElement}
 							<path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
 					</a>
-					<MessagesButton href={messagesHref} size={svgSize}/>
+					{!isMockData && <MessagesButton href={messagesHref} size={svgSize}/>}
 
 					<div className={`header-menu-panel ${menuOpen ? "open" : ""}`}>
 						<a onClick={() => openSettings()} className="header-panel-link">
@@ -262,14 +262,14 @@ export function Header({accountHref, messagesHref, semesterScope, searchElement}
 						<path d="M691.47 0.07C700.14 0.07 708.81 0.07 717.48 0.07C720.42 1.82 732.59 2.15 737 3.21C750.79 6.53 764.3 11.74 775.75 20.3C782.61 25.42 788.83 31.93 793.3 39.22C797.19 45.56 800.64 52.39 802.07 59.75C803.83 68.85 804.97 78.1 803.83 87.43C799.92 119.18 772.23 147.09 748.67 166.9C738.36 175.58 728.03 184.25 717.78 193.02C715.23 195.19 707.95 199.32 707.89 202.73C740.78 202.87 773.68 203.01 806.58 203.15C806.63 221.46 806.67 239.77 806.72 258.08C741.81 258.04 676.89 258 611.98 257.96C611.1 254.4 611.7 250.05 611.7 246.34C611.7 238.1 611.7 229.85 611.7 221.6C611.7 218.08 610.43 211.56 611.98 208.39C613.17 205.97 617.61 203.53 619.72 201.87C626.67 196.43 633.19 190.43 640.09 184.94C661.12 168.2 681.65 150.72 702.23 133.44C715.21 122.54 730.59 111.33 735.73 94.45C744.47 65.7 714.72 44.03 688.84 56.34C680.5 60.3 675.36 67.97 673.2 76.72C672.46 79.72 673.18 83.99 671.52 86.57C650.02 86.43 628.53 86.3 607.04 86.17C605.28 81.28 607.84 70.8 608.81 65.62C613.74 39.35 633.07 18.18 657.56 8.25C664.45 5.46 672.08 3 679.48 2.04C681.71 1.75 690.31 1.18 691.47 0.07ZM0.07 3.4C22.9 3.46 45.74 3.51 68.57 3.56C68.63 88.4 68.69 173.24 68.76 258.08C45.86 258.14 22.97 258.21 0.07 258.27C0.07 173.31 0.07 88.36 0.07 3.4ZM101.93 257.94C101.93 173.15 101.93 88.35 101.93 3.56C124.11 2.54 146.56 3.5 168.77 3.5C209.91 3.5 247.36 2.32 281.77 28.31C342.17 73.93 341.9 186.62 282.66 232.97C244.98 262.46 198.43 258.23 153.26 258.23C141.66 258.23 130.05 258.23 118.45 258.23C113.35 258.23 106.84 259.28 101.93 257.94ZM481.43 261.16C472.48 261.16 463.53 261.16 454.58 261.16C452.83 259.67 449.05 260.29 446.77 259.96C440.31 259.02 433.84 257.8 427.56 256.06C411.23 251.54 393.93 242.77 382.39 230C356.96 201.88 358.5 175.35 358.5 139.42C358.5 114.54 358.5 89.66 358.5 64.78C358.5 50.67 358.5 36.55 358.5 22.43C358.5 17.68 357.27 8.11 358.85 3.98C381.69 3.98 404.52 3.98 427.36 3.98C428.68 7.59 427.69 13.12 427.69 16.98C427.69 26.77 427.69 36.55 427.69 46.33C427.69 79.32 427.69 112.3 427.69 145.29C427.69 154.38 426.85 163.97 429.13 172.84C433.7 190.65 450.17 201.06 467.85 201.48C486.63 201.92 502.53 190.52 507.78 172.53C510.13 164.46 509.07 155.29 509.07 146.97C509.07 114.54 509.07 82.11 509.07 49.69C509.07 39.48 509.07 29.28 509.07 19.08C509.07 14.33 508.21 8.6 509.29 3.98C532.06 3.85 554.82 3.71 577.59 3.58C579.56 7.01 578.17 20.37 578.17 24.95C578.17 43.4 578.17 61.85 578.17 80.3C578.17 100.84 578.17 121.39 578.17 141.93C578.17 156.26 579.69 171.65 576.75 185.75C571.84 209.27 558.79 229.81 538.33 242.93C526.9 250.25 514.21 255.12 501 258.05C496.85 258.97 484.04 259.7 481.43 261.16ZM171 199.26C176.86 200.42 183.75 199.49 189.74 199.49C207.86 199.49 226.52 198.59 240.65 185.92C248.18 179.18 251.97 168.69 254.22 159.19C258.9 139.42 258.96 114.9 252.21 95.64C249.5 87.93 245.47 79.78 238.91 74.53C224.75 63.2 206.37 62.12 188.9 62.12C183.05 62.12 176.79 61.5 171 62.29C171 107.94 171 153.6 171 199.26Z" fill="currentColor" fill-rule="evenodd" stroke="currentColor" stroke-width="0.25" stroke-linejoin="round"/>
 					</svg>
 				</a>
-				<HeaderActions
+				{!isMockData && <HeaderActions
 					accountHref={accountHref}
 					size={svgSize}
 					searchOpen={searchOpen}
 					onSearchToggle={toggleSearch}
 					searchAvailable={Boolean(searchElement)}
-				/>
-				<SearchPopup open={searchOpen} onClose={() => setSearchOpen(false)} searchElement={searchElement}/>
+				/>}
+				{!isMockData && <SearchPopup open={searchOpen} onClose={() => setSearchOpen(false)} searchElement={searchElement}/>}
 				<Settings open={settingsOpen} setOpen={setSettingsOpen} semesterScope={semesterScope}/>
 			</header>
 		);

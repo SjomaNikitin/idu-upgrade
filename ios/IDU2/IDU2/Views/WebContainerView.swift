@@ -19,7 +19,6 @@ struct WebContainerView: UIViewRepresentable {
 		let webView = SafeAreaAwareWebView(frame: .zero, configuration: configuration)
 		webView.isInspectable = true
 		webView.navigationDelegate = context.coordinator
-        webView.navigationDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.contentInsetAdjustmentBehavior = .never
         webView.isOpaque = false
@@ -29,7 +28,7 @@ struct WebContainerView: UIViewRepresentable {
             guard let webView else { return }
             coordinator?.applySafeAreaInsets(to: webView)
         }
-        webView.load(URLRequest(url: AppConfig.workerBaseURL))
+        context.coordinator.loadIDUWithRemoteAssets(in: webView)
 
         return webView
     }
@@ -40,8 +39,48 @@ struct WebContainerView: UIViewRepresentable {
 
     private func makePlatformBootstrapScript() -> WKUserScript {
         let source = """
-        document.documentElement.setAttribute('data-app-platform', 'ios');
-        document.documentElement.classList.add('ios-app');
+        (() => {
+            try {
+                const storedSafeTop = localStorage.getItem('iduIosSafeTop');
+                const safeTop = Number(storedSafeTop);
+                if (storedSafeTop !== null && Number.isFinite(safeTop) && safeTop >= 0 && safeTop <= 200) {
+                    document.documentElement?.style.setProperty('--ios-safe-top', `${safeTop}px`);
+                }
+            } catch (error) {
+                console.info('[IDU2] Could not restore saved iOS header inset', error);
+            }
+
+            const configurePage = () => {
+                const html = document.documentElement;
+                if (html) {
+                    html.setAttribute('data-app-platform', 'ios');
+                    html.classList.add('ios-app');
+                }
+
+                if (document.head && !document.getElementById('idu-custom-viewport')) {
+                    const viewport = document.createElement('meta');
+                    viewport.id = 'idu-custom-viewport';
+                    viewport.name = 'viewport';
+                    viewport.content = 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no';
+                    document.head.appendChild(viewport);
+                }
+
+                if (document.body) {
+                    document.body.setAttribute('path', window.location.pathname);
+                }
+
+                return !!html && !!document.head && !!document.body;
+            };
+
+            if (!configurePage()) {
+                const observer = new MutationObserver(() => {
+                    if (configurePage()) observer.disconnect();
+                });
+                observer.observe(document, { childList: true, subtree: true });
+                document.addEventListener('DOMContentLoaded', configurePage, { once: true });
+            }
+        })();
+
         window.__IDUSyncScheduleToApp = function(schedule) {
             if (!schedule || !window.webkit || !window.webkit.messageHandlers || !window.webkit.messageHandlers.\(Self.scheduleBridgeName)) {
                 return;
@@ -56,15 +95,152 @@ struct WebContainerView: UIViewRepresentable {
 
         return WKUserScript(
             source: source,
-            injectionTime: .atDocumentEnd,
+            injectionTime: .atDocumentStart,
             forMainFrameOnly: true
         )
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+        private enum AssetError: LocalizedError {
+            case invalidResponse(URL, Int)
+            case invalidText(URL)
+
+            var errorDescription: String? {
+                switch self {
+                case let .invalidResponse(url, statusCode):
+                    return "Asset request for \(url.absoluteString) returned HTTP \(statusCode)"
+                case let .invalidText(url):
+                    return "Asset at \(url.absoluteString) was not valid UTF-8"
+                }
+            }
+        }
+
+        func loadIDUWithRemoteAssets(in webView: WKWebView) {
+            Task {
+                do {
+                    async let javascript = Self.downloadText(from: AppConfig.contentScriptURL)
+                    async let css = Self.downloadText(from: AppConfig.stylesheetURL)
+                    let (javascriptSource, cssSource) = try await (javascript, css)
+                    let cssLiteral = try Self.javascriptStringLiteral(cssSource)
+                    let cssInjectionSource = """
+                    (() => {
+                        const css = \(cssLiteral);
+                        const installStyles = () => {
+                            if (document.getElementById('idu-custom-styles')) return true;
+
+                            if (!document.head) return false;
+
+                            const style = document.createElement('style');
+                            style.id = 'idu-custom-styles';
+                            style.textContent = css;
+                            document.head.appendChild(style);
+                            console.info('[IDU2] Cloudflare styles loaded', {
+                                url: '\(AppConfig.stylesheetURL.absoluteString)',
+                                bytes: style.textContent.length,
+                                target: style.parentElement?.tagName
+                            });
+                            return true;
+                        };
+
+                        if (!installStyles()) {
+                            const observer = new MutationObserver(() => {
+                                if (installStyles()) observer.disconnect();
+                            });
+                            observer.observe(document, { childList: true, subtree: true });
+                            document.addEventListener('DOMContentLoaded', installStyles, { once: true });
+                        }
+                    })();
+                    """
+                    let javascriptInjectionSource = """
+                    console.info('[IDU2] Cloudflare JavaScript loaded', {
+                        url: '\(AppConfig.contentScriptURL.absoluteString)',
+                        bytes: \(javascriptSource.utf8.count)
+                    });
+                    \(javascriptSource)
+                    """
+
+                    await MainActor.run {
+                        let controller = webView.configuration.userContentController
+                        let windowSafeTop = webView.window?.safeAreaInsets.top ?? 0
+                        let nativeSafeTop = max(windowSafeTop, webView.safeAreaInsets.top)
+
+                        if nativeSafeTop > 0 {
+                            controller.addUserScript(WKUserScript(
+                                source: """
+                                document.documentElement?.style.setProperty('--ios-safe-top', '\(nativeSafeTop)px');
+                                try { localStorage.setItem('iduIosSafeTop', '\(nativeSafeTop)'); } catch {}
+                                """,
+                                injectionTime: .atDocumentStart,
+                                forMainFrameOnly: true
+                            ))
+                        }
+                        controller.addUserScript(WKUserScript(
+                            source: cssInjectionSource,
+                            injectionTime: .atDocumentStart,
+                            forMainFrameOnly: true
+                        ))
+                        controller.addUserScript(WKUserScript(
+                            source: javascriptInjectionSource,
+                            injectionTime: .atDocumentStart,
+                            forMainFrameOnly: true
+                        ))
+                        print(
+                            "Registered Cloudflare assets:",
+                            "css=\(cssSource.utf8.count) bytes,",
+                            "javascript=\(javascriptSource.utf8.count) bytes"
+                        )
+                        webView.load(URLRequest(url: AppConfig.iduBaseURL))
+                    }
+                } catch {
+                    print("Failed to load Cloudflare assets: \(error.localizedDescription)")
+                    await MainActor.run {
+                        // Keep login usable even if the asset host is temporarily unavailable.
+                        _ = webView.load(URLRequest(url: AppConfig.iduBaseURL))
+                    }
+                }
+            }
+        }
+
+        private static func downloadText(from url: URL) async throws -> String {
+            var request = URLRequest(url: url)
+            request.cachePolicy = .reloadRevalidatingCacheData
+            request.timeoutInterval = 15
+
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+                throw AssetError.invalidResponse(url, statusCode)
+            }
+            guard let text = String(data: data, encoding: .utf8) else {
+                throw AssetError.invalidText(url)
+            }
+            return text
+        }
+
+        private static func javascriptStringLiteral(_ value: String) throws -> String {
+            let data = try JSONSerialization.data(
+                withJSONObject: value,
+                options: [.fragmentsAllowed]
+            )
+            guard let literal = String(data: data, encoding: .utf8) else {
+                throw AssetError.invalidText(AppConfig.stylesheetURL)
+            }
+            return literal
+        }
+
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             applySafeAreaInsets(to: webView)
-            print("Loaded IDU worker site")
+            print("Loaded IDU site directly")
+            webView.evaluateJavaScript(
+                "({ stylesLoaded: !!document.getElementById('idu-custom-styles'), styleBytes: document.getElementById('idu-custom-styles')?.textContent?.length || 0, scriptsLoaded: typeof window.replaceHeader === 'function', viewport: document.querySelector('meta[name=viewport]')?.content || null, layoutWidth: document.documentElement.clientWidth, bodyPath: document.body?.getAttribute('path') || null })"
+            ) { result, error in
+                if let error {
+                    print("Failed to inspect injected Cloudflare assets: \(error.localizedDescription)")
+                    return
+                }
+                print("Cloudflare asset injection status:", result ?? "nil")
+            }
         }
 
         func webView(
@@ -88,6 +264,7 @@ struct WebContainerView: UIViewRepresentable {
             let safeTop = max(windowSafeTop, webView.safeAreaInsets.top)
             let script = """
             document.documentElement.style.setProperty('--ios-safe-top', '\(safeTop)px');
+            try { localStorage.setItem('iduIosSafeTop', '\(safeTop)'); } catch {}
             if (document.body) {
                 document.body.style.setProperty('--ios-safe-top', '\(safeTop)px');
             }

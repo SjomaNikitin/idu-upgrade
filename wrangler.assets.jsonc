@@ -1,0 +1,14 @@
+/**
+ * Static browser assets consumed by the iOS WKWebView.
+ *
+ * This is deliberately a separate Cloudflare project from the legacy proxy
+ * Worker in wrangler.jsonc, so deploying assets cannot replace that Worker.
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "idu-upgrade-assets",
+	"compatibility_date": "2026-09-16",
+	"assets": {
+		"directory": "./dist"
+	}
+}
