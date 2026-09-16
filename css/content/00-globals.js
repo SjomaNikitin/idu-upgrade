@@ -1,3 +1,27 @@
+// This used to be injected into <head> by the proxy. Keep it at the start of
+// the browser bundle so direct WKWebView navigation establishes loader state
+// before the rest of the page and application initialize.
+try {
+	window.__iduOriginalView = localStorage.getItem("iduOriginalView") === "true";
+	if (window.__iduOriginalView) {
+		document.documentElement.classList.add("idu-original-view", "idu-ready");
+	} else {
+		window.__iduLoaderStartedAt = performance.now();
+		const storedTheme = localStorage.getItem("theme");
+		if (storedTheme) document.documentElement.setAttribute("data-theme", storedTheme);
+		const storedIosSafeTop = localStorage.getItem("iduIosSafeTop");
+		const storedSafeTop = Number(storedIosSafeTop);
+		if (
+			storedIosSafeTop !== null &&
+			Number.isFinite(storedSafeTop) &&
+			storedSafeTop >= 0 &&
+			storedSafeTop <= 200
+		) {
+			document.documentElement.style.setProperty("--ios-safe-top", `${storedSafeTop}px`);
+		}
+	}
+} catch {}
+
 let themePresets = [
 	{ bc: "rgb(255, 255, 255)", mc: "rgb(0, 0, 0)", name: "Default" },
 	{ bc: "rgb(157,190,187)", mc: "rgb(244,233,205)", name: "Dzaga" },

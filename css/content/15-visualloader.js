@@ -72,3 +72,18 @@ window.hideVisualLoader = function hideVisualLoader() {
 	documentElement.classList.add("idu-loader-fading");
 	window.setTimeout(finishLoading, 500);
 }
+
+// Never leave the login form hidden indefinitely when auto-login, network
+// activity, or page initialization does not complete as expected.
+if (window.location.pathname === "/users/sign_in") {
+	window.setTimeout(() => {
+		const documentElement = document.documentElement;
+		if (
+			!documentElement.classList.contains("idu-ready") &&
+			!documentElement.classList.contains("idu-loader-fading")
+		) {
+			console.info("[IDU2] Login loader exceeded 5 seconds; fading it out");
+			window.hideVisualLoader();
+		}
+	}, 5000);
+}

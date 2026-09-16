@@ -50,6 +50,7 @@ if (!window.__iduContentBootstrapRegistered) {
 			semesterScope: extractSemesterScope()
 		};
 		if (
+			window.location.pathname === "/" &&
 			window.webkit &&
 			window.webkit.messageHandlers &&
 			window.webkit.messageHandlers.iduScheduleSync
