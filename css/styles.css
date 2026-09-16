@@ -822,7 +822,8 @@
 		clear: both;
 		width: calc(100% - var(--padding-4));
 		margin: var(--padding-2);
-		padding: var(--padding-1);
+		padding: var(--padding-2);
+		font-weight: bold;
 	}
 
 	div:has(#calendar){
