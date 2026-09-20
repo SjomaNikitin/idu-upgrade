@@ -101,26 +101,21 @@ struct WebContainerView: UIViewRepresentable {
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
-        private enum AssetError: LocalizedError {
-            case invalidResponse(URL, Int)
-            case invalidText(URL)
-
-            var errorDescription: String? {
-                switch self {
-                case let .invalidResponse(url, statusCode):
-                    return "Asset request for \(url.absoluteString) returned HTTP \(statusCode)"
-                case let .invalidText(url):
-                    return "Asset at \(url.absoluteString) was not valid UTF-8"
-                }
-            }
-        }
-
         func loadIDUWithRemoteAssets(in webView: WKWebView) {
             Task {
                 do {
-                    async let javascript = Self.downloadText(from: AppConfig.contentScriptURL)
-                    async let css = Self.downloadText(from: AppConfig.stylesheetURL)
-                    let (javascriptSource, cssSource) = try await (javascript, css)
+                    let assetCache = RemoteAssetCache()
+                    async let javascript = assetCache.loadText(
+                        from: AppConfig.contentScriptURL,
+                        cacheFileName: "content.js"
+                    )
+                    async let css = assetCache.loadText(
+                        from: AppConfig.stylesheetURL,
+                        cacheFileName: "styles.css"
+                    )
+                    let (javascriptAsset, cssAsset) = try await (javascript, css)
+                    let javascriptSource = javascriptAsset.text
+                    let cssSource = cssAsset.text
                     let cssLiteral = try Self.javascriptStringLiteral(cssSource)
                     let cssInjectionSource = """
                     (() => {
@@ -193,14 +188,14 @@ struct WebContainerView: UIViewRepresentable {
                             forMainFrameOnly: true
                         ))
                         print(
-                            "Registered Cloudflare assets:",
-                            "css=\(cssSource.utf8.count) bytes,",
-                            "javascript=\(javascriptSource.utf8.count) bytes"
+                            "Registered assets:",
+                            "css=\(cssSource.utf8.count) bytes (\(cssAsset.source.rawValue)),",
+                            "javascript=\(javascriptSource.utf8.count) bytes (\(javascriptAsset.source.rawValue))"
                         )
                         webView.load(URLRequest(url: AppConfig.iduBaseURL))
                     }
                 } catch {
-                    print("Failed to load Cloudflare assets: \(error.localizedDescription)")
+                    print("Failed to load remote or saved assets: \(error.localizedDescription)")
                     await MainActor.run {
                         // Keep login usable even if the asset host is temporarily unavailable.
                         _ = webView.load(URLRequest(url: AppConfig.iduBaseURL))
@@ -209,30 +204,13 @@ struct WebContainerView: UIViewRepresentable {
             }
         }
 
-        private static func downloadText(from url: URL) async throws -> String {
-            var request = URLRequest(url: url)
-            request.cachePolicy = .reloadRevalidatingCacheData
-            request.timeoutInterval = 15
-
-            let (data, response) = try await URLSession.shared.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-                throw AssetError.invalidResponse(url, statusCode)
-            }
-            guard let text = String(data: data, encoding: .utf8) else {
-                throw AssetError.invalidText(url)
-            }
-            return text
-        }
-
         private static func javascriptStringLiteral(_ value: String) throws -> String {
             let data = try JSONSerialization.data(
                 withJSONObject: value,
                 options: [.fragmentsAllowed]
             )
             guard let literal = String(data: data, encoding: .utf8) else {
-                throw AssetError.invalidText(AppConfig.stylesheetURL)
+                throw RemoteAssetCache.CacheError.invalidText(AppConfig.stylesheetURL)
             }
             return literal
         }

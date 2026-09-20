@@ -1,4 +1,25 @@
 const autoLoginAttemptStorageKey = "iduAutoLoginAttemptInProgress";
+const appleReviewLogin = "AppleLogin";
+const appleReviewPassword = "123";
+
+function setupAppleReviewLogin(loginInput, passwordInput) {
+	const loginForm = loginInput.form || document.getElementById("new_user");
+	if (!loginForm) return;
+
+	loginForm.addEventListener("submit", function (event) {
+		if (
+			loginInput.value !== appleReviewLogin ||
+			passwordInput.value !== appleReviewPassword
+		) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		sessionStorage.removeItem(autoLoginAttemptStorageKey);
+		window.renderIduMockDashboard?.();
+	}, true);
+}
 
 function saveAutoLoginPreference(loginInput, passwordInput) {
 	const loginForm = loginInput.form || document.getElementById("new_user");
@@ -25,6 +46,8 @@ function autoLogin() {
 		sessionStorage.removeItem(autoLoginAttemptStorageKey);
 		return;
 	}
+
+	setupAppleReviewLogin(loginInput, passwordInput);
 
 	const login = localStorage.getItem("login");
 	const password = localStorage.getItem("password");

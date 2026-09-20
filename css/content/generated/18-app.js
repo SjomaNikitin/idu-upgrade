@@ -683,7 +683,7 @@
           }
         },
         /* @__PURE__ */ k("svg", { width: svgSize, height: svgSize, viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M4 6H20M4 12H20M4 18H20", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }))
-      ), !isMockData && /* @__PURE__ */ k(MessagesButton, { href: messagesHref, size: svgSize }), /* @__PURE__ */ k("div", { className: `header-menu-panel ${menuOpen ? "open" : ""}` }, /* @__PURE__ */ k("a", { onClick: () => openSettings(), className: "header-panel-link" }, /* @__PURE__ */ k("svg", { width: svgSize, height: svgSize, viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M12.9046 3.06005C12.6988 3 12.4659 3 12 3C11.5341 3 11.3012 3 11.0954 3.06005C10.7942 3.14794 10.5281 3.32808 10.3346 3.57511C10.2024 3.74388 10.1159 3.96016 9.94291 4.39272C9.69419 5.01452 9.00393 5.33471 8.36857 5.123L7.79779 4.93281C7.3929 4.79785 7.19045 4.73036 6.99196 4.7188C6.70039 4.70181 6.4102 4.77032 6.15701 4.9159C5.98465 5.01501 5.83376 5.16591 5.53197 5.4677C5.21122 5.78845 5.05084 5.94882 4.94896 6.13189C4.79927 6.40084 4.73595 6.70934 4.76759 7.01551C4.78912 7.2239 4.87335 7.43449 5.04182 7.85566C5.30565 8.51523 5.05184 9.26878 4.44272 9.63433L4.16521 9.80087C3.74031 10.0558 3.52786 10.1833 3.37354 10.3588C3.23698 10.5141 3.13401 10.696 3.07109 10.893C3 11.1156 3 11.3658 3 11.8663C3 12.4589 3 12.7551 3.09462 13.0088C3.17823 13.2329 3.31422 13.4337 3.49124 13.5946C3.69158 13.7766 3.96395 13.8856 4.50866 14.1035C5.06534 14.3261 5.35196 14.9441 5.16236 15.5129L4.94721 16.1584C4.79819 16.6054 4.72367 16.829 4.7169 17.0486C4.70875 17.3127 4.77049 17.5742 4.89587 17.8067C5.00015 18.0002 5.16678 18.1668 5.5 18.5C5.83323 18.8332 5.99985 18.9998 6.19325 19.1041C6.4258 19.2295 6.68733 19.2913 6.9514 19.2831C7.17102 19.2763 7.39456 19.2018 7.84164 19.0528L8.36862 18.8771C9.00393 18.6654 9.6942 18.9855 9.94291 19.6073C10.1159 20.0398 10.2024 20.2561 10.3346 20.4249C10.5281 20.6719 10.7942 20.8521 11.0954 20.94C11.3012 21 11.5341 21 12 21C12.4659 21 12.6988 21 12.9046 20.94C13.2058 20.8521 13.4719 20.6719 13.6654 20.4249C13.7976 20.2561 13.8841 20.0398 14.0571 19.6073C14.3058 18.9855 14.9961 18.6654 15.6313 18.8773L16.1579 19.0529C16.605 19.2019 16.8286 19.2764 17.0482 19.2832C17.3123 19.2913 17.5738 19.2296 17.8063 19.1042C17.9997 18.9999 18.1664 18.8333 18.4996 18.5001C18.8328 18.1669 18.9994 18.0002 19.1037 17.8068C19.2291 17.5743 19.2908 17.3127 19.2827 17.0487C19.2759 16.8291 19.2014 16.6055 19.0524 16.1584L18.8374 15.5134C18.6477 14.9444 18.9344 14.3262 19.4913 14.1035C20.036 13.8856 20.3084 13.7766 20.5088 13.5946C20.6858 13.4337 20.8218 13.2329 20.9054 13.0088C21 12.7551 21 12.4589 21 11.8663C21 11.3658 21 11.1156 20.9289 10.893C20.866 10.696 20.763 10.5141 20.6265 10.3588C20.4721 10.1833 20.2597 10.0558 19.8348 9.80087L19.5569 9.63416C18.9478 9.26867 18.6939 8.51514 18.9578 7.85558C19.1262 7.43443 19.2105 7.22383 19.232 7.01543C19.2636 6.70926 19.2003 6.40077 19.0506 6.13181C18.9487 5.94875 18.7884 5.78837 18.4676 5.46762C18.1658 5.16584 18.0149 5.01494 17.8426 4.91583C17.5894 4.77024 17.2992 4.70174 17.0076 4.71872C16.8091 4.73029 16.6067 4.79777 16.2018 4.93273L15.6314 5.12287C14.9961 5.33464 14.3058 5.0145 14.0571 4.39272C13.8841 3.96016 13.7976 3.74388 13.6654 3.57511C13.4719 3.32808 13.2058 3.14794 12.9046 3.06005Z", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }))), /* @__PURE__ */ k("a", { href: "/users/sign_out", className: "header-panel-link", onClick: () => localStorage.setItem("autoLogin", "no") }, /* @__PURE__ */ k("svg", { xmlns: "http://www.w3.org/2000/svg", width: svgSize, height: svgSize, viewBox: "0 0 24 24" }, /* @__PURE__ */ k("path", { fill: "none", stroke: "currentColor", "stroke-linecap": "round", "stroke-linejoin": "round", "stroke-width": "2", d: "M15 4.001H5v14a2 2 0 0 0 2 2h8m1-5l3-3m0 0l-3-3m3 3H9" }))))), /* @__PURE__ */ k("a", { className: "header-logo-link", href: "/" }, /* @__PURE__ */ k("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 808 261", width: "80", height: "40" }, /* @__PURE__ */ k("path", { d: "M691.47 0.07C700.14 0.07 708.81 0.07 717.48 0.07C720.42 1.82 732.59 2.15 737 3.21C750.79 6.53 764.3 11.74 775.75 20.3C782.61 25.42 788.83 31.93 793.3 39.22C797.19 45.56 800.64 52.39 802.07 59.75C803.83 68.85 804.97 78.1 803.83 87.43C799.92 119.18 772.23 147.09 748.67 166.9C738.36 175.58 728.03 184.25 717.78 193.02C715.23 195.19 707.95 199.32 707.89 202.73C740.78 202.87 773.68 203.01 806.58 203.15C806.63 221.46 806.67 239.77 806.72 258.08C741.81 258.04 676.89 258 611.98 257.96C611.1 254.4 611.7 250.05 611.7 246.34C611.7 238.1 611.7 229.85 611.7 221.6C611.7 218.08 610.43 211.56 611.98 208.39C613.17 205.97 617.61 203.53 619.72 201.87C626.67 196.43 633.19 190.43 640.09 184.94C661.12 168.2 681.65 150.72 702.23 133.44C715.21 122.54 730.59 111.33 735.73 94.45C744.47 65.7 714.72 44.03 688.84 56.34C680.5 60.3 675.36 67.97 673.2 76.72C672.46 79.72 673.18 83.99 671.52 86.57C650.02 86.43 628.53 86.3 607.04 86.17C605.28 81.28 607.84 70.8 608.81 65.62C613.74 39.35 633.07 18.18 657.56 8.25C664.45 5.46 672.08 3 679.48 2.04C681.71 1.75 690.31 1.18 691.47 0.07ZM0.07 3.4C22.9 3.46 45.74 3.51 68.57 3.56C68.63 88.4 68.69 173.24 68.76 258.08C45.86 258.14 22.97 258.21 0.07 258.27C0.07 173.31 0.07 88.36 0.07 3.4ZM101.93 257.94C101.93 173.15 101.93 88.35 101.93 3.56C124.11 2.54 146.56 3.5 168.77 3.5C209.91 3.5 247.36 2.32 281.77 28.31C342.17 73.93 341.9 186.62 282.66 232.97C244.98 262.46 198.43 258.23 153.26 258.23C141.66 258.23 130.05 258.23 118.45 258.23C113.35 258.23 106.84 259.28 101.93 257.94ZM481.43 261.16C472.48 261.16 463.53 261.16 454.58 261.16C452.83 259.67 449.05 260.29 446.77 259.96C440.31 259.02 433.84 257.8 427.56 256.06C411.23 251.54 393.93 242.77 382.39 230C356.96 201.88 358.5 175.35 358.5 139.42C358.5 114.54 358.5 89.66 358.5 64.78C358.5 50.67 358.5 36.55 358.5 22.43C358.5 17.68 357.27 8.11 358.85 3.98C381.69 3.98 404.52 3.98 427.36 3.98C428.68 7.59 427.69 13.12 427.69 16.98C427.69 26.77 427.69 36.55 427.69 46.33C427.69 79.32 427.69 112.3 427.69 145.29C427.69 154.38 426.85 163.97 429.13 172.84C433.7 190.65 450.17 201.06 467.85 201.48C486.63 201.92 502.53 190.52 507.78 172.53C510.13 164.46 509.07 155.29 509.07 146.97C509.07 114.54 509.07 82.11 509.07 49.69C509.07 39.48 509.07 29.28 509.07 19.08C509.07 14.33 508.21 8.6 509.29 3.98C532.06 3.85 554.82 3.71 577.59 3.58C579.56 7.01 578.17 20.37 578.17 24.95C578.17 43.4 578.17 61.85 578.17 80.3C578.17 100.84 578.17 121.39 578.17 141.93C578.17 156.26 579.69 171.65 576.75 185.75C571.84 209.27 558.79 229.81 538.33 242.93C526.9 250.25 514.21 255.12 501 258.05C496.85 258.97 484.04 259.7 481.43 261.16ZM171 199.26C176.86 200.42 183.75 199.49 189.74 199.49C207.86 199.49 226.52 198.59 240.65 185.92C248.18 179.18 251.97 168.69 254.22 159.19C258.9 139.42 258.96 114.9 252.21 95.64C249.5 87.93 245.47 79.78 238.91 74.53C224.75 63.2 206.37 62.12 188.9 62.12C183.05 62.12 176.79 61.5 171 62.29C171 107.94 171 153.6 171 199.26Z", fill: "currentColor", "fill-rule": "evenodd", stroke: "currentColor", "stroke-width": "0.25", "stroke-linejoin": "round" }))), !isMockData && /* @__PURE__ */ k(
+      ), !isMockData && /* @__PURE__ */ k(MessagesButton, { href: messagesHref, size: svgSize }), /* @__PURE__ */ k("div", { className: `header-menu-panel ${menuOpen ? "open" : ""}` }, /* @__PURE__ */ k("a", { onClick: () => openSettings(), className: "header-panel-link" }, /* @__PURE__ */ k("svg", { width: svgSize, height: svgSize, viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "M12.9046 3.06005C12.6988 3 12.4659 3 12 3C11.5341 3 11.3012 3 11.0954 3.06005C10.7942 3.14794 10.5281 3.32808 10.3346 3.57511C10.2024 3.74388 10.1159 3.96016 9.94291 4.39272C9.69419 5.01452 9.00393 5.33471 8.36857 5.123L7.79779 4.93281C7.3929 4.79785 7.19045 4.73036 6.99196 4.7188C6.70039 4.70181 6.4102 4.77032 6.15701 4.9159C5.98465 5.01501 5.83376 5.16591 5.53197 5.4677C5.21122 5.78845 5.05084 5.94882 4.94896 6.13189C4.79927 6.40084 4.73595 6.70934 4.76759 7.01551C4.78912 7.2239 4.87335 7.43449 5.04182 7.85566C5.30565 8.51523 5.05184 9.26878 4.44272 9.63433L4.16521 9.80087C3.74031 10.0558 3.52786 10.1833 3.37354 10.3588C3.23698 10.5141 3.13401 10.696 3.07109 10.893C3 11.1156 3 11.3658 3 11.8663C3 12.4589 3 12.7551 3.09462 13.0088C3.17823 13.2329 3.31422 13.4337 3.49124 13.5946C3.69158 13.7766 3.96395 13.8856 4.50866 14.1035C5.06534 14.3261 5.35196 14.9441 5.16236 15.5129L4.94721 16.1584C4.79819 16.6054 4.72367 16.829 4.7169 17.0486C4.70875 17.3127 4.77049 17.5742 4.89587 17.8067C5.00015 18.0002 5.16678 18.1668 5.5 18.5C5.83323 18.8332 5.99985 18.9998 6.19325 19.1041C6.4258 19.2295 6.68733 19.2913 6.9514 19.2831C7.17102 19.2763 7.39456 19.2018 7.84164 19.0528L8.36862 18.8771C9.00393 18.6654 9.6942 18.9855 9.94291 19.6073C10.1159 20.0398 10.2024 20.2561 10.3346 20.4249C10.5281 20.6719 10.7942 20.8521 11.0954 20.94C11.3012 21 11.5341 21 12 21C12.4659 21 12.6988 21 12.9046 20.94C13.2058 20.8521 13.4719 20.6719 13.6654 20.4249C13.7976 20.2561 13.8841 20.0398 14.0571 19.6073C14.3058 18.9855 14.9961 18.6654 15.6313 18.8773L16.1579 19.0529C16.605 19.2019 16.8286 19.2764 17.0482 19.2832C17.3123 19.2913 17.5738 19.2296 17.8063 19.1042C17.9997 18.9999 18.1664 18.8333 18.4996 18.5001C18.8328 18.1669 18.9994 18.0002 19.1037 17.8068C19.2291 17.5743 19.2908 17.3127 19.2827 17.0487C19.2759 16.8291 19.2014 16.6055 19.0524 16.1584L18.8374 15.5134C18.6477 14.9444 18.9344 14.3262 19.4913 14.1035C20.036 13.8856 20.3084 13.7766 20.5088 13.5946C20.6858 13.4337 20.8218 13.2329 20.9054 13.0088C21 12.7551 21 12.4589 21 11.8663C21 11.3658 21 11.1156 20.9289 10.893C20.866 10.696 20.763 10.5141 20.6265 10.3588C20.4721 10.1833 20.2597 10.0558 19.8348 9.80087L19.5569 9.63416C18.9478 9.26867 18.6939 8.51514 18.9578 7.85558C19.1262 7.43443 19.2105 7.22383 19.232 7.01543C19.2636 6.70926 19.2003 6.40077 19.0506 6.13181C18.9487 5.94875 18.7884 5.78837 18.4676 5.46762C18.1658 5.16584 18.0149 5.01494 17.8426 4.91583C17.5894 4.77024 17.2992 4.70174 17.0076 4.71872C16.8091 4.73029 16.6067 4.79777 16.2018 4.93273L15.6314 5.12287C14.9961 5.33464 14.3058 5.0145 14.0571 4.39272C13.8841 3.96016 13.7976 3.74388 13.6654 3.57511C13.4719 3.32808 13.2058 3.14794 12.9046 3.06005Z", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }))), /* @__PURE__ */ k("a", { href: "/users/sign_out", className: "header-panel-link", onClick: () => localStorage.setItem("autoLogin", "no") }, /* @__PURE__ */ k("svg", { xmlns: "http://www.w3.org/2000/svg", width: svgSize, height: svgSize, viewBox: "0 0 24 24" }, /* @__PURE__ */ k("path", { fill: "none", stroke: "currentColor", "stroke-linecap": "round", "stroke-linejoin": "round", "stroke-width": "2", d: "M15 4.001H5v14a2 2 0 0 0 2 2h8m1-5l3-3m0 0l-3-3m3 3H9" }))))), /* @__PURE__ */ k("a", { className: "header-logo-link", href: "/" }, /* @__PURE__ */ k("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 832 258", version: "1.1", width: "80", height: "40" }, /* @__PURE__ */ k("path", { d: "M 4.442264185219603e-16 127.50336318009782 L 8.884528370439206e-16 255.00672636019564 18.25 254.5946365131115 C 28.2875 254.36798709721523, 43.8125 254.1414736661712, 52.75 254.0912733330137 L 69 254 69 187.41666666666669 C 68.99999999999999 134.6026024292965, 69.25849691669517 120.91633575133558, 70.25 121.23470377840198 C 70.9375 121.45545752318974, 77.60476526233184 130.60545752318973, 85.0661450274041 141.56803711173532 C 92.52752479247636 152.5306167002809, 106.02752479247636 172.1840222145816, 115.0661450274041 185.24227158795915 C 124.10476526233185 198.3005209613367, 135.775 215.3340852032082, 141 223.09463656989584 C 146.225 230.85518793658346, 153.2 240.87116572200185, 156.5 245.35236498193666 L 162.5 253.5 169.5 254.03301972304186 C 173.35 254.32618057071488, 186.2875 254.37994173364996, 198.25 254.15248897400872 L 219.99999999999997 253.73893850193372 220 126.86946925096686 L 220 0 185.5 0 L 151 0 151 66.58333333333334 C 150.99999999999997 119.39978068570436, 150.74154782263523 133.08275473240886, 149.75 132.76082788097028 C 149.0625 132.5376165488373, 139.18681971122487 118.66261654883728, 127.80404380272192 101.92749454763695 C 116.42126789421897 85.19237254643663, 100.67277709234165 62.050000000000004, 92.80739757632784 50.5 C 84.94201806031404 38.949999999999996, 74.03653265220467 22.8625, 68.57298555830702 14.749999999999996 L 58.639263569402196 -5.152559361016735e-15 29.319631784701098 -2.5762796805083674e-15 L 0 0 4.442264185219603e-16 127.50336318009782 M 253.24616927715664 126.75 L 253.5 253.5 287.75 253.76312763208597 L 322 254.0262552641719 322 127.01312763208595 L 322 0 287.49616927715664 0 L 252.9923385543133 0 253.24616927715664 126.75 M 355 127.0508074670434 L 355 254.1016149340868 414.75 253.75673209390072 C 467.50076126868305 253.4522495438033, 475.6128496727617 253.19820929936276, 484 251.5880813037217 C 538.1720971582944 241.18836187412177, 572.8360800607534 201.78887914538916, 578.1346915463548 144.5935052853935 C 585.4218623799811 65.93281062160901, 546.4312901231319 12.230295437541265, 474.25658246845353 1.5200542649791045 C 466.06083330714245 0.3038602136302022, 453.11725011682375 -2.264688205756696e-15, 409.50658246845353 -1.258090848504585e-15 L 355 0 355 127.0508074670434 M 612 84.42764051533362 C 612 173.02986108713245, 612.1988213946098 177.756437353249, 616.5646330579402 192.94255319628314 C 628.8031886503783 235.51335956872128, 671.1344060164514 259.303400532705, 729.7747378576067 256.56635610820956 C 782.3578872142126 254.11203139260658, 816.3731671212864 230.05916275552062, 827.7723653597332 187.2703201063262 L 830.3752358476826 177.5 830.7281901031254 88.75 L 831.0811443585683 -5.551126064388396e-17 796.5405721792841 -2.775563032194198e-17 L 762 0 761.9881311246135 82.25 C 761.9782959682911 150.40655074026574, 761.7310134415899 165.42144863629616, 760.5449792427468 169.87761543952854 C 757.7682282554591 180.31042216842684, 749.0092627437555 190.34757490482326, 738.4203408270337 195.23088058474812 C 734.1715683795617 197.19029201384586, 731.862141803173 197.5, 721.5 197.5 C 710.0599744714854 197.5, 709.1966804946121 197.35217471960394, 703 194.33217100942585 C 692.5058801692167 189.2177745431928, 686.2626810404083 182.2975726923929, 682.6546714000524 171.78062688474526 C 680.5734102486462 165.71398268954235, 680.5 163.9668375934266, 680.5 120.5 C 680.5 95.75, 680.3875 58.5125, 680.25 37.75 L 680 0 646 0 L 612 0 612 84.42764051533362 M 471 60.56519809810713 C 498.17174703629604 67.68481427721672, 509.830467426046 87.0493035265728, 509.9683158192803 125.28941375142983 C 510.1082286962731 164.10222623730783, 499.768242065242 184.23129849049934, 475.36629225207685 192.64991017611612 C 467.96445532117605 195.20352541418586, 466.215798636529 195.38904378699917, 445.75 195.7919599538735 L 424 196.2201585687995 424 126.96688523595328 L 424 57.71361190310709 444.25 58.28783102742102 C 458.50889719602026 58.692163445276876, 466.42307003584534 59.36593827208571, 471 60.56519809810713", stroke: "none", fill: "currentColor", "fill-rule": "evenodd", "data-fill-layer-id": "trace-color" }))), !isMockData && /* @__PURE__ */ k(
         HeaderActions,
         {
           accountHref,
@@ -2846,12 +2846,359 @@
     );
   }
 
+  // src/mockDashboardData.js
+  function formatDayKey(date) {
+    const weekdayKeys = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    return weekdayKeys[date.getDay()];
+  }
+  function createLesson(lessonNumber, start, end, day, subject, room, note = "") {
+    return {
+      lessonNumber: String(lessonNumber),
+      time: `${start}-${end}`,
+      start,
+      end,
+      day,
+      subject,
+      subjectHref: "#",
+      location: room,
+      locationHref: "#",
+      note,
+      absence: false,
+      lateness: false
+    };
+  }
+  function buildDaySchedule(dayLabel, subjects) {
+    const timeSlots = [
+      ["7:55", "8:40"],
+      ["8:45", "9:30"],
+      ["9:35", "10:20"],
+      ["10:30", "11:15"],
+      ["11:25", "12:10"],
+      ["12:15", "13:00"],
+      ["13:10", "13:55"],
+      ["14:25", "15:10"],
+      ["15:15", "16:00"]
+    ];
+    return Object.fromEntries(
+      timeSlots.flatMap(([start, end], index) => {
+        const slot = subjects[index];
+        if (!slot) {
+          return [];
+        }
+        return [
+          [
+            `${start}-${end}`,
+            createLesson(index, start, end, dayLabel, slot.subject, slot.room, slot.note || "")
+          ]
+        ];
+      })
+    );
+  }
+  function buildExampleDashboardData() {
+    const todayKey = formatDayKey(/* @__PURE__ */ new Date());
+    const weeklySchedule = {
+      monday: buildDaySchedule("Monday", [
+        { subject: "Matematyka", room: "12" },
+        { subject: "Jezyk polski", room: "8" },
+        { subject: "Historia", room: "7" },
+        { subject: "Biologia", room: "15" },
+        { subject: "Jezyk angielski", room: "14" },
+        { subject: "WF", room: "Sala A" },
+        { subject: "Informatyka", room: "22" },
+        { subject: "Hiszpanski", room: "11", note: "Konwersacje" },
+        { subject: "Hiszpanski", room: "11", note: "Konwersacje" }
+      ]),
+      tuesday: buildDaySchedule("Tuesday", [
+        null,
+        null,
+        { subject: "Fizyka", room: "16" },
+        { subject: "Matematyka", room: "12" },
+        { subject: "Chemia", room: "18" },
+        { subject: "Jezyk angielski", room: "14" },
+        { subject: "Geografia", room: "10" },
+        { subject: "WF", room: "Boisko" },
+        { subject: "Biznes", room: "5" }
+      ]),
+      wednesday: buildDaySchedule("Wednesday", [
+        { subject: "Jezyk polski", room: "8" },
+        { subject: "Historia", room: "7" },
+        { subject: "Matematyka", room: "12" },
+        { subject: "Informatyka", room: "22" },
+        { subject: "Biologia", room: "15" },
+        { subject: "Plastyka", room: "6" },
+        { subject: "Hiszpanski", room: "11" },
+        { subject: "WF", room: "Sala A" },
+        { subject: "Hiszpanski", room: "11", note: "Konwersacje" }
+      ]),
+      thursday: buildDaySchedule("Thursday", [
+        { subject: "Chemia", room: "18" },
+        { subject: "Geografia", room: "10" },
+        { subject: "Jezyk angielski", room: "14" },
+        { subject: "Matematyka", room: "12" },
+        { subject: "Fizyka", room: "16" },
+        { subject: "Biznes", room: "5" },
+        { subject: "Historia", room: "7" },
+        { subject: "Muzyka", room: "9" },
+        { subject: "Hiszpanski", room: "11", note: "Konwersacje" }
+      ]),
+      friday: buildDaySchedule("Friday", [
+        null,
+        { subject: "Jezyk polski", room: "8" },
+        { subject: "Matematyka", room: "12" },
+        { subject: "Biologia", room: "15" },
+        { subject: "Jezyk angielski", room: "14" },
+        { subject: "Informatyka", room: "22" },
+        { subject: "WF", room: "Sala A" },
+        { subject: "Godzina wychowawcza", room: "4" },
+        { subject: "Hiszpanski", room: "11" }
+      ])
+    };
+    if (!weeklySchedule[todayKey]) {
+      weeklySchedule[todayKey] = weeklySchedule.monday;
+    }
+    return {
+      homeworkUrl: "#",
+      reviewsUrl: "#",
+      messagesUrl: "#",
+      attendance: [
+        {
+          subject: "Matematyka",
+          subjectUrl: "#",
+          type: "Nieobecnosc",
+          date: "2026-07-10",
+          issuedAt: "2026-07-10 08:15",
+          absence: true,
+          presence: false,
+          lateness: false,
+          seeMoreUrl: "mogData",
+          mockData: true
+        },
+        {
+          subject: "WF",
+          subjectUrl: "#",
+          type: "Obecnosc",
+          date: "2026-07-10",
+          issuedAt: "2026-07-10 08:15",
+          absence: false,
+          presence: true,
+          lateness: false,
+          seeMoreUrl: "mogData",
+          mockData: true
+        },
+        {
+          subject: "Hiszpa\u0144ski",
+          subjectUrl: "#",
+          type: "Obecnosc",
+          date: "2026-07-10",
+          issuedAt: "2026-07-10 08:15",
+          absence: false,
+          presence: true,
+          lateness: false,
+          seeMoreUrl: "mogData",
+          mockData: true
+        },
+        {
+          subject: "Historia",
+          subjectUrl: "#",
+          type: "Obecnosc",
+          date: "2026-07-10",
+          issuedAt: "2026-07-10 08:15",
+          absence: false,
+          presence: true,
+          lateness: false,
+          seeMoreUrl: "mogData",
+          mockData: true
+        },
+        {
+          subject: "Matematyka",
+          subjectUrl: "#",
+          type: "Nieobecnosc",
+          date: "2026-07-10",
+          issuedAt: "2026-07-10 08:15",
+          absence: false,
+          presence: true,
+          lateness: false,
+          seeMoreUrl: "mogData",
+          mockData: true
+        },
+        {
+          subject: "Jezyk angielski",
+          subjectUrl: "#",
+          type: "Spoznienie",
+          date: "2026-07-09",
+          issuedAt: "2026-07-09 09:00",
+          absence: false,
+          presence: false,
+          lateness: true,
+          seeMoreUrl: "mogData"
+        },
+        {
+          subject: "Matematyka",
+          subjectUrl: "#",
+          type: "Nieobecnosc",
+          date: "2026-07-10",
+          issuedAt: "2026-07-10 08:15",
+          absence: false,
+          presence: true,
+          lateness: false,
+          seeMoreUrl: "mogData",
+          mockData: true
+        },
+        {
+          subject: "Matematyka",
+          subjectUrl: "#",
+          type: "Nieobecnosc",
+          date: "2026-07-10",
+          issuedAt: "2026-07-10 08:15",
+          absence: false,
+          presence: true,
+          lateness: false,
+          seeMoreUrl: "mogData",
+          mockData: true
+        },
+        {
+          subject: "Jezyk angielski",
+          subjectUrl: "#",
+          type: "Nieobecnosc",
+          date: "2026-07-10",
+          issuedAt: "2026-07-10 08:15",
+          absence: false,
+          presence: true,
+          lateness: false,
+          seeMoreUrl: "mogData",
+          mockData: true
+        },
+        {
+          subject: "Biznes",
+          subjectUrl: "#",
+          type: "Nieobecnosc",
+          date: "2026-07-10",
+          issuedAt: "2026-07-10 08:15",
+          absence: false,
+          presence: true,
+          lateness: false,
+          seeMoreUrl: "mogData",
+          mockData: true
+        }
+      ],
+      news: [
+        {
+          title: "Praca szko\u0142y w lato",
+          titleUrl: "#",
+          date: "2026-07-12",
+          updatedAt: "2026-07-12 08:00",
+          comments: "3",
+          sticky: true,
+          read: false,
+          priority: "high"
+        },
+        {
+          title: "Zmiana planu zajec na przyszly tydzien",
+          titleUrl: "#",
+          date: "2026-07-11",
+          updatedAt: "2026-07-11 18:30",
+          comments: "0",
+          sticky: false,
+          read: true,
+          priority: "normal"
+        }
+      ],
+      grades: [
+        {
+          subject: "Matematyka",
+          subjectUrl: "#",
+          grade: "5",
+          gradeText: "Sprawdzian",
+          gradeDescriptionUrl: "#",
+          description: "Funkcje liniowe",
+          date: "2026-07-08",
+          seeMoreUrl: "mogData"
+        },
+        {
+          subject: "Historia",
+          subjectUrl: "#",
+          grade: "4+",
+          gradeText: "Kartkowka",
+          gradeDescriptionUrl: "#",
+          description: "Sredniowiecze",
+          date: "2026-07-07",
+          seeMoreUrl: "mogData"
+        },
+        {
+          subject: "Biznes",
+          subjectUrl: "#",
+          grade: "6",
+          gradeText: "Kartkowka",
+          gradeDescriptionUrl: "#",
+          description: "Sredniowiecze",
+          date: "2026-07-07",
+          seeMoreUrl: "mogData"
+        },
+        {
+          subject: "Hiszpa\u0144ski",
+          subjectUrl: "#",
+          grade: "ZAL",
+          gradeText: "Kartkowka",
+          gradeDescriptionUrl: "#",
+          description: "Sredniowiecze",
+          date: "2026-07-07",
+          seeMoreUrl: "mogData"
+        },
+        {
+          subject: "polski",
+          subjectUrl: "#",
+          grade: "4",
+          gradeText: "Kartkowka",
+          gradeDescriptionUrl: "#",
+          description: "Sredniowiecze",
+          date: "2026-07-07",
+          seeMoreUrl: "mogData"
+        }
+      ],
+      subjects: {
+        classInfo: {
+          name: "3A",
+          url: "#",
+          forumUrl: "#",
+          forumName: "Forum klasy 3A",
+          teacher: "Jan Kowalski",
+          teacherUrl: "#"
+        },
+        subjects: [
+          { name: "Matematyka", url: "#", title: "Matematyka", italic: false },
+          { name: "Jezyk angielski", url: "#", title: "Jezyk angielski", italic: false },
+          { name: "Historia", url: "#", title: "Historia", italic: false }
+        ]
+      },
+      schedule: weeklySchedule,
+      subjectAnnouncements: [
+        {
+          subject: "Matematyka",
+          subjectUrl: "#",
+          title: "Praca domowa na poniedzialek",
+          titleUrl: "#",
+          date: "2026-07-12",
+          read: false
+        },
+        {
+          subject: "Jezyk angielski",
+          subjectUrl: "#",
+          title: "Przypomnienie o projekcie",
+          titleUrl: "#",
+          date: "2026-07-11",
+          read: true
+        }
+      ]
+    };
+  }
+
   // src/content/app.jsx
   window.replaceHeader = function replaceHeader(data = {}) {
+    const isMockData = Boolean(window.__IDU_MOCK_DATA);
+    if (window.location.pathname === "/users/sign_in" && !isMockData) return false;
     if (document.getElementById("idu-header-root")) return true;
     const oldHeader = document.querySelector("#top");
     if (!oldHeader) return false;
-    const isMockData = Boolean(window.__IDU_MOCK_DATA);
     const semesterScope = data.semesterScope || null;
     const searchElement = window.location.pathname === "/" ? document.querySelector("#unique-id26") : null;
     searchElement?.remove();
@@ -2880,6 +3227,31 @@
       );
     }
     return true;
+  };
+  window.renderIduMockDashboard = function renderIduMockDashboard() {
+    const data = buildExampleDashboardData();
+    window.__IDU_MOCK_DATA = data;
+    const top = document.createElement("div");
+    top.id = "top";
+    const content = document.createElement("div");
+    content.id = "content";
+    const footer = document.createElement("footer");
+    footer.id = "footer";
+    document.body.replaceChildren(top, content, footer);
+    document.body.className = "";
+    document.body.setAttribute("path", "/");
+    document.title = "IDU Demo";
+    const headerLoaded = window.replaceHeader(data);
+    const contentLoaded = window.replaceMainContent(data);
+    const footerLoaded = window.replaceFooter();
+    window.hideVisualLoader?.();
+    window.scrollTo(0, 0);
+    console.info("[IDU2] Local Apple review dashboard loaded", {
+      headerLoaded,
+      contentLoaded,
+      footerLoaded
+    });
+    return headerLoaded && contentLoaded;
   };
   window.replaceMainContent = function replaceMainContent(data) {
     const oldMainContent = document.getElementById("content");
