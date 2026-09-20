@@ -3,8 +3,10 @@
     <style name="Theme.IDU2" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">#E5F8F2</item>
+        <item name="android:navigationBarColor">#E5F8F2</item>
         <item name="android:windowActionModeOverlay">true</item>
-        <item name="android:windowBackground">#FFFFFF</item>
+        <item name="android:windowBackground">#E5F8F2</item>
         <item name="android:colorAccent">#506E57</item>
     </style>
 </resources>

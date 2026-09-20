@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
@@ -32,12 +33,28 @@ import java.io.File
 class MainActivity : ComponentActivity() {
     private var webView: WebView? = null
 
+    companion object {
+        // Matches --background-color in the shared default theme.
+        private const val APP_BACKGROUND_COLOR = "#E5F8F2"
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val appBackgroundColor = Color.parseColor(APP_BACKGROUND_COLOR)
         val root = FrameLayout(this)
+        root.setBackgroundColor(appBackgroundColor)
         setContentView(root)
+        window.statusBarColor = appBackgroundColor
+        window.navigationBarColor = appBackgroundColor
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+        ViewCompat.getWindowInsetsController(root)?.apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
         ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
             val keyboard = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -57,7 +74,7 @@ class MainActivity : ComponentActivity() {
 
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
         val browser = WebView(this).also { webView = it }
-        browser.setBackgroundColor(Color.WHITE)
+        browser.setBackgroundColor(appBackgroundColor)
         browser.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true

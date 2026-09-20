@@ -13,7 +13,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 		{ w: 2, h: 1 },
 		{ w: 4, h: 1 },
 	];
-	const fullSize = {w: 4, h: 6}
+	const fullSize = {w: 4, h: 1}
 	const {
 		width,
 		height,
