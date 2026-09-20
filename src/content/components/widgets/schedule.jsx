@@ -104,7 +104,7 @@ export function Schedule({ widgetId, moveWidget, data }) {
 		widgetRef,
 		resizeZoneRef,
 		resizingRef,
-	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, {w: 4, h: 6});
+	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, {w: 2, h: 1});
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
 
 	useEffect(() => {

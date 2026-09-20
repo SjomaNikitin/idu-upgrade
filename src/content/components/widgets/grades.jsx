@@ -13,7 +13,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 		{ w: 2, h: 1 },
 		{ w: 4, h: 1 },
 	];
-	const fullSize = {w: 4, h: 1}
+	const fullSize = {w: 4, h: 6}
 	const {
 		width,
 		height,
@@ -22,7 +22,7 @@ export function Grades({ widgetId, moveWidget, data }) {
 		widgetRef,
 		resizeZoneRef,
 		resizingRef,
-	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, {w: 4, h: 2});
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
 
 	function normalizeGrade(grade) {

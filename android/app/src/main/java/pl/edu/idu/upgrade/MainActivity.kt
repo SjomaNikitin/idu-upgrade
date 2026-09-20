@@ -29,9 +29,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     private var webView: WebView? = null
+    private var safeTop = 0
+    private var safeBottom = 0
 
     companion object {
         // Matches --background-color in the shared default theme.
@@ -46,8 +49,8 @@ class MainActivity : ComponentActivity() {
         val root = FrameLayout(this)
         root.setBackgroundColor(appBackgroundColor)
         setContentView(root)
-        window.statusBarColor = appBackgroundColor
-        window.navigationBarColor = appBackgroundColor
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
@@ -58,7 +61,15 @@ class MainActivity : ComponentActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
             val keyboard = insets.getInsets(WindowInsetsCompat.Type.ime())
-            view.setPadding(bars.left, bars.top, bars.right, maxOf(bars.bottom, keyboard.bottom))
+            // WindowInsets are physical pixels, while values injected into the
+            // page are CSS pixels (density-independent on Android WebView).
+            val density = resources.displayMetrics.density
+            safeTop = (bars.top / density).roundToInt()
+            safeBottom = (bars.bottom / density).roundToInt()
+            // The page paints behind transparent system bars. Only the keyboard
+            // shrinks the native container; CSS keeps page content in safe areas.
+            view.setPadding(bars.left, 0, bars.right, keyboard.bottom)
+            webView?.let(::applySafeArea)
             insets
         }
 
@@ -110,6 +121,7 @@ class MainActivity : ComponentActivity() {
             }
 
             override fun onPageFinished(view: WebView, url: String) {
+                applySafeArea(view)
                 view.evaluateJavascript(
                     "JSON.stringify({platform:document.documentElement.getAttribute('data-app-platform'),stylesLoaded:!!document.getElementById('idu-custom-styles'),scriptsLoaded:typeof window.replaceHeader==='function'})",
                 ) { status -> Log.i("IDU2", "Loaded $url injection=$status") }
@@ -167,5 +179,15 @@ class MainActivity : ComponentActivity() {
         }
         webView = null
         super.onDestroy()
+    }
+
+    private fun applySafeArea(view: WebView) {
+        view.evaluateJavascript(
+            "document.documentElement.style.setProperty('--android-safe-top','${safeTop}px');" +
+                "document.documentElement.style.setProperty('--android-safe-bottom','${safeBottom}px');" +
+                "document.body?.style.setProperty('--android-safe-top','${safeTop}px');" +
+                "document.body?.style.setProperty('--android-safe-bottom','${safeBottom}px');",
+            null,
+        )
     }
 }

@@ -66,7 +66,8 @@ test('bootstrap and styles precede content; custom CSS moves after site CSS befo
         });
     `);
     assert.equal(p.window.platformAtStart, 'android');
-    assert.equal(p.window.stylesAtStart, css);
+    assert.ok(p.window.stylesAtStart.startsWith(css));
+    assert.match(p.window.stylesAtStart, /--android-safe-top/);
     p.document.head.appendChild({ id: 'site-styles' });
     p.domReady();
     assert.equal(p.window.lastStyle, 'idu-custom-styles');
@@ -85,7 +86,7 @@ test('document-start before HTML exists waits only for the root and executes con
     p.mutate();
     p.domReady();
     assert.equal(p.window.runs, 1);
-    assert.equal(p.document.getElementById('idu-custom-styles').textContent, css);
+    assert.ok(p.document.getElementById('idu-custom-styles').textContent.startsWith(css));
     assert.equal(p.document.head.children.filter(child => child.id === 'idu-custom-styles').length, 1);
     assert.equal(p.document.head.children.filter(child => child.id === 'idu-custom-viewport').length, 1);
 });

@@ -1,11 +1,22 @@
 (() => {
     const css = __IDU_CSS_LITERAL__;
+    const androidInsetsCss = `
+        html[data-app-platform="android"] #idu-header-root {
+            padding-top: var(--android-safe-top, 0px);
+        }
+        html[data-app-platform="android"] body {
+            padding-bottom: var(--android-safe-bottom, 0px);
+        }
+        html[data-app-platform="android"] .edit-block {
+            top: calc(var(--padding-2) + var(--android-safe-top, 0px));
+        }
+    `;
     const installStyles = () => {
         if (document.getElementById('idu-custom-styles')) return true;
         if (!document.head) return false;
         const style = document.createElement('style');
         style.id = 'idu-custom-styles';
-        style.textContent = css;
+        style.textContent = `${css}\n${androidInsetsCss}`;
         document.head.appendChild(style);
         console.info('[IDU2] Cloudflare styles loaded', { bytes: css.length });
         return true;
