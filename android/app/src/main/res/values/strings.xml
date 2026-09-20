@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IDU2</string>
+    <string name="update_webview">Update Android System WebView or Google Chrome in Google Play, then reopen IDU2.</string>
+</resources>
