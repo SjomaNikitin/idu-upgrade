@@ -1,4 +1,4 @@
-package pl.edu.idu.upgrade
+package com.idu2.nidu
 
 object AppConfig {
     const val BASE_URL = "https://idu.edu.pl"

@@ -19,7 +19,7 @@ or Android Studio's generated `local.properties`:
 The build uses Java 17 (install it or select it as the Gradle JDK in Android
 Studio), Android SDK 36, Gradle 8.13, and Android Gradle Plugin 8.11.1.
 The APK is `app/build/outputs/apk/debug/app-debug.apk`.
-The initial application ID is `pl.edu.idu.upgrade`.
+The application ID is `com.idu2.nidu`.
 
 ## Loading sequence
 

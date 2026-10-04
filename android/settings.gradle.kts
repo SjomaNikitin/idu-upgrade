@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "IDU2"
+rootProject.name = "NIDU"
 include(":app")

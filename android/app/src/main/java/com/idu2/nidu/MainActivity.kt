@@ -1,4 +1,4 @@
-package pl.edu.idu.upgrade
+package com.idu2.nidu
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
@@ -183,7 +183,9 @@ class MainActivity : ComponentActivity() {
 
     private fun applySafeArea(view: WebView) {
         view.evaluateJavascript(
-            "document.documentElement.style.setProperty('--android-safe-top','${safeTop}px');" +
+            "try{localStorage.setItem('iduAndroidSafeTop','${safeTop}');" +
+                "localStorage.setItem('iduAndroidSafeBottom','${safeBottom}');}catch(_e){}" +
+                "document.documentElement.style.setProperty('--android-safe-top','${safeTop}px');" +
                 "document.documentElement.style.setProperty('--android-safe-bottom','${safeBottom}px');" +
                 "document.body?.style.setProperty('--android-safe-top','${safeTop}px');" +
                 "document.body?.style.setProperty('--android-safe-bottom','${safeBottom}px');",

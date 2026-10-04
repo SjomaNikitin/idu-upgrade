@@ -6,13 +6,17 @@ import vm from 'node:vm';
 const asset = name => readFileSync(new URL(`../app/src/main/assets/${name}`, import.meta.url), 'utf8');
 const css = 'body::before { content: "quoted \\ text </style>"; }';
 
-function page({ ready = true, subframe = false } = {}) {
+function page({ ready = true, subframe = false, local = {} } = {}) {
     const events = new Map();
     const observers = [];
     const element = tag => ({
         tag, children: [], attributes: {},
         classList: { add() {} },
-        style: { setProperty() {} },
+        style: {
+            values: {},
+            setProperty(key, value) { this.values[key] = value; },
+            getPropertyValue(key) { return this.values[key] ?? ''; },
+        },
         setAttribute(key, value) { this.attributes[key] = value; },
         appendChild(child) {
             this.children = this.children.filter(existing => existing !== child);
@@ -31,8 +35,14 @@ function page({ ready = true, subframe = false } = {}) {
     };
     const window = { location: { pathname: '/users/sign_in' } };
     window.top = subframe ? {} : window;
+    const storedValues = new Map(Object.entries(local));
+    const localStorage = {
+        getItem(key) { return storedValues.has(key) ? storedValues.get(key) : null; },
+        setItem(key, value) { storedValues.set(key, String(value)); },
+        removeItem(key) { storedValues.delete(key); },
+    };
     const context = vm.createContext({
-        document, window, console: { info() {} },
+        document, window, localStorage, console: { info() {} },
         MutationObserver: class {
             constructor(callback) { this.callback = callback; }
             observe() { observers.push(this); this.active = true; }
@@ -72,6 +82,16 @@ test('bootstrap and styles precede content; custom CSS moves after site CSS befo
     p.domReady();
     assert.equal(p.window.lastStyle, 'idu-custom-styles');
     assert.equal(p.document.body.attributes.path, '/users/sign_in');
+});
+
+test('saved Android safe area is restored before styles and content execute', () => {
+    const p = page({ local: { iduAndroidSafeTop: '36', iduAndroidSafeBottom: '18' } });
+    install(p, `
+        window.safeTopAtStart = document.documentElement.style.getPropertyValue('--android-safe-top');
+        window.safeBottomAtStart = document.documentElement.style.getPropertyValue('--android-safe-bottom');
+    `);
+    assert.equal(p.window.safeTopAtStart, '36px');
+    assert.equal(p.window.safeBottomAtStart, '18px');
 });
 
 test('document-start before HTML exists waits only for the root and executes content once', () => {

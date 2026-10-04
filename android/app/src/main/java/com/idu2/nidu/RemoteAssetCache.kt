@@ -1,4 +1,4 @@
-package pl.edu.idu.upgrade
+package com.idu2.nidu
 
 import android.content.res.AssetManager
 import android.util.AtomicFile

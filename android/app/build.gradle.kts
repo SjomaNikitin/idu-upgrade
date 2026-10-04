@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "pl.edu.idu.upgrade"
+    namespace = "com.idu2.nidu"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "pl.edu.idu.upgrade"
-        minSdk = 26
+        applicationId = "com.idu2.nidu"
+        minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
     buildFeatures { buildConfig = true }
     compileOptions {
