@@ -1,0 +1,24 @@
+{
+	"manifest_version": 3,
+	"name": "IDU Upgrade Development",
+	"version": "0.1.0",
+	"description": "Loads the local IDU Upgrade JavaScript and CSS on the real IDU website.",
+	"permissions": ["scripting"],
+	"host_permissions": [
+		"https://idu.edu.pl/*",
+		"https://*.idu.edu.pl/*"
+	],
+	"background": {
+		"service_worker": "background.js"
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://idu.edu.pl/*",
+				"https://*.idu.edu.pl/*"
+			],
+			"js": ["bootstrap.js", "content.js"],
+			"run_at": "document_start"
+		}
+	]
+}

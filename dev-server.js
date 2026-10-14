@@ -3,6 +3,7 @@ import { mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { Readable } from 'node:stream';
 import worker from './src/worker.js';
+import { buildExtension } from './scripts/build-extension.js';
 
 const app = express();
 const PORT = process.env.PORT || 8787;
@@ -113,7 +114,7 @@ app.use(async (req, res) => {
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  await buildContentApp();
+	await Promise.all([buildContentApp(), buildExtension()]);
 }
 
 app.listen(PORT, () => {

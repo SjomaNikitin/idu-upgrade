@@ -7,6 +7,13 @@ try {
 		document.documentElement.classList.add("idu-original-view", "idu-ready");
 	} else {
 		window.__iduLoaderStartedAt = performance.now();
+		if (window.__iduVisualLoaderTimeoutId === undefined) {
+			window.__iduVisualLoaderTimeoutId = window.setTimeout(() => {
+				document.documentElement.classList.add("idu-ready");
+				document.documentElement.classList.remove("idu-loader-fading");
+				document.getElementById("loader")?.remove();
+			}, 1000);
+		}
 		const storedTheme = localStorage.getItem("theme");
 		if (storedTheme) document.documentElement.setAttribute("data-theme", storedTheme);
 		const storedIosSafeTop = localStorage.getItem("iduIosSafeTop");

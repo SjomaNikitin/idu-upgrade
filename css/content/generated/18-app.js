@@ -1322,7 +1322,7 @@
       widgetRef,
       resizeZoneRef,
       resizingRef
-    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize);
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 4, h: 2 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function normalizeGrade(grade) {
       const value = grade.trim().toLowerCase();
@@ -1546,7 +1546,7 @@
       widgetRef,
       resizeZoneRef,
       resizingRef
-    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 2, h: 1 });
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 4, h: 1 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function SubjectRow({ item, isLast = false, showDescription = false }) {
       return /* @__PURE__ */ k("div", { className: `widget-subject-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("a", { href: item.url }, item.name));
@@ -1951,7 +1951,7 @@
       widgetRef,
       resizeZoneRef,
       resizingRef
-    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 4, h: 2 });
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 2, h: 1 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function NewsRow({ item, isLast = false }) {
       return /* @__PURE__ */ k("div", { className: `widget-news-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("div", { className: "widget-news-box-date" }, /* @__PURE__ */ k("span", { className: "widget-news-box-date-day" }, item.date.slice(0, 2)), /* @__PURE__ */ k("br", null), /* @__PURE__ */ k("span", { className: "widget-news-box-date-month" }, item.date.slice(3, 6))), /* @__PURE__ */ k("a", { href: item.titleUrl }, item.title));
@@ -2088,7 +2088,7 @@
       widgetRef,
       resizeZoneRef,
       resizingRef
-    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 2, h: 1 });
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 4, h: 2 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function NewsRow({ item, isLast = false }) {
       return /* @__PURE__ */ k("div", { className: `widget-news-box ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("div", { className: "widget-news-box-date" }, /* @__PURE__ */ k("span", { className: "widget-news-box-date-day" }, item.date.slice(0, 2)), /* @__PURE__ */ k("br", null), /* @__PURE__ */ k("span", { className: "widget-news-box-date-month" }, item.date.slice(3, 6))), /* @__PURE__ */ k("a", { href: item.titleUrl }, item.title, " ", /* @__PURE__ */ k("br", null), " ", /* @__PURE__ */ k("span", { className: "widget-news-box-comments" }, "komentarze: ", item.comments)));
@@ -2251,7 +2251,7 @@
       widgetRef,
       resizeZoneRef,
       resizingRef
-    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 2, h: 1 });
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 4, h: 1 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
     function normalizePercentage(value) {
       const number = Number(value);

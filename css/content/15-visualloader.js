@@ -59,12 +59,16 @@ window.hideVisualLoader = function hideVisualLoader() {
 		? performance.now() - loaderStartedAt
 		: 0;
 	const finishLoading = () => {
+		if (window.__iduVisualLoaderTimeoutId !== undefined) {
+			window.clearTimeout(window.__iduVisualLoaderTimeoutId);
+			window.__iduVisualLoaderTimeoutId = undefined;
+		}
 		documentElement.classList.add("idu-ready");
 		documentElement.classList.remove("idu-loader-fading");
 		document.getElementById("loader")?.remove();
 	};
 
-	if (loaderDuration < 1000) {
+	if (loaderDuration < 500) {
 		finishLoading();
 		return;
 	}
@@ -85,5 +89,5 @@ if (window.location.pathname === "/users/sign_in") {
 			console.info("[IDU2] Login loader exceeded 5 seconds; fading it out");
 			window.hideVisualLoader();
 		}
-	}, 5000);
+	}, 100);
 }

@@ -4,9 +4,10 @@
 	"private": true,
 	"scripts": {
 		"build": "bash scripts/build-elastic-beanstalk.sh",
+		"build:extension": "node scripts/build-extension.js",
 		"dev": "node dev-server.js",
 		"start": "node dev-server.js",
-		"dev:watch": "nodemon --ext js,css --watch src --watch css dev-server.js",
+		"dev:watch": "nodemon --ext js,jsx,css --watch src --watch css --watch scripts/build-extension.js --ignore css/content/generated/** --ignore extension/content.js --ignore extension/styles.css dev-server.js",
 		"release": "node scripts/release.js",
 		"publish": "npm run release && wrangler deploy --config wrangler.assets.jsonc",
 		"test": "vitest"

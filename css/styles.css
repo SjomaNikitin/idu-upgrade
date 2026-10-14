@@ -904,11 +904,19 @@ html.idu-loader-fading::after {
 		display: none !important;
 	}
 
+	#top #logo{
+		display: none !important;
+	}
+
 	.module h3 {
 		border-width: 0 !important;
 		color: var(--main-text-color);
 		margin-left: var(--h3-margin);
 		margin-right: var(--h3-margin);
+	}
+
+	iframe {
+		border-radius: var(--padding-1);
 	}
 
 	.action-module h3 {

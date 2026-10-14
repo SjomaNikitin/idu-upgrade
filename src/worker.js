@@ -28,6 +28,11 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 			document.documentElement.classList.add("idu-original-view", "idu-ready");
 		} else {
 			window.__iduLoaderStartedAt = performance.now();
+			window.__iduVisualLoaderTimeoutId = window.setTimeout(() => {
+				document.documentElement.classList.add("idu-ready");
+				document.documentElement.classList.remove("idu-loader-fading");
+				document.getElementById("loader")?.remove();
+			}, 1000);
 			const theme = localStorage.getItem("theme");
 			if (theme) document.documentElement.setAttribute("data-theme", theme);
 			const storedIosSafeTop = localStorage.getItem("iduIosSafeTop");
