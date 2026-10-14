@@ -64,7 +64,7 @@ window.hideVisualLoader = function hideVisualLoader() {
 			window.__iduVisualLoaderTimeoutId = undefined;
 		}
 		documentElement.classList.add("idu-ready");
-		documentElement.classList.remove("idu-loader-fading");
+		documentElement.classList.remove("idu-loading", "idu-loader-fading");
 		document.getElementById("loader")?.remove();
 	};
 

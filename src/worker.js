@@ -22,17 +22,25 @@ const contentScripts = [
 ];
 
 const criticalLoaderHtml = `<script id="idu-theme-critical">
+	window.__iduOriginalView = false;
 	try {
 		window.__iduOriginalView = localStorage.getItem("iduOriginalView") === "true";
-		if (window.__iduOriginalView) {
-			document.documentElement.classList.add("idu-original-view", "idu-ready");
-		} else {
+	} catch {}
+	if (window.__iduOriginalView) {
+		document.documentElement?.classList.add("idu-original-view", "idu-ready");
+	} else {
+		if (window.__iduVisualLoaderTimeoutId === undefined &&
+			!document.documentElement?.classList.contains("idu-ready")) {
 			window.__iduLoaderStartedAt = performance.now();
 			window.__iduVisualLoaderTimeoutId = window.setTimeout(() => {
-				document.documentElement.classList.add("idu-ready");
-				document.documentElement.classList.remove("idu-loader-fading");
+				document.documentElement?.classList.add("idu-ready");
+				document.documentElement?.classList.remove("idu-loading", "idu-loader-fading");
 				document.getElementById("loader")?.remove();
+				window.__iduVisualLoaderTimeoutId = undefined;
 			}, 1000);
+			document.documentElement?.classList.add("idu-loading");
+		}
+		try {
 			const theme = localStorage.getItem("theme");
 			if (theme) document.documentElement.setAttribute("data-theme", theme);
 			const storedIosSafeTop = localStorage.getItem("iduIosSafeTop");
@@ -40,8 +48,8 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 			if (storedIosSafeTop !== null && Number.isFinite(iosSafeTop) && iosSafeTop >= 0 && iosSafeTop <= 200) {
 				document.documentElement.style.setProperty("--ios-safe-top", String(iosSafeTop) + "px");
 			}
-		}
-	} catch {}
+		} catch {}
+	}
 </script>
 <style id="idu-loader-critical">
 	html {
@@ -64,7 +72,7 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 		--idu-loader-spinner-color: #851a36;
 	}
 
-	html::before {
+	html.idu-loading::before {
 		content: "";
 		position: fixed;
 		inset: 0;
@@ -78,7 +86,7 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 		display: none;
 	}
 
-	html::after {
+	html.idu-loading::after {
 		content: "";
 		position: fixed;
 		left: 50%;
@@ -134,7 +142,7 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		html::after {
+		html.idu-loading::after {
 			animation: idu-loader-spinner-show 150ms ease 1s forwards;
 		}
 

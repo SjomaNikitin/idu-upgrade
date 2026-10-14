@@ -1,4 +1,5 @@
 import { h } from 'preact';
+import { NiduLogo } from './niduLogo.jsx';
 
 const supportUrl = 'https://sjomanikitin.github.io/idu-upgrade/';
 const privacyUrl = 'https://sjomanikitin.github.io/idu-upgrade/privacy.html';
@@ -14,7 +15,7 @@ export function Footer() {
 			style={isSignInPage ? { display: 'none', bottom: '0px' } : undefined}
 		>
 			<div className="idu-app-footer__identity">
-				<strong>IDU2</strong>
+				<NiduLogo />
 				<span>Życie szkolne w jednym miejscu</span>
 			</div>
 			<nav className="idu-app-footer__links" aria-label="Informacje o aplikacji">
@@ -23,7 +24,7 @@ export function Footer() {
 				<a href={sourceUrl}>Kod źródłowy</a>
 			</nav>
 			<p className="idu-app-footer__legal">
-				© 2026 IDU2 · Projekt niezależny
+				© 2026 NIDU · Projekt niezależny
 			</p>
 		</div>
 	);

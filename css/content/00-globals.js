@@ -1,19 +1,28 @@
 // This used to be injected into <head> by the proxy. Keep it at the start of
 // the browser bundle so direct WKWebView navigation establishes loader state
 // before the rest of the page and application initialize.
+window.__iduOriginalView = false;
 try {
 	window.__iduOriginalView = localStorage.getItem("iduOriginalView") === "true";
-	if (window.__iduOriginalView) {
-		document.documentElement.classList.add("idu-original-view", "idu-ready");
-	} else {
+} catch {}
+
+if (window.__iduOriginalView) {
+	document.documentElement?.classList.add("idu-original-view", "idu-ready");
+} else {
+	// Storage can throw (for example in sandboxed documents). Register the
+	// deadline independently, before any theme reads or application bootstrap.
+	if (window.__iduVisualLoaderTimeoutId === undefined &&
+		!document.documentElement?.classList.contains("idu-ready")) {
 		window.__iduLoaderStartedAt = performance.now();
-		if (window.__iduVisualLoaderTimeoutId === undefined) {
-			window.__iduVisualLoaderTimeoutId = window.setTimeout(() => {
-				document.documentElement.classList.add("idu-ready");
-				document.documentElement.classList.remove("idu-loader-fading");
-				document.getElementById("loader")?.remove();
-			}, 1000);
-		}
+		window.__iduVisualLoaderTimeoutId = window.setTimeout(() => {
+			document.documentElement?.classList.add("idu-ready");
+			document.documentElement?.classList.remove("idu-loading", "idu-loader-fading");
+			document.getElementById("loader")?.remove();
+			window.__iduVisualLoaderTimeoutId = undefined;
+		}, 1000);
+		document.documentElement?.classList.add("idu-loading");
+	}
+	try {
 		const storedTheme = localStorage.getItem("theme");
 		if (storedTheme) document.documentElement.setAttribute("data-theme", storedTheme);
 		const storedIosSafeTop = localStorage.getItem("iduIosSafeTop");
@@ -26,8 +35,8 @@ try {
 		) {
 			document.documentElement.style.setProperty("--ios-safe-top", `${storedSafeTop}px`);
 		}
-	}
-} catch {}
+	} catch {}
+}
 
 let themePresets = [
 	{ bc: "rgb(255, 255, 255)", mc: "rgb(0, 0, 0)", name: "Default" },
@@ -64,7 +73,7 @@ if (window.isIduOriginalViewEnabled()) {
 	document.getElementById("idu-custom-styles")?.remove();
 	document.getElementById("idu-custom-viewport")?.remove();
 	document.getElementById("idu-loader-critical")?.remove();
-	document.documentElement.classList.remove("idu-original-view", "idu-ready", "idu-loader-fading");
+	document.documentElement.classList.remove("idu-original-view", "idu-ready", "idu-loading", "idu-loader-fading");
 }
 
 const root = document.documentElement;

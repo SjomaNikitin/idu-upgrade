@@ -18,7 +18,7 @@ struct WebContainerView: UIViewRepresentable {
         ThemePreference.install(in: configuration.userContentController)
         configuration.userContentController.addUserScript(makePlatformBootstrapScript())
 
-		let webView = SafeAreaAwareWebView(frame: .zero, configuration: configuration)
+		let webView = FilePreviewWebView(frame: .zero, configuration: configuration)
 		webView.isInspectable = true
 		webView.navigationDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
@@ -95,14 +95,43 @@ struct WebContainerView: UIViewRepresentable {
         };
         """
 
-        return WKUserScript(
-            source: source,
-            injectionTime: .atDocumentStart,
-            forMainFrameOnly: true
-        )
+        return HTMLDocumentScript.atDocumentStart(source)
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+        private var pendingFilePreview = false
+        private var filePreviewURLs: Set<URL> = []
+
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+                     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+            if navigationAction.targetFrame?.isMainFrame == true {
+                // Back-forward cache restores may not issue a new response.
+                pendingFilePreview = navigationAction.request.url.map { filePreviewURLs.contains($0) } ?? false
+            }
+            decisionHandler(.allow)
+        }
+
+        func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
+                     decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+            if navigationResponse.isForMainFrame {
+                let mimeType = navigationResponse.response.mimeType?.lowercased()
+                pendingFilePreview = navigationResponse.canShowMIMEType && mimeType != nil &&
+                    mimeType != "text/html" && mimeType != "application/xhtml+xml"
+                if let url = navigationResponse.response.url {
+                    if pendingFilePreview {
+                        filePreviewURLs.insert(url)
+                    } else {
+                        filePreviewURLs.remove(url)
+                    }
+                }
+            }
+            decisionHandler(.allow)
+        }
+
+        func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+            (webView as? FilePreviewWebView)?.setFilePreview(pendingFilePreview)
+        }
+
         func loadIDUWithRemoteAssets(in webView: WKWebView) {
             Task {
                 do {
@@ -171,25 +200,15 @@ struct WebContainerView: UIViewRepresentable {
                         let nativeSafeTop = max(windowSafeTop, webView.safeAreaInsets.top)
 
                         if nativeSafeTop > 0 {
-                            controller.addUserScript(WKUserScript(
-                                source: """
+                            controller.addUserScript(HTMLDocumentScript.atDocumentStart(
+                                """
                                 document.documentElement?.style.setProperty('--ios-safe-top', '\(nativeSafeTop)px');
                                 try { localStorage.setItem('iduIosSafeTop', '\(nativeSafeTop)'); } catch {}
-                                """,
-                                injectionTime: .atDocumentStart,
-                                forMainFrameOnly: true
+                                """
                             ))
                         }
-                        controller.addUserScript(WKUserScript(
-                            source: cssInjectionSource,
-                            injectionTime: .atDocumentStart,
-                            forMainFrameOnly: true
-                        ))
-                        controller.addUserScript(WKUserScript(
-                            source: javascriptInjectionSource,
-                            injectionTime: .atDocumentStart,
-                            forMainFrameOnly: true
-                        ))
+                        controller.addUserScript(HTMLDocumentScript.atDocumentStart(cssInjectionSource))
+                        controller.addUserScript(HTMLDocumentScript.atDocumentStart(javascriptInjectionSource))
                         print(
                             "Registered assets:",
                             "css=\(cssSource.utf8.count) bytes (\(cssAsset.source.rawValue)),",
@@ -219,6 +238,7 @@ struct WebContainerView: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            guard (webView as? FilePreviewWebView)?.isFilePreview != true else { return }
             applySafeAreaInsets(to: webView)
             print("Loaded IDU site directly")
             webView.evaluateJavaScript(
@@ -249,6 +269,7 @@ struct WebContainerView: UIViewRepresentable {
         }
 
         func applySafeAreaInsets(to webView: WKWebView) {
+            guard (webView as? FilePreviewWebView)?.isFilePreview != true else { return }
             let windowSafeTop = webView.window?.safeAreaInsets.top ?? 0
             let safeTop = max(windowSafeTop, webView.safeAreaInsets.top)
             let script = """
@@ -266,7 +287,7 @@ struct WebContainerView: UIViewRepresentable {
                 "finalSafeTop=\(safeTop)"
             )
 
-            webView.evaluateJavaScript(script) { _, error in
+            webView.evaluateJavaScript(HTMLDocumentScript.wrap(script)) { _, error in
                 if let error {
                     print("Failed to update iOS safe area inset: \(error.localizedDescription)")
                     return
@@ -336,14 +357,6 @@ struct WebContainerView: UIViewRepresentable {
         }
     }
 
-    final class SafeAreaAwareWebView: WKWebView {
-        var onSafeAreaInsetsChange: (() -> Void)?
-
-        override func safeAreaInsetsDidChange() {
-            super.safeAreaInsetsDidChange()
-            onSafeAreaInsetsChange?()
-        }
-    }
 }
 
 #Preview {

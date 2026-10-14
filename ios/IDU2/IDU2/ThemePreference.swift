@@ -23,7 +23,7 @@ enum ThemePreference {
     static func install(in controller: WKUserContentController) {
         let saved = UserDefaults.standard.string(forKey: storageKey)
         let themeLiteral = saved.flatMap { themes.contains($0) ? "\"\($0)\"" : nil } ?? "null"
-        let source = scriptMarker + """
+        let source = """
         (() => {
             if (location.protocol !== 'https:' ||
                 !/^(?:www\\.|s[0-9]+\\.)?idu\\.edu\\.pl$/.test(location.hostname)) return;
@@ -47,7 +47,7 @@ enum ThemePreference {
         let otherScripts = controller.userScripts.filter { !$0.source.hasPrefix(scriptMarker) }
         controller.removeAllUserScripts()
         controller.addUserScript(WKUserScript(
-            source: source,
+            source: scriptMarker + HTMLDocumentScript.wrap(source),
             injectionTime: .atDocumentStart,
             forMainFrameOnly: true
         ))

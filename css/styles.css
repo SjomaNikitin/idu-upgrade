@@ -67,8 +67,8 @@
 	--grades-box-bg: #0c79651d;
 }
 
-/* Critical visual loader. This must live in the static stylesheet because
-   direct WKWebView navigation no longer receives the proxy's HTML injection. */
+/* Only show the loader after JS has registered its one-second deadline.
+   Loading this stylesheet alone must never cover a native file viewer. */
 html {
 	--idu-loader-color: #e5f8f2;
 	--idu-loader-spinner-color: #0b5f5d;
@@ -89,7 +89,7 @@ html[data-theme="Besties"] {
 	--idu-loader-spinner-color: #851a36;
 }
 
-html::before {
+html.idu-loading::before {
 	content: "";
 	position: fixed;
 	inset: 0;
@@ -99,7 +99,7 @@ html::before {
 	background: var(--idu-loader-color);
 }
 
-html::after {
+html.idu-loading::after {
 	content: "";
 	position: fixed;
 	left: 50%;
@@ -155,7 +155,7 @@ html.idu-loader-fading::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	html::after {
+	html.idu-loading::after {
 		animation: idu-loader-spinner-show 150ms ease 1s forwards;
 	}
 
@@ -1226,10 +1226,9 @@ html.idu-loader-fading::after {
 		gap: 3px;
 	}
 
-	.idu-app-footer__identity strong {
+	.idu-app-footer__identity svg {
+		display: block;
 		color: var(--main-text-color);
-		font-size: 1.05rem;
-		line-height: 1.2;
 	}
 
 	.idu-app-footer__identity span,
