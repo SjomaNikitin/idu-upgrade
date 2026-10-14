@@ -2690,4 +2690,10 @@ html.idu-loader-fading::after {
 			}
 		}
 	}
+	.profile-event.file{
+		background-image: none !important;
+	}
+	.profile-event.lesson{
+		background-image: none !important;
+	}
 }
