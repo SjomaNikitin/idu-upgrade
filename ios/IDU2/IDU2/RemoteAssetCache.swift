@@ -32,18 +32,25 @@ struct RemoteAssetCache {
     private let session: URLSession
     private let fileManager: FileManager
     private let cacheDirectory: URL
+    private let cacheEnabled: Bool
 
     init(
         session: URLSession = .shared,
         fileManager: FileManager = .default,
-        cacheDirectory: URL? = nil
+        cacheDirectory: URL? = nil,
+        cacheEnabled: Bool = true
     ) {
         self.session = session
         self.fileManager = fileManager
         self.cacheDirectory = cacheDirectory ?? Self.defaultCacheDirectory(using: fileManager)
+        self.cacheEnabled = cacheEnabled
     }
 
     func loadText(from url: URL, cacheFileName: String) async throws -> Asset {
+        // Development must not silently reuse published or previous local assets.
+        if !cacheEnabled {
+            return Asset(text: try await downloadText(from: url), source: .network)
+        }
         do {
             let text = try await downloadText(from: url)
             try save(text, as: cacheFileName)
@@ -66,7 +73,7 @@ struct RemoteAssetCache {
 
     private func downloadText(from url: URL) async throws -> String {
         var request = URLRequest(url: url)
-        request.cachePolicy = .reloadRevalidatingCacheData
+        request.cachePolicy = cacheEnabled ? .reloadRevalidatingCacheData : .reloadIgnoringLocalCacheData
         request.timeoutInterval = 15
 
         let (data, response) = try await session.data(for: request)

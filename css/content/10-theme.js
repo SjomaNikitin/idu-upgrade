@@ -17,6 +17,8 @@ window.loadWebsiteTheme = function (chooseTheme) {
 
 		document.documentElement.setAttribute("data-theme", chooseTheme);
 		localStorage.setItem("theme", chooseTheme);
+		// The native app shares this preference across login and school domains.
+		window.webkit?.messageHandlers?.iduThemeSync?.postMessage(chooseTheme);
 		if (chooseTheme !== "Default" && document.querySelector("canvas.bg-canvas")) {
 			hideXmas()
 		}
@@ -179,4 +181,3 @@ function addFooterSnow() {
 	}
 
 }
-

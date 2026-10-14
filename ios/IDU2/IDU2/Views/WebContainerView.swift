@@ -14,6 +14,8 @@ struct WebContainerView: UIViewRepresentable {
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         configuration.websiteDataStore = .default()
         configuration.userContentController.add(context.coordinator, name: Self.scheduleBridgeName)
+        configuration.userContentController.add(context.coordinator, name: ThemePreference.bridgeName)
+        ThemePreference.install(in: configuration.userContentController)
         configuration.userContentController.addUserScript(makePlatformBootstrapScript())
 
 		let webView = SafeAreaAwareWebView(frame: .zero, configuration: configuration)
@@ -104,7 +106,8 @@ struct WebContainerView: UIViewRepresentable {
         func loadIDUWithRemoteAssets(in webView: WKWebView) {
             Task {
                 do {
-                    let assetCache = RemoteAssetCache()
+                    print("Loading UI assets:", AppConfig.contentScriptURL, AppConfig.stylesheetURL)
+                    let assetCache = RemoteAssetCache(cacheEnabled: !AppConfig.usesLocalAssets)
                     async let javascript = assetCache.loadText(
                         from: AppConfig.contentScriptURL,
                         cacheFileName: "content.js"
@@ -297,6 +300,15 @@ struct WebContainerView: UIViewRepresentable {
             _ userContentController: WKUserContentController,
             didReceive message: WKScriptMessage
         ) {
+            if message.name == ThemePreference.bridgeName {
+                guard message.frameInfo.isMainFrame,
+                      ThemePreference.isTrustedOrigin(message.frameInfo.securityOrigin),
+                      let theme = message.body as? String else { return }
+                ThemePreference.save(theme)
+                ThemePreference.install(in: userContentController)
+                return
+            }
+
             guard message.name == WebContainerView.scheduleBridgeName else {
                 return
             }

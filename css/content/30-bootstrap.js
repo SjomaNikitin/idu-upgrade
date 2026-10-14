@@ -3,7 +3,6 @@ const iduOriginalViewEnabled = window.isIduOriginalViewEnabled?.() === true;
 if (!iduOriginalViewEnabled) {
 	window.loadWebsiteTheme();
 }
-
 let svgSize = "60%";
 if (!window.__iduContentBootstrapRegistered) {
 	window.__iduContentBootstrapRegistered = true;

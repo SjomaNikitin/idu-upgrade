@@ -383,6 +383,8 @@
 				DEVELOPMENT_TEAM = JCG5Q6DHDB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Debug-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = NIDU;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -418,6 +420,7 @@
 				DEVELOPMENT_TEAM = JCG5Q6DHDB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NIDU;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -453,7 +456,7 @@
 				DEVELOPMENT_TEAM = JCG5Q6DHDB;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IDU2Widget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = IDU2Widget;
+				INFOPLIST_KEY_CFBundleDisplayName = "NIDU Widget";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -485,7 +488,7 @@
 				DEVELOPMENT_TEAM = JCG5Q6DHDB;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IDU2Widget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = IDU2Widget;
+				INFOPLIST_KEY_CFBundleDisplayName = "NIDU Widget";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (

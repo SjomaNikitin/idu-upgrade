@@ -17,7 +17,7 @@
 	--input-field-color: #189e8a44;
 
 	/* The "Black/Grey" Accents */
-	--mg: #1d1d1f;
+	--mg: #0B5F5D;
 	/* Deep "Eerie Black" for main headers */
 	--topmg: #121212;
 	/* Darkest grey for the very top */
@@ -701,7 +701,7 @@ html.idu-loader-fading::after {
 
 	body[path="/users/sign_in"] input[type=submit] {
 		background-color: var(--mg) !important;
-		color: var(--gradient-text-color) !important;
+		color: var(--actionbtn-text-color) !important;
 	}
 
 
@@ -915,9 +915,6 @@ html.idu-loader-fading::after {
 		margin-right: var(--h3-margin);
 	}
 
-	iframe {
-		border-radius: var(--padding-1);
-	}
 
 	.action-module h3 {
 		color: var(--main-text-color);
@@ -1464,6 +1461,7 @@ html.idu-loader-fading::after {
 	#top{
 		background-color: rgb(0 0 0 / 0);
 		background-image: none !important;
+		margin-top: var(--header-height);
 	}
 
 	.idu-custom-header.mini{
@@ -1554,6 +1552,10 @@ html.idu-loader-fading::after {
 	.header-panel-link.active {
 		background-color: var(--mc);
 		color: var(--module-color);
+	}
+
+	.alert{
+		margin-top: var(--header-height);
 	}
 
 	.header-logo-link {

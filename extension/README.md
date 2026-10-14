@@ -18,3 +18,9 @@ It only injects this project's UI changes into the original IDU page.
 When **Original IDU view** is enabled, the extension skips CSS injection during
 the next page load. This prevents the custom mobile styles from flashing before
 the original site styles appear.
+
+In customized mode, the extension adds the packaged `styles.css` as a real
+`<link id="idu-extension-styles" rel="stylesheet">`. It moves that link behind
+the original IDU styles after the document loads and restores it if page code
+removes it. You can inspect the link in DevTools Elements and inspect the file in
+Network or Sources under the extension's `chrome-extension://` URL.
