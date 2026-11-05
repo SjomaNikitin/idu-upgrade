@@ -2749,17 +2749,23 @@ html.idu-loader-fading::after {
 			min-height: 0; height: 40px; margin: 0; border: 0; background: transparent !important;
 		}
 		.mail-search-scope {
-			position: relative; flex: none; max-width: 38%; height: 28px;
+			position: relative; flex: 0 0 clamp(88px, 25vw, 100px); min-width: 0; height: 28px;
 			border-inline-end: 1px solid var(--module-border-color);
 		}
+		.mail-search-scope-label {
+			position: absolute; inset: 0; display: flex; align-items: center;
+			padding: 0 30px 0 8px; color: var(--main-text-color); font-size: 16px;
+			line-height: 1; pointer-events: none;
+		}
 		.mail-search-scope::after {
-			content: ""; position: absolute; top: 50%; right: 10px; width: 7px; height: 7px;
+			content: ""; position: absolute; z-index: 1; top: 50%; right: 10px; width: 7px; height: 7px;
 			border: solid var(--main-text-color); border-width: 0 2px 2px 0;
 			transform: translateY(-65%) rotate(45deg); pointer-events: none;
 		}
 		.mail-search .mail-search-group select {
-			-webkit-appearance: none; appearance: none; width: 100%; max-width: none;
-			padding: 0 30px 0 8px; border-radius: 0; height: 28px; box-shadow: none !important;
+			-webkit-appearance: none; appearance: none; position: absolute; z-index: 2; inset: 0;
+			width: 100%; max-width: none; padding: 0; border-radius: 0; height: 28px;
+			opacity: 0; box-shadow: none !important;
 		}
 		.mail-search-row > input[type=submit] {
 			height: 44px; width: auto; padding-inline: 12px;
