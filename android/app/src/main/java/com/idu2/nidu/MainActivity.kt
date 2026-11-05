@@ -33,7 +33,6 @@ import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     private var webView: WebView? = null
-    private var safeTop = 0
     private var safeBottom = 0
 
     companion object {
@@ -64,7 +63,6 @@ class MainActivity : ComponentActivity() {
             // WindowInsets are physical pixels, while values injected into the
             // page are CSS pixels (density-independent on Android WebView).
             val density = resources.displayMetrics.density
-            safeTop = (bars.top / density).roundToInt()
             safeBottom = (bars.bottom / density).roundToInt()
             // The page paints behind transparent system bars. Only the keyboard
             // shrinks the native container; CSS keeps page content in safe areas.
@@ -183,11 +181,9 @@ class MainActivity : ComponentActivity() {
 
     private fun applySafeArea(view: WebView) {
         view.evaluateJavascript(
-            "try{localStorage.setItem('iduAndroidSafeTop','${safeTop}');" +
+            "try{localStorage.removeItem('iduAndroidSafeTop');" +
                 "localStorage.setItem('iduAndroidSafeBottom','${safeBottom}');}catch(_e){}" +
-                "document.documentElement.style.setProperty('--android-safe-top','${safeTop}px');" +
                 "document.documentElement.style.setProperty('--android-safe-bottom','${safeBottom}px');" +
-                "document.body?.style.setProperty('--android-safe-top','${safeTop}px');" +
                 "document.body?.style.setProperty('--android-safe-bottom','${safeBottom}px');",
             null,
         )

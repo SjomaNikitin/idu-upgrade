@@ -2,13 +2,13 @@
     const css = __IDU_CSS_LITERAL__;
     const androidInsetsCss = `
         html[data-app-platform="android"] #idu-header-root {
-            padding-top: var(--android-safe-top, 0px);
+            padding-top: 10px;
         }
         html[data-app-platform="android"] body {
             padding-bottom: var(--android-safe-bottom, 0px);
         }
         html[data-app-platform="android"] .edit-block {
-            top: calc(var(--padding-2) + var(--android-safe-top, 0px));
+            top: calc(var(--padding-2) + 10px);
         }
     `;
     const installStyles = () => {

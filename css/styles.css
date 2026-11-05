@@ -1426,6 +1426,9 @@ html.idu-loader-fading::after {
 		z-index: 1000;
 		width: 100%;
 		background: var(--background-color);
+		background: color-mix(in srgb, var(--background-color) 50%, transparent);
+		-webkit-backdrop-filter: blur(18px);
+		backdrop-filter: blur(18px);
 		transition: transform 220ms ease;
 		will-change: transform;
 	}
@@ -1451,7 +1454,7 @@ html.idu-loader-fading::after {
 		"left center right";
 		align-items: center;
 		box-sizing: border-box;
-		background: var(--background-color);
+		background: transparent;
 		overflow: visible;
 		position: relative;
 		padding: var(--padding-2);
