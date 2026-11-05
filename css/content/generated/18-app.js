@@ -2863,7 +2863,15 @@
     group.className = "mail-search-group";
     const scopeControl = document.createElement("div");
     scopeControl.className = "mail-search-scope";
-    scopeControl.append(scope);
+    const scopeLabel = document.createElement("span");
+    scopeLabel.className = "mail-search-scope-label";
+    scopeLabel.setAttribute("aria-hidden", "true");
+    const updateScopeLabel = () => {
+      scopeLabel.textContent = scope.selectedOptions[0]?.textContent || "";
+    };
+    scope.addEventListener("change", updateScopeLabel);
+    updateScopeLabel();
+    scopeControl.append(scopeLabel, scope);
     group.append(scopeControl, ...fields.map(({ field }) => field));
     row.append(group, submit);
     form.prepend(row);
