@@ -34,7 +34,10 @@ function compactSearch(form) {
 	row.className = "mail-search-row";
 	const group = document.createElement("div");
 	group.className = "mail-search-group";
-	group.append(scope, ...fields.map(({field}) => field));
+	const scopeControl = document.createElement("div");
+	scopeControl.className = "mail-search-scope";
+	scopeControl.append(scope);
+	group.append(scopeControl, ...fields.map(({field}) => field));
 	row.append(group, submit);
 	form.prepend(row);
 	form.classList.add("mail-search");

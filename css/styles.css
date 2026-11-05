@@ -2721,6 +2721,15 @@ html.idu-loader-fading::after {
 
 @media (max-width: 500px) {
 	body.mobile-mail #content {
+		z-index: 20 !important;
+		--mail-control-background: var(--input-field-color);
+		.module, .module * {
+			border-color: var(--module-border-color) !important;
+		}
+		hr {
+			border: 0;
+			border-top: 1px solid var(--module-border-color);
+		}
 		.mail-nav, .mail-search-row {
 			display: flex;
 			align-items: center;
@@ -2732,42 +2741,66 @@ html.idu-loader-fading::after {
 		.mail-search { margin: 0; padding: 0; background: transparent; }
 		.mail-search-group {
 			display: flex; flex: 1; min-width: 0; align-items: center; height: 44px;
-			background: var(--input-field-color); border: 1px solid var(--module-border-color); border-radius: 12px;
+			background: var(--mail-control-background); border: 1px solid var(--module-border-color); border-radius: 12px;
+			box-shadow: none !important;
 		}
 		.mail-search .field { flex: 1; min-width: 0; margin: 0; padding: 0; background: transparent; }
 		.mail-search .mail-search-group :is(input,select) {
 			min-height: 0; height: 40px; margin: 0; border: 0; background: transparent !important;
 		}
-		.mail-search .mail-search-group select {
-			width: auto; flex: none; max-width: 38%; border-radius: 0;
-			border-inline-end: 1px solid var(--module-border-color); height: 28px;
+		.mail-search-scope {
+			position: relative; flex: none; max-width: 38%; height: 28px;
+			border-inline-end: 1px solid var(--module-border-color);
 		}
-		.mail-search-row > input[type=submit] { height: 44px; width: auto; padding-inline: 12px; }
+		.mail-search-scope::after {
+			content: ""; position: absolute; top: 50%; right: 10px; width: 7px; height: 7px;
+			border: solid var(--main-text-color); border-width: 0 2px 2px 0;
+			transform: translateY(-65%) rotate(45deg); pointer-events: none;
+		}
+		.mail-search .mail-search-group select {
+			-webkit-appearance: none; appearance: none; width: 100%; max-width: none;
+			padding: 0 30px 0 8px; border-radius: 0; height: 28px; box-shadow: none !important;
+		}
+		.mail-search-row > input[type=submit] {
+			height: 44px; width: auto; padding-inline: 12px;
+			background: var(--mail-control-background) !important; color: var(--main-text-color) !important;
+			border: 1px solid var(--module-border-color) !important; box-shadow: none !important;
+		}
 		.mail-search .field[hidden], .mail-search .field label, .mail-search .clear { display: none; }
 		.mail-search input, .mail-search select, .mail-compose input[type=text] {
 			font-size: 16px; min-height: 44px; padding-inline: 8px; border-radius: 12px;
 		}
 		.mail-search select { max-width: 28%; color: var(--main-text-color); }
+		.mail-search input::placeholder {
+			color: color-mix(in srgb, var(--main-text-color) 55%, transparent); opacity: 1;
+		}
 		.mail-search > *, .mail-search .actions, .mail-search input[type=submit] {
 			margin-block: 0 !important; float: none; align-self: center;
 		}
-		.mail-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+		.mail-nav {
+			position: relative; z-index: 20; display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start;
+		}
 		.mail-nav summary, .mail-nav > a {
 			display: flex; align-items: center; justify-content: center; min-height: 44px; gap: 8px;
-			padding-inline: 12px; border-radius: 14px; background: var(--icon-background-color);
+			padding-inline: 12px; border-radius: 14px; background: var(--mail-control-background) !important;
+			color: var(--main-text-color) !important; border: 1px solid var(--module-border-color) !important;
+			box-shadow: none !important; text-shadow: none !important;
 			font-weight: 600; text-decoration: none; cursor: pointer;
 		}
 		.mail-nav summary::-webkit-details-marker { display: none; }
 		.mail-nav summary::after { content: ""; width: 6px; height: 6px; border: solid currentColor;
 			border-width: 0 2px 2px 0; transform: rotate(45deg); transition: transform 180ms; }
 		.mail-nav details[open] summary::after { transform: rotate(225deg); }
+		.module:has(#message-folders) { overflow: visible !important; }
 		#message-folders {
-			position: static; display: grid; width: 100%; margin-top: 6px;
+			position: absolute; top: calc(100% + 6px); left: 0; z-index: 30;
+			display: grid; width: calc((100% - 8px) / 2); margin: 0;
 			min-width: 0; padding: 6px; border-radius: 16px;
 			border: 1px solid var(--module-border-color); background: var(--module-color);
 			background: color-mix(in srgb, var(--module-color) 80%, transparent);
 			-webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
-			box-shadow: 0 6px 18px var(--module-shadow-color);
+			box-shadow: none;
 		}
 		#message-folders a, #message-folders .current { display: block; padding: 10px 12px; }
 		.message-table, .message-table tbody { display: block; border: 0; }
@@ -2785,7 +2818,22 @@ html.idu-loader-fading::after {
 		.message-table td.user { font-size: .88rem; }
 		.message-table td.user img { width: 22px; height: 22px; object-fit: cover; border-radius: 50%; vertical-align: middle; }
 		.message-table td.user > * { display: inline; float: none; }
-		.message-table td:last-child { font-size: .78rem; }
+		.message-table td:last-child {
+			font-size: .78rem;
+			color: color-mix(in srgb, var(--main-text-color) 62%, transparent) !important;
+		}
+		.message-table input[type=checkbox] {
+			-webkit-appearance: none; appearance: none; display: grid; place-content: center;
+			width: 18px; height: 18px; margin: 0; border: 0 !important;
+			border-radius: 6px; background: var(--input-field-color) !important;
+		}
+		.message-table input[type=checkbox]::after {
+			content: ""; width: 4px; height: 8px; border: solid var(--background-color);
+			border-width: 0 2px 2px 0; transform: rotate(45deg) scale(0);
+			transition: transform 140ms ease;
+		}
+		.message-table input[type=checkbox]:checked { background: var(--akcent-color) !important; }
+		.message-table input[type=checkbox]:checked::after { transform: rotate(45deg) scale(1); }
 		.mail-compose .field {
 			display: flex; flex-direction: column; align-items: stretch; gap: 5px; margin-bottom: 14px;
 		}
