@@ -2,6 +2,8 @@
 import { h, render } from "preact";
 import { Header } from "./components/header.jsx";
 import { MainContent } from "./components/mainContent.jsx";
+import { setupMobileMessages } from "./mobileMessages.js";
+window.setupMobileMessages = setupMobileMessages;
 import { Footer } from "./components/footer.jsx";
 import { buildExampleDashboardData } from "../mockDashboardData.js";
 

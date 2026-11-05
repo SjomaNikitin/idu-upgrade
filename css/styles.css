@@ -2718,3 +2718,172 @@ html.idu-loader-fading::after {
 		background-image: none !important;
 	}
 }
+
+@media (max-width: 500px) {
+	body.mobile-mail #content {
+		.mail-nav, .mail-search-row {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin: 8px 0;
+			padding: 0;
+			background: transparent;
+		}
+		.mail-search { margin: 0; padding: 0; background: transparent; }
+		.mail-search-group {
+			display: flex; flex: 1; min-width: 0; align-items: center; height: 44px;
+			background: var(--input-field-color); border: 1px solid var(--module-border-color); border-radius: 12px;
+		}
+		.mail-search .field { flex: 1; min-width: 0; margin: 0; padding: 0; background: transparent; }
+		.mail-search .mail-search-group :is(input,select) {
+			min-height: 0; height: 40px; margin: 0; border: 0; background: transparent !important;
+		}
+		.mail-search .mail-search-group select {
+			width: auto; flex: none; max-width: 38%; border-radius: 0;
+			border-inline-end: 1px solid var(--module-border-color); height: 28px;
+		}
+		.mail-search-row > input[type=submit] { height: 44px; width: auto; padding-inline: 12px; }
+		.mail-search .field[hidden], .mail-search .field label, .mail-search .clear { display: none; }
+		.mail-search input, .mail-search select, .mail-compose input[type=text] {
+			font-size: 16px; min-height: 44px; padding-inline: 8px; border-radius: 12px;
+		}
+		.mail-search select { max-width: 28%; color: var(--main-text-color); }
+		.mail-search > *, .mail-search .actions, .mail-search input[type=submit] {
+			margin-block: 0 !important; float: none; align-self: center;
+		}
+		.mail-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+		.mail-nav summary, .mail-nav > a {
+			display: flex; align-items: center; justify-content: center; min-height: 44px; gap: 8px;
+			padding-inline: 12px; border-radius: 14px; background: var(--icon-background-color);
+			font-weight: 600; text-decoration: none; cursor: pointer;
+		}
+		.mail-nav summary::-webkit-details-marker { display: none; }
+		.mail-nav summary::after { content: ""; width: 6px; height: 6px; border: solid currentColor;
+			border-width: 0 2px 2px 0; transform: rotate(45deg); transition: transform 180ms; }
+		.mail-nav details[open] summary::after { transform: rotate(225deg); }
+		#message-folders {
+			position: static; display: grid; width: 100%; margin-top: 6px;
+			min-width: 0; padding: 6px; border-radius: 16px;
+			border: 1px solid var(--module-border-color); background: var(--module-color);
+			background: color-mix(in srgb, var(--module-color) 80%, transparent);
+			-webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+			box-shadow: 0 6px 18px var(--module-shadow-color);
+		}
+		#message-folders a, #message-folders .current { display: block; padding: 10px 12px; }
+		.message-table, .message-table tbody { display: block; border: 0; }
+		.message-table tr:has(td.select) {
+			display: grid; grid-template-columns: 28px minmax(0,1fr);
+			gap: 3px 8px; padding: 12px 4px; align-items: center;
+			border: 0; border-bottom: 1px solid var(--module-border-color);
+			background: transparent !important;
+		}
+		.message-table tr:has(td.select) > td {
+			display: block; grid-column: 2; width: auto; padding: 0; border: 0;
+			text-align: left; background: transparent; line-height: 1.4;
+		}
+		.message-table tr:has(td.select) > td.select { grid-column: 1; grid-row: 1 / span 3; }
+		.message-table td.user { font-size: .88rem; }
+		.message-table td.user img { width: 22px; height: 22px; object-fit: cover; border-radius: 50%; vertical-align: middle; }
+		.message-table td.user > * { display: inline; float: none; }
+		.message-table td:last-child { font-size: .78rem; }
+		.mail-compose .field {
+			display: flex; flex-direction: column; align-items: stretch; gap: 5px; margin-bottom: 14px;
+		}
+		.mail-compose small { color: var(--main-text-color); font-size: .8rem; }
+		.mail-compose .mail-recipient > :is(div, ul), .mail-compose ul[class*="token-input-list"] {
+			width: 100% !important; max-width: 100%; border-radius: 12px;
+			background: var(--input-field-color); border-color: var(--module-border-color);
+		}
+		.mail-compose .mail-recipient input[type=text] { max-width: 100%; color: var(--main-text-color); }
+		.mail-compose .field:has(input[type=checkbox]) { flex-direction: row; align-items: center; }
+		.mail-compose .field input[type=checkbox] { width: auto; flex-grow: 0; }
+		.mail-compose .actions {
+			display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-start; gap: 8px;
+		}
+		.mail-compose .actions input[type=submit] {
+			margin: 0; position: static; border-radius: 12px; font-size: 1rem;
+		}
+		.mail-compose .cke_top, .mail-compose .cke_bottom { background: var(--module-color); }
+		.mail-compose .cke { border-radius: 12px; overflow: hidden; }
+		.mail-compose .cke_toolgroup { margin: 0; }
+		.mail-compose .cke_toolbar, .mail-compose .cke_toolbar_break, .mail-compose .cke_toolbar_separator,
+		.mail-compose .cke_toolgroup .cke_button { display: none; }
+		.mail-compose .cke_toolbar:has(.cke_button__bold, .cke_button__numberedlist, .cke_button__link),
+		.mail-compose .cke_toolgroup :is(.cke_button__bold,.cke_button__italic,.cke_button__bulletedlist,.cke_button__numberedlist,.cke_button__link) {
+			display: inline-block;
+		}
+		.mail-compose .cke_button { padding: 11px 8px; }
+		.mail-compose .mail-recipient ul[class*="token-input-list"] {
+			display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+			height: auto !important; min-height: 44px; padding: 6px !important;
+			box-sizing: border-box; overflow: visible;
+		}
+		.mail-compose .mail-recipient li[class*="token-input-token"] {
+			display: flex; align-items: center; max-width: 100%; min-height: 30px;
+			margin: 0 !important; padding: 4px 8px !important; float: none;
+			border: 1px solid var(--module-border-color); border-radius: 9px;
+			background: var(--module-color); color: var(--main-text-color);
+			box-sizing: border-box;
+		}
+		.mail-compose .mail-recipient li[class*="token-input-token"] p {
+			min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+		}
+		.mail-compose .mail-recipient li[class*="token-input-input-token"] {
+			flex: 1 1 9rem; min-width: 7rem; min-height: 30px;
+			margin: 0 !important; padding: 0 !important; float: none;
+			border: 0 !important; background: transparent !important;
+		}
+		.mail-compose .mail-recipient input[type=text] {
+			width: 100% !important; height: 30px; min-height: 30px; margin: 0; padding: 0 4px;
+			border: 0 !important; border-radius: 0; background: transparent !important;
+			box-shadow: none !important;
+		}
+		.mail-compose :is(input, button, select, textarea, .cke_button, .cke) {
+			caret-color: var(--main-text-color); -webkit-tap-highlight-color: transparent;
+		}
+		.mail-compose :is(input, button, select, textarea, .cke_button):focus {
+			outline: none; box-shadow: none; border-color: var(--module-border-color) !important;
+		}
+		.mail-compose :is(input, button, select, textarea, .cke_button):focus-visible {
+			box-shadow: inset 0 0 0 1px var(--module-border-color);
+		}
+		.mail-compose :is(.cke, .cke_inner, .cke_top, .cke_bottom, .cke_contents) {
+			border-color: var(--module-border-color) !important; box-shadow: none;
+		}
+		.mail-compose .field:has(input[type=checkbox]) {
+			position: relative; min-height: 48px; justify-content: space-between;
+			padding: 8px 12px; border-radius: 12px; border: 1px solid var(--module-border-color);
+			background: var(--input-field-color);
+		}
+		.mail-compose .field:has(input[type=checkbox]) label::after { content: ""; position: absolute; inset: 0; }
+		.mail-compose .field input[type=checkbox] {
+			position: relative; inset: auto; align-self: center; display: block;
+			height: 24px; width: 24px; margin: 0; accent-color: var(--akcent-color);
+		}
+		.mail-compose input[type=submit] { min-height: 44px; padding-inline: 16px; }
+	}
+	html[data-theme="Ocean"] .mobile-mail .cke_button_icon { filter: invert(1); }
+	body.mobile-mail div[class*="token-input-dropdown"] {
+		border: 0;
+		max-width: calc(100vw - 64px); background: var(--module-color); color: var(--main-text-color);
+		border-radius: 10px; overflow: auto; max-height: 32dvh;
+	}
+	body.mobile-mail div[class*="token-input-dropdown"] li {
+		background: var(--module-color); color: var(--main-text-color); padding: 10px;
+	}
+	body.mobile-mail div[class*="token-input-dropdown"] li[class*="selected"] {
+		background: var(--akcent-color); color: var(--module-color);
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		html.idu-ready body.mobile-mail :is(.message-table tr:has(td.select), .mail-compose, details[open] #message-folders) {
+			animation: mail-arrive 280ms cubic-bezier(.2,.8,.2,1) backwards;
+		}
+		html.idu-ready body.mobile-mail .message-table tr:nth-child(2) { animation-delay: 30ms; }
+		html.idu-ready body.mobile-mail .message-table tr:nth-child(3) { animation-delay: 60ms; }
+		html.idu-ready body.mobile-mail .message-table tr:nth-child(n+4) { animation-delay: 90ms; }
+	}
+}
+@keyframes mail-arrive {
+	from { opacity: 0; transform: translateY(-8px); }
+	to { opacity: 1; transform: translateY(0); }
+}

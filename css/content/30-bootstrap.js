@@ -36,6 +36,7 @@ if (!window.__iduContentBootstrapRegistered) {
 
 	try {
 		if (window.innerWidth < window.innerHeight || mockData) {
+		if (window.matchMedia("(max-width: 500px)").matches) window.setupMobileMessages();
 		const pageData = mockData || {
 			homeworkUrl: extractHomeWorkUrl(),
 			reviewsUrl: extractReviewsUrl(),
