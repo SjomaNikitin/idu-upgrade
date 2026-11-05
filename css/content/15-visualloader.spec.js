@@ -51,6 +51,8 @@ it("hands off a slow load to one ordered dashboard entrance", () => {
 	expect(delays).toEqual([0, 45, 90, 135]);
 	expect(page.elements[0].classList.add).toHaveBeenCalledWith("idu-dashboard-entering");
 	expect(page.elements[0].classList.remove).toHaveBeenCalledWith("idu-dashboard-entering");
+	expect(openDashboard(storage).elements[0].animate).not.toHaveBeenCalled();
+	storage.set("iduDashboardEntranceAt", String(Date.now() - 151_000));
 	expect(openDashboard(storage).elements[0].animate).toHaveBeenCalledOnce();
 });
 

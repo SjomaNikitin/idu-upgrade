@@ -76,6 +76,16 @@ function revealDashboard(header, widgets) {
 	dashboardRevealed = true;
 	if (!header.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+	const now = Date.now();
+	try {
+		const key = "iduDashboardEntranceAt";
+		const elapsed = now - Number(localStorage.getItem(key));
+		if (elapsed >= 0 && elapsed < 150_000) return;
+		localStorage.setItem(key, String(now));
+	} catch {
+		return;
+	}
+
 	header.classList.add("idu-dashboard-entering");
 
 	// Grid auto-placement follows DOM order, including the user's saved layout.
