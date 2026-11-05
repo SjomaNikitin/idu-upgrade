@@ -15,7 +15,6 @@
         if (html) {
             html.setAttribute('data-app-platform', 'android');
             html.classList.add('android-app');
-            html.style.setProperty('--ios-safe-top', '0px');
             html.style.setProperty('--android-safe-bottom', `${savedSafeBottom}px`);
         }
         if (document.head && !document.getElementById('idu-custom-viewport')) {

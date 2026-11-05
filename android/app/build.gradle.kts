@@ -11,7 +11,7 @@ android {
         applicationId = "com.idu2.nidu"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
+        versionCode = 3
         versionName = "1.1"
     }
     buildFeatures { buildConfig = true }

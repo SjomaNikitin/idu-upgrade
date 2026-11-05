@@ -77,7 +77,9 @@ test('bootstrap and styles precede content; custom CSS moves after site CSS befo
     `);
     assert.equal(p.window.platformAtStart, 'android');
     assert.ok(p.window.stylesAtStart.startsWith(css));
-    assert.match(p.window.stylesAtStart, /#idu-header-root\s*\{\s*padding-top: 10px;/);
+    assert.match(p.window.stylesAtStart, /--android-header-gap: 8px;/);
+    assert.match(p.window.stylesAtStart, /#idu-header-root\s*\{\s*padding-top: var\(--android-header-gap\);/);
+    assert.match(p.window.stylesAtStart, /\.idu-custom-header\s*\{\s*margin-top: 0 !important;/);
     p.document.head.appendChild({ id: 'site-styles' });
     p.domReady();
     assert.equal(p.window.lastStyle, 'idu-custom-styles');
@@ -88,11 +90,14 @@ test('Android header spacing stays fixed while the saved bottom safe area is res
     const p = page({ local: { iduAndroidSafeTop: '36', iduAndroidSafeBottom: '18' } });
     install(p, `
         window.safeTopAtStart = document.documentElement.style.getPropertyValue('--android-safe-top');
+        window.iosSafeTopAtStart = document.documentElement.style.getPropertyValue('--ios-safe-top');
         window.safeBottomAtStart = document.documentElement.style.getPropertyValue('--android-safe-bottom');
     `);
     assert.equal(p.window.safeTopAtStart, '');
+    assert.equal(p.window.iosSafeTopAtStart, '');
     assert.equal(p.window.safeBottomAtStart, '18px');
-    assert.match(p.document.getElementById('idu-custom-styles').textContent, /padding-top: 10px;/);
+    assert.match(p.document.getElementById('idu-custom-styles').textContent, /--android-header-gap: 8px;/);
+    assert.match(p.document.getElementById('idu-custom-styles').textContent, /margin-top: 0 !important;/);
 });
 
 test('document-start before HTML exists waits only for the root and executes content once', () => {

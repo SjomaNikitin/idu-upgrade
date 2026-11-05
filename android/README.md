@@ -51,9 +51,10 @@ main frame on `https://idu.edu.pl` and its HTTPS tenant subdomains such as
 `s35.idu.edu.pl`. HTTP and HTTPS redirects stay inside the WebView; telephone
 and email links open their corresponding Android apps.
 
-Android sets `data-app-platform="android"` and `android-app`. Native window
-insets keep the WebView clear of system bars and the keyboard, so it does not
-reuse iOS's extra top padding. Login cookies and DOM storage persist in WebView.
+Android sets `data-app-platform="android"` and `android-app`. The header uses a
+fixed 8px top gap and explicitly removes the website's legacy header margin; it
+does not read, calculate, or restore an iOS-style top inset. Native window
+insets still protect the bottom bar and keyboard. Login cookies and DOM storage persist in WebView.
 The launcher icon is copied from the existing iOS app.
 
 JavaScript behavior checks, from the repository root:

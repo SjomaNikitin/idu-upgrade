@@ -1,14 +1,20 @@
 (() => {
     const css = __IDU_CSS_LITERAL__;
     const androidInsetsCss = `
+        html[data-app-platform="android"] {
+            --android-header-gap: 8px;
+        }
         html[data-app-platform="android"] #idu-header-root {
-            padding-top: 10px;
+            padding-top: var(--android-header-gap);
+        }
+        html[data-app-platform="android"] .idu-custom-header {
+            margin-top: 0 !important;
         }
         html[data-app-platform="android"] body {
             padding-bottom: var(--android-safe-bottom, 0px);
         }
         html[data-app-platform="android"] .edit-block {
-            top: calc(var(--padding-2) + 10px);
+            top: calc(var(--padding-2) + var(--android-header-gap));
         }
     `;
     const installStyles = () => {
