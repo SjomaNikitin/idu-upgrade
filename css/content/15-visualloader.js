@@ -45,15 +45,65 @@ window.captureIosHeaderHeight = function captureIosHeaderHeight() {
 	}
 };
 
+// The native iOS web view is transparent. Give the document canvas the
+// loader color independently of the fixed overlay and animated layers.
+if (window.location.pathname === "/" && !window.__iduOriginalView &&
+	document.documentElement?.dataset?.appPlatform === "ios") {
+	document.documentElement.style.backgroundColor = "var(--idu-loader-color, #e5f8f2)";
+}
+
+let dashboardRevealed = false;
+let dashboardHandoffScheduled = false;
+
+function afterIosDashboardPaint(callback) {
+	const waitForPaint = () => {
+		if (document.hidden) {
+			document.addEventListener("visibilitychange", waitForPaint, { once: true });
+			return;
+		}
+		window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+			if (document.hidden) waitForPaint();
+			else callback();
+		}));
+	};
+
+	if (document.readyState === "complete") waitForPaint();
+	else window.addEventListener("load", waitForPaint, { once: true });
+}
+
+function revealDashboard(header, widgets) {
+	if (dashboardRevealed) return;
+	dashboardRevealed = true;
+	if (!header.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+	header.classList.add("idu-dashboard-entering");
+
+	// Grid auto-placement follows DOM order, including the user's saved layout.
+	const animations = [header, ...widgets].map((element, index) =>
+		element.animate([
+			{ opacity: 0, translate: "0 -24px" },
+			{ opacity: 1, translate: "0 0" },
+		], {
+			duration: 400,
+			delay: index * 45,
+			easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+			fill: "backwards",
+		})
+	);
+
+	const restoreHeaderGlass = () => header.classList.remove("idu-dashboard-entering");
+	const finalAnimation = animations[animations.length - 1];
+	if (finalAnimation?.finished) {
+		finalAnimation.finished.then(restoreHeaderGlass, restoreHeaderGlass);
+	} else {
+		restoreHeaderGlass();
+	}
+}
+
 window.hideVisualLoader = function hideVisualLoader() {
 	window.captureIosHeaderHeight?.();
 
 	const documentElement = document.documentElement;
-	if (documentElement.classList.contains("idu-ready") ||
-		documentElement.classList.contains("idu-loader-fading")) {
-		return;
-	}
-
 	const loaderStartedAt = Number(window.__iduLoaderStartedAt);
 	const loaderDuration = Number.isFinite(loaderStartedAt)
 		? performance.now() - loaderStartedAt
@@ -67,6 +117,37 @@ window.hideVisualLoader = function hideVisualLoader() {
 		documentElement.classList.remove("idu-loading", "idu-loader-fading");
 		document.getElementById("loader")?.remove();
 	};
+
+	// Wait for the custom dashboard to mount, then remove the spinner and
+	// reveal the cards in the same paint over the matching theme background.
+	if (window.location.pathname === "/" || window.__IDU_MOCK_DATA) {
+		const header = document.getElementById("idu-header-root");
+		const widgets = document.querySelectorAll("#content .widgets-grid > .widget");
+		if (header && widgets.length) {
+			if (dashboardHandoffScheduled) return;
+			dashboardHandoffScheduled = true;
+			const reveal = () => {
+				finishLoading();
+				revealDashboard(header, widgets);
+			};
+			if (documentElement.dataset?.appPlatform === "ios" &&
+				documentElement.classList.contains("idu-loading")) {
+				afterIosDashboardPaint(() => {
+					// If the safety deadline already exposed the page, leave it visible.
+					if (documentElement.classList.contains("idu-loading")) reveal();
+				});
+			} else if (documentElement.dataset?.appPlatform !== "ios" ||
+				!documentElement.classList.contains("idu-ready")) {
+				reveal();
+			}
+			return;
+		}
+	}
+
+	if (documentElement.classList.contains("idu-ready") ||
+		documentElement.classList.contains("idu-loader-fading")) {
+		return;
+	}
 
 	if (loaderDuration < 500) {
 		finishLoading();

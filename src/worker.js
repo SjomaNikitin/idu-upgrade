@@ -37,7 +37,7 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 				document.documentElement?.classList.remove("idu-loading", "idu-loader-fading");
 				document.getElementById("loader")?.remove();
 				window.__iduVisualLoaderTimeoutId = undefined;
-			}, 1000);
+			}, window.location?.pathname === "/" ? 8000 : 1000);
 			document.documentElement?.classList.add("idu-loading");
 		}
 		try {

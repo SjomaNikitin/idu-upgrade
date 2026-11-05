@@ -1425,18 +1425,35 @@ html.idu-loader-fading::after {
 		top: 0;
 		z-index: 1000;
 		width: 100%;
+		background: transparent;
+		transition: transform 220ms ease;
+		will-change: transform;
+	}
+
+	#idu-header-root::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
 		background: var(--background-color);
 		background: color-mix(in srgb, var(--background-color) 50%, transparent);
 		-webkit-backdrop-filter: blur(18px);
 		backdrop-filter: blur(18px);
-		transition: transform 220ms ease;
-		will-change: transform;
+		-webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 16px), transparent 100%);
+		mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 16px), transparent 100%);
+		opacity: 1;
+		transition: opacity 320ms ease;
 	}
 
 	#idu-header-root.is-scroll-hidden,
 	#idu-header-root.is-edit-hidden {
 		transform: translateY(-100%);
 		pointer-events: none;
+	}
+
+	#idu-header-root.idu-dashboard-entering::before {
+		opacity: 0;
 	}
 
 	html[data-app-platform="ios"] #idu-header-root {
@@ -1457,6 +1474,7 @@ html.idu-loader-fading::after {
 		background: transparent;
 		overflow: visible;
 		position: relative;
+		z-index: 1;
 		padding: var(--padding-2);
 	}
 
