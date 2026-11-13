@@ -1042,6 +1042,7 @@ html.idu-loader-fading::after {
 		border-color: var(--module-border-color);
 		border-radius: 5px;
 		background: var(--background-color);
+		color: var(--main-text-color) !important;
 	}
 
 
