@@ -37,7 +37,7 @@
 </header>
 <main id="main">
 <section class="container page-hero">
-<p class="eyebrow">OBOWIĄZUJE OD 6 SIERPNIA 2026</p>
+<p class="eyebrow">OBOWIĄZUJE OD 13 LISTOPADA 2026</p>
 <h1>Polityka prywatności</h1>
 <p class="lead">Polityka prywatności aplikacji NIDU. Dowiedz się, jakie dane są potrzebne aplikacji, jak przepływają i jak możesz je usunąć.</p>
 </section>
@@ -61,7 +61,7 @@
         <h2>2. Jakie dane przetwarza aplikacja</h2>
         <p>NIDU umożliwia dostęp do danych pochodzących z zewnętrznego szkolnego systemu IDU. W zależności od zawartości konta mogą to być między innymi:</p>
         <ul>
-          <li>dane logowania podane przez użytkownika,</li>
+          <li>dane logowania wpisywane przez użytkownika na stronie logowania IDU,</li>
           <li>plan lekcji, oceny, frekwencja i zadania domowe,</li>
           <li>wiadomości, ogłoszenia i informacje związane z kontem szkolnym,</li>
           <li>ustawienia aplikacji, takie jak wybrany motyw i układ panelu,</li>
@@ -72,13 +72,14 @@
 
       <section>
         <h2>3. Logowanie i przepływ danych</h2>
-        <p>Ruch sieciowy aplikacji przechodzi przez usługę techniczną NIDU i jest przekazywany do szkolnego systemu IDU w celu wykonania żądania użytkownika. Oznacza to, że dane logowania i dane szkolne są przetwarzane w trakcie transmisji. NIDU nie tworzy oddzielnego konta użytkownika i nie prowadzi własnej bazy kont szkolnych.</p>
-        <p>Jeśli użytkownik włączy automatyczne logowanie, login i hasło mogą zostać zapisane lokalnie w przestrzeni danych witryny na urządzeniu. Funkcja jest opcjonalna.</p>
+        <p>Aplikacja łączy się bezpośrednio ze szkolnym systemem IDU. Login, hasło i dane szkolne są przesyłane szyfrowanym połączeniem HTTPS między urządzeniem a IDU i nie przechodzą przez serwery NIDU. Wygląd NIDU jest nakładany na stronę IDU na urządzeniu użytkownika, a dane szkolne są przetwarzane tylko lokalnie, w celu ich wyświetlenia.</p>
+        <p>Do działania aplikacja pobiera z serwera NIDU wyłącznie pliki interfejsu (skrypt i arkusz stylów). Te pliki nie zawierają danych użytkownika, a ich pobranie nie przekazuje NIDU danych logowania ani danych szkolnych. NIDU nie tworzy oddzielnego konta użytkownika i nie prowadzi własnej bazy kont szkolnych.</p>
+        <p>Aplikacja nie zapisuje loginu ani hasła na urządzeniu. Pozostawanie zalogowanym zależy od plików cookie sesji systemu IDU.</p>
       </section>
 
       <section>
         <h2>4. Dane przechowywane na urządzeniu</h2>
-        <p>Aplikacja może lokalnie przechowywać ustawienia interfejsu, dane sesji, opcjonalne dane automatycznego logowania oraz kopię planu lekcji potrzebną do działania widżetu. Dane lokalne pozostają na urządzeniu do czasu wyczyszczenia danych aplikacji lub jej odinstalowania.</p>
+        <p>Aplikacja może lokalnie przechowywać ustawienia interfejsu (motyw, układ i rozmiar widżetów), pliki cookie sesji systemu IDU, kopię pobranych plików interfejsu oraz, w aplikacji na iOS, kopię planu lekcji potrzebną do działania widżetu na ekranie głównym. Dane lokalne pozostają na urządzeniu do czasu wyczyszczenia danych aplikacji lub jej odinstalowania.</p>
         <p>NIDU nie wykorzystuje danych szkolnych do profilowania reklamowego i nie sprzedaje danych osobowych.</p>
       </section>
 
@@ -87,15 +88,16 @@
         <p>W świadczeniu usługi mogą uczestniczyć:</p>
         <ul>
           <li>operator szkolnego systemu IDU i właściwa szkoła — jako źródło danych konta,</li>
-          <li>Cloudflare — jako dostawca infrastruktury sieciowej i hostingu usługi pośredniczącej,</li>
-          <li>Apple — jako operator systemu iOS, App Store i usług systemowych.</li>
+          <li>Cloudflare — jako dostawca hostingu plików interfejsu aplikacji,</li>
+          <li>Apple — jako operator systemu iOS, App Store i usług systemowych,</li>
+          <li>Google — jako operator systemu Android, Google Play i komponentu Android System WebView.</li>
         </ul>
         <p>Podmioty te mogą przetwarzać dane zgodnie z własnymi regulaminami i politykami prywatności. NIDU nie udostępnia danych sieciom reklamowym ani brokerom danych.</p>
       </section>
 
       <section>
         <h2>6. Retencja i usuwanie danych</h2>
-        <p>Usługa pośrednicząca NIDU nie jest przeznaczona do trwałego przechowywania treści konta szkolnego ani danych logowania po zakończeniu obsługi żądania. Dostawcy infrastruktury mogą zachowywać ograniczone logi techniczne przez okres wynikający z ich zasad bezpieczeństwa i utrzymania usługi.</p>
+        <p>NIDU nie otrzymuje ani nie przechowuje na swoich serwerach treści konta szkolnego ani danych logowania. Przy pobieraniu plików interfejsu dostawca hostingu (Cloudflare) może zachowywać ograniczone logi techniczne, takie jak adres IP i czas żądania, przez okres wynikający z jego zasad bezpieczeństwa i utrzymania usługi.</p>
         <p>Aby usunąć dane zapisane przez aplikację na urządzeniu, odinstaluj NIDU. W sprawie usunięcia lub poprawienia danych znajdujących się na koncie szkolnym skontaktuj się ze szkołą lub operatorem systemu IDU. Możesz również napisać do nas, aby uzyskać pomoc dotyczącą danych przetwarzanych przez NIDU.</p>
       </section>
 
@@ -116,7 +118,7 @@
 
       <section lang="en">
         <h2>English summary</h2>
-        <p>NIDU processes sign-in details and school information only to provide access to the external IDU school service, display the user’s information, and synchronize the schedule widget. Optional auto-login details, preferences, session data, and schedule information may be stored locally on the device. Network infrastructure providers may process limited technical connection data. NIDU does not sell personal data or use school information for advertising.</p>
+        <p>NIDU connects directly to the external IDU school service. Your login, password and school information travel over HTTPS between your device and IDU and never pass through NIDU servers; school information is processed only on your device to display it and, on iOS, to update the schedule widget. NIDU servers only provide the app’s interface files (a script and a stylesheet), which contain no user data. Preferences, IDU session cookies, cached interface files and schedule information may be stored locally on the device. NIDU does not store your login or password on the device. The hosting provider (Cloudflare) may keep limited technical logs, such as IP address and request time, when the interface files are downloaded. NIDU does not sell personal data or use school information for advertising.</p>
         <p>To remove locally stored information, uninstall the app. Requests concerning source data held by the school service should be addressed to the school or IDU operator. Privacy questions can be sent to <a href="mailto:support.idu2@gmail.com?subject=NIDU%20Privacy">support.idu2@gmail.com</a>.</p>
       </section>
     </article>
