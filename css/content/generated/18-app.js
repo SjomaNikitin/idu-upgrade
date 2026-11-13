@@ -1023,6 +1023,7 @@
     let pointerPosition;
     let currentPointerPosition;
     let widgetDragTimeOut;
+    let pressFeedbackTimeout;
     let autoScrollStartTimeout;
     let autoScrollInterval;
     let autoScrollDirection = null;
@@ -1194,9 +1195,16 @@
           return;
         }
         clearTimeout(editModeTimeOut);
+        clearTimeout(pressFeedbackTimeout);
         editModeTimeOut = null;
         editModePointerId = null;
         widget.classList.remove("widget-pressing");
+      }
+      function schedulePressFeedback() {
+        clearTimeout(pressFeedbackTimeout);
+        pressFeedbackTimeout = setTimeout(() => {
+          if (!dragging) widget.classList.add("widget-pressing");
+        }, 150);
       }
       function startDragging(e3) {
         cancelEditModeActivation();
@@ -1205,7 +1213,7 @@
           editModePointerId = pointerId;
           pointerPosition = { x: e3.clientX, y: e3.clientY };
           currentPointerPosition = { x: e3.clientX, y: e3.clientY };
-          widget.classList.add("widget-pressing");
+          schedulePressFeedback();
           editModeTimeOut = setTimeout(() => {
             if (window.editMode || editModePointerId !== pointerId) return;
             editModeTimeOut = null;
@@ -1218,8 +1226,9 @@
         if (resizeRef.current) return;
         pointerPosition = { x: e3.clientX, y: e3.clientY };
         currentPointerPosition = { x: e3.clientX, y: e3.clientY };
-        widget.classList.add("widget-pressing");
+        schedulePressFeedback();
         const beginDrag = () => {
+          clearTimeout(pressFeedbackTimeout);
           if (pointerPosition.x !== currentPointerPosition.x || pointerPosition.y !== currentPointerPosition.y) {
             widget.classList.remove("widget-pressing");
             return;
@@ -1246,6 +1255,7 @@
       function stopDragging(e3) {
         cancelEditModeActivation(e3);
         clearTimeout(widgetDragTimeOut);
+        clearTimeout(pressFeedbackTimeout);
         widget.classList.remove("widget-pressing");
         setDraggingMode(false);
         if (activePointerId !== null && e3.pointerId !== activePointerId) return;
@@ -1289,11 +1299,12 @@
           ) > editModeMoveTolerance) {
             cancelEditModeActivation(e3);
           }
-          if (window.editMode && !dragging && widget.classList.contains("widget-pressing") && Math.hypot(
+          if (window.editMode && !dragging && pointerPosition && Math.hypot(
             currentPointerPosition.x - pointerPosition.x,
             currentPointerPosition.y - pointerPosition.y
           ) > editModeMoveTolerance) {
             clearTimeout(widgetDragTimeOut);
+            clearTimeout(pressFeedbackTimeout);
             widget.classList.remove("widget-pressing");
           }
         }
@@ -1320,6 +1331,7 @@
         handle.remove();
         cancelEditModeActivation();
         clearTimeout(widgetDragTimeOut);
+        clearTimeout(pressFeedbackTimeout);
         clearTimeout(visualUpdateTimer);
         clearAutoScroll();
         setDraggingMode(false);

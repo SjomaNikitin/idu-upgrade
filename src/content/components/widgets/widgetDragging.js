@@ -12,6 +12,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 	let pointerPosition;
 	let currentPointerPosition;
 	let widgetDragTimeOut;
+	let pressFeedbackTimeout;
 	let autoScrollStartTimeout;
 	let autoScrollInterval;
 	let autoScrollDirection = null;
@@ -222,9 +223,17 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			}
 
 			clearTimeout(editModeTimeOut);
+			clearTimeout(pressFeedbackTimeout);
 			editModeTimeOut = null;
 			editModePointerId = null;
 			widget.classList.remove('widget-pressing');
+		}
+
+		function schedulePressFeedback() {
+			clearTimeout(pressFeedbackTimeout);
+			pressFeedbackTimeout = setTimeout(() => {
+				if (!dragging) widget.classList.add('widget-pressing');
+			}, 150);
 		}
 
 		function startDragging(e){
@@ -234,7 +243,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 				editModePointerId = pointerId;
 				pointerPosition = {x: e.clientX , y: e.clientY };
 				currentPointerPosition = {x: e.clientX , y: e.clientY };
-				widget.classList.add('widget-pressing');
+				schedulePressFeedback();
 				editModeTimeOut = setTimeout(() => {
 					if (window.editMode || editModePointerId !== pointerId) return;
 
@@ -248,8 +257,9 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			if (resizeRef.current) return;
 			pointerPosition = {x: e.clientX , y: e.clientY };
 			currentPointerPosition = {x: e.clientX , y: e.clientY };
-			widget.classList.add('widget-pressing');
+			schedulePressFeedback();
 			const beginDrag = () => {
+				clearTimeout(pressFeedbackTimeout);
 				if (pointerPosition.x !== currentPointerPosition.x || pointerPosition.y !== currentPointerPosition.y) {
 					widget.classList.remove('widget-pressing');
 					return;
@@ -277,6 +287,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		function stopDragging (e) {
 			cancelEditModeActivation(e);
 			clearTimeout(widgetDragTimeOut);
+			clearTimeout(pressFeedbackTimeout);
 			widget.classList.remove('widget-pressing');
 			setDraggingMode(false);
 			if (activePointerId !== null && e.pointerId !== activePointerId) return;
@@ -328,13 +339,14 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 				if (
 					window.editMode &&
 					!dragging &&
-					widget.classList.contains('widget-pressing') &&
+					pointerPosition &&
 					Math.hypot(
 						currentPointerPosition.x - pointerPosition.x,
 						currentPointerPosition.y - pointerPosition.y
 					) > editModeMoveTolerance
 				) {
 					clearTimeout(widgetDragTimeOut);
+					clearTimeout(pressFeedbackTimeout);
 					widget.classList.remove('widget-pressing');
 				}
 			}
@@ -362,6 +374,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			handle.remove();
 			cancelEditModeActivation();
 			clearTimeout(widgetDragTimeOut);
+			clearTimeout(pressFeedbackTimeout);
 			clearTimeout(visualUpdateTimer);
 			clearAutoScroll();
 			setDraggingMode(false);

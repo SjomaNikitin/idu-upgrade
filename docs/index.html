@@ -1,85 +1,271 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Pomoc techniczna, odpowiedzi na najczęstsze pytania i kontakt dla użytkowników aplikacji IDU2.">
-  <meta name="theme-color" content="#315ee7">
-  <title>Pomoc IDU2</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIDU — dziennik dla uczniów</title>
+<meta name="description" content="NIDU — wygodniejszy dostęp do planu lekcji, ocen i informacji szkolnych. Poznaj dziennik stworzony przez uczniów dla uczniów.">
+<meta name="theme-color" content="#1a2024">
+<meta property="og:title" content="NIDU — dziennik dla uczniów">
+<meta property="og:description" content="NIDU — wygodniejszy dostęp do planu lekcji, ocen i informacji szkolnych. Poznaj dziennik stworzony przez uczniów dla uczniów.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<script src="site.js" defer>
+</script>
+<link rel="canonical" href="https://sjomanikitin.github.io/idu-upgrade/">
+<noscript>
+<style>@media(max-width:720px){.site-header nav{display:flex;position:static;flex-direction:column;width:100%;box-shadow:none}.header-inner{flex-wrap:wrap;padding-block:15px}.menu-toggle{display:none}}</style>
+</noscript>
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="./" aria-label="IDU2 — strona pomocy">
-      <span class="brand-mark" aria-hidden="true">IDU2</span>
-      <span>Wsparcie</span>
-    </a>
-    <nav class="site-nav" aria-label="Główna nawigacja">
-      <a href="./" aria-current="page">Pomoc</a>
-      <a href="privacy.html">Prywatność</a>
-      <a href="https://github.com/SjomaNikitin/idu-upgrade">GitHub</a>
-    </nav>
-  </header>
-
-  <main class="page-shell">
-    <section class="hero">
-      <div>
-        <p class="eyebrow">Centrum pomocy</p>
-        <h1>Jak możemy Ci pomóc?</h1>
-        <p class="hero-copy">Znajdź szybką odpowiedź, zgłoś problem lub podziel się pomysłem dotyczącym aplikacji IDU2.</p>
-        <div class="actions">
-          <a class="button button-primary" href="mailto:support.idu2@gmail.com?subject=Pomoc%20IDU2">Napisz do nas</a>
-          <a class="button button-secondary" href="https://github.com/SjomaNikitin/idu-upgrade/issues/new">Zgłoś problem na GitHubie</a>
-        </div>
-      </div>
-
-      <aside class="contact-card" aria-labelledby="contact-title">
-        <h2 id="contact-title">Kontakt</h2>
-        <p>Wsparcie techniczne i uwagi:</p>
-        <p><a href="mailto:support.idu2@gmail.com">support.idu2@gmail.com</a></p>
-        <p>Odpowiadamy w języku polskim lub angielskim.</p>
-      </aside>
-    </section>
-
-    <section class="section" aria-labelledby="faq-title">
-      <div class="section-heading">
-        <h2 id="faq-title">Najczęstsze pytania</h2>
-        <p>Zanim wyślesz zgłoszenie, wypróbuj poniższe rozwiązania.</p>
-      </div>
-
-      <div class="cards">
-        <article class="card">
-          <span class="card-number" aria-hidden="true">01</span>
-          <h3>Nie mogę się zalogować</h3>
-          <p>Sprawdź dane logowania bezpośrednio w szkolnym systemie IDU. Jeśli tam również nie działają, skontaktuj się ze szkołą lub administratorem konta.</p>
-        </article>
-        <article class="card">
-          <span class="card-number" aria-hidden="true">02</span>
-          <h3>Widżet nie pokazuje planu</h3>
-          <p>Otwórz aplikację, zaloguj się i wyświetl aktualny plan lekcji. Następnie wróć do ekranu początkowego, aby widżet mógł się odświeżyć.</p>
-        </article>
-        <article class="card">
-          <span class="card-number" aria-hidden="true">03</span>
-          <h3>Dane są nieaktualne</h3>
-          <p>IDU2 prezentuje dane dostarczane przez szkolny system. Uruchom aplikację ponownie; jeśli problem pozostaje, porównaj dane z oficjalnym portalem szkoły.</p>
-        </article>
-      </div>
-
-      <div class="notice" role="note">
-        <div>
-          <strong>Chroń swoje konto</strong>
-          Nigdy nie przesyłaj nam hasła, pełnych danych ucznia ani zrzutów ekranu zawierających poufne informacje. W zgłoszeniu podaj model iPhone’a, wersję iOS oraz krótki opis problemu.
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <p>© 2026 IDU2. Projekt niezależny.</p>
-    <div class="footer-links">
-      <a href="privacy.html">Polityka prywatności</a>
-      <a href="https://github.com/SjomaNikitin/idu-upgrade">Kod źródłowy</a>
-    </div>
-  </footer>
+<a class="skip-link" href="#main">Przejdź do treści</a>
+<header class="site-header">
+<div class="container header-inner">
+<a class="brand" href="index.html" aria-label="NIDU — strona główna">NIDU</a>
+<span class="tagline">Da się wygodniej.</span>
+<button class="menu-toggle" aria-expanded="false" aria-controls="navigation" aria-label="Otwórz menu">Menu <span aria-hidden="true">☰</span>
+</button>
+<nav id="navigation" aria-label="Główna nawigacja">
+<a href="index.html" aria-current="page">Strona główna</a>
+<a href="about.html">O nas</a>
+<a href="updates.html">Co nowego</a>
+<a class="button " href="app.html">Przejdź do aplikacji<span aria-hidden="true">↗</span>
+</a>
+</nav>
+</div>
+</header>
+<main id="main">
+<section class="container hero">
+<div class="hero-text">
+<p class="eyebrow">NIDU / TWÓJ SZKOLNY DZIEŃ</p>
+<h1>Dziennik szkolny NIDU</h1>
+<p class="lead">Masz dość ustawiania planu lekcji na tapetę? Przybliżania strony w przeglądarce, aby trafić w przycisk? Teraz to możesz szybciej zrobić dzięki NIDU!</p>
+<div class="actions">
+<a class="button " href="app.html">Przejdź do aplikacji<span aria-hidden="true">↗</span>
+</a>
+<a class="button secondary" href="updates.html">Co nowego<span aria-hidden="true">↗</span>
+</a>
+</div>
+<div class="hero-note">
+<span class="status-dot">
+</span>Mniej szukania. Więcej czasu dla siebie.</div>
+</div>
+<div class="demo-wrap">
+<div class="app-demo">
+<div class="demo-top">
+<strong>NIDU</strong>
+<span class="pill">PODGLĄD APLIKACJI</span>
+</div>
+<div class="next-lesson">
+<div class="mini-heading">Dzisiaj <span id="selected-time">08:55 — 09:40</span>
+</div>
+<h3 id="selected-subject" aria-live="polite" aria-atomic="true">Geografia</h3>
+<p id="selected-location">⌖ &nbsp; Sala 208</p>
+<div class="progress">
+<span>
+</span>
+</div>
+</div>
+<div class="demo-schedule">
+<div class="mini-heading">Twój tydzień <span>Wybierz lekcję ↙</span>
+</div>
+<div class="timetable">
+<span class="day">Pon</span>
+<span class="day">Wt</span>
+<span class="day">Śr</span>
+<span class="day">Czw</span>
+<span class="day">Pt</span>
+<button type="button" class="lesson " data-subject="Język polski" data-time="08:00 — 08:45" data-location="Sala 204" aria-label="Język polski, 1. lekcja, poniedziałek, 08:00–08:45, sala 204" aria-pressed="false">pol</button>
+<button type="button" class="lesson " data-subject="Matematyka" data-time="08:00 — 08:45" data-location="Sala 115" aria-label="Matematyka, 1. lekcja, wtorek, 08:00–08:45, sala 115" aria-pressed="false">mat</button>
+<button type="button" class="lesson " data-subject="Język angielski" data-time="08:00 — 08:45" data-location="Sala 207" aria-label="Język angielski, 1. lekcja, środa, 08:00–08:45, sala 207" aria-pressed="false">ang</button>
+<button type="button" class="lesson " data-subject="Fizyka" data-time="08:00 — 08:45" data-location="Sala 302" aria-label="Fizyka, 1. lekcja, czwartek, 08:00–08:45, sala 302" aria-pressed="false">fiz</button>
+<button type="button" class="lesson " data-subject="Historia" data-time="08:00 — 08:45" data-location="Sala 106" aria-label="Historia, 1. lekcja, piątek, 08:00–08:45, sala 106" aria-pressed="false">hist</button>
+<button type="button" class="lesson " data-subject="Wychowanie fizyczne" data-time="08:55 — 09:40" data-location="Sala 011 · hala sportowa" aria-label="Wychowanie fizyczne, 2. lekcja, poniedziałek, 08:55–09:40, sala 011, hala sportowa" aria-pressed="false">wf</button>
+<button type="button" class="lesson selected" data-subject="Geografia" data-time="08:55 — 09:40" data-location="Sala 208" aria-label="Geografia, 2. lekcja, wtorek, 08:55–09:40, sala 208" aria-pressed="true">geo</button>
+<button type="button" class="lesson " data-subject="Biologia" data-time="08:55 — 09:40" data-location="Sala 301" aria-label="Biologia, 2. lekcja, środa, 08:55–09:40, sala 301" aria-pressed="false">bio</button>
+<button type="button" class="lesson " data-subject="Informatyka" data-time="08:55 — 09:40" data-location="Sala 214" aria-label="Informatyka, 2. lekcja, czwartek, 08:55–09:40, sala 214" aria-pressed="false">inf</button>
+<button type="button" class="lesson " data-subject="Język polski" data-time="08:55 — 09:40" data-location="Sala 204" aria-label="Język polski, 2. lekcja, piątek, 08:55–09:40, sala 204" aria-pressed="false">pol</button>
+<button type="button" class="lesson " data-subject="Matematyka" data-time="09:50 — 10:35" data-location="Sala 115" aria-label="Matematyka, 3. lekcja, poniedziałek, 09:50–10:35, sala 115" aria-pressed="false">mat</button>
+<button type="button" class="lesson " data-subject="Język angielski" data-time="09:50 — 10:35" data-location="Sala 207" aria-label="Język angielski, 3. lekcja, wtorek, 09:50–10:35, sala 207" aria-pressed="false">ang</button>
+<button type="button" class="lesson " data-subject="Fizyka" data-time="09:50 — 10:35" data-location="Sala 302" aria-label="Fizyka, 3. lekcja, środa, 09:50–10:35, sala 302" aria-pressed="false">fiz</button>
+<button type="button" class="lesson " data-subject="Historia" data-time="09:50 — 10:35" data-location="Sala 106" aria-label="Historia, 3. lekcja, czwartek, 09:50–10:35, sala 106" aria-pressed="false">hist</button>
+<button type="button" class="lesson " data-subject="Wychowanie fizyczne" data-time="09:50 — 10:35" data-location="Sala 011 · hala sportowa" aria-label="Wychowanie fizyczne, 3. lekcja, piątek, 09:50–10:35, sala 011, hala sportowa" aria-pressed="false">wf</button>
+<button type="button" class="lesson " data-subject="Chemia" data-time="10:45 — 11:30" data-location="Sala 303" aria-label="Chemia, 4. lekcja, poniedziałek, 10:45–11:30, sala 303" aria-pressed="false">chem</button>
+<button type="button" class="lesson " data-subject="Biologia" data-time="10:45 — 11:30" data-location="Sala 301" aria-label="Biologia, 4. lekcja, wtorek, 10:45–11:30, sala 301" aria-pressed="false">bio</button>
+<button type="button" class="lesson " data-subject="Wychowanie fizyczne" data-time="10:45 — 11:30" data-location="Sala 011 · hala sportowa" aria-label="Wychowanie fizyczne, 4. lekcja, środa, 10:45–11:30, sala 011, hala sportowa" aria-pressed="false">wf</button>
+<button type="button" class="lesson " data-subject="Język polski" data-time="10:45 — 11:30" data-location="Sala 204" aria-label="Język polski, 4. lekcja, czwartek, 10:45–11:30, sala 204" aria-pressed="false">pol</button>
+<button type="button" class="lesson " data-subject="Matematyka" data-time="10:45 — 11:30" data-location="Sala 115" aria-label="Matematyka, 4. lekcja, piątek, 10:45–11:30, sala 115" aria-pressed="false">mat</button>
+<button type="button" class="lesson " data-subject="Język angielski" data-time="11:40 — 12:25" data-location="Sala 207" aria-label="Język angielski, 5. lekcja, poniedziałek, 11:40–12:25, sala 207" aria-pressed="false">ang</button>
+<button type="button" class="lesson " data-subject="Informatyka" data-time="11:40 — 12:25" data-location="Sala 214" aria-label="Informatyka, 5. lekcja, wtorek, 11:40–12:25, sala 214" aria-pressed="false">inf</button>
+<button type="button" class="lesson " data-subject="Matematyka" data-time="11:40 — 12:25" data-location="Sala 115" aria-label="Matematyka, 5. lekcja, środa, 11:40–12:25, sala 115" aria-pressed="false">mat</button>
+<button type="button" class="lesson " data-subject="Wychowanie fizyczne" data-time="11:40 — 12:25" data-location="Sala 011 · hala sportowa" aria-label="Wychowanie fizyczne, 5. lekcja, czwartek, 11:40–12:25, sala 011, hala sportowa" aria-pressed="false">wf</button>
+<button type="button" class="lesson " data-subject="Geografia" data-time="11:40 — 12:25" data-location="Sala 208" aria-label="Geografia, 5. lekcja, piątek, 11:40–12:25, sala 208" aria-pressed="false">geo</button>
+</div>
+</div>
+<div class="demo-bottom">
+<div>
+<span>▤</span>
+<strong>Przedmioty<small>Wszystko pod ręką</small>
+</strong>
+</div>
+<div>
+<span>✧</span>
+<strong>Oceny<small>Jasno i przejrzyście</small>
+</strong>
+</div>
+</div>
+</div>
+<p class="demo-caption">Przykładowe dane · kliknij lekcję i sprawdź podgląd</p>
+<span class="orbit orbit-one" aria-hidden="true">✳</span>
+</div>
+</section>
+<section class="features section">
+<div class="container">
+<div class="section-heading">
+<p class="eyebrow">MNIEJ KLIKANIA, WIĘCEJ ŻYCIA</p>
+<h2>Dziennik internetowy w NIDU</h2>
+</div>
+<div class="feature-grid">
+<article class="feature-card">
+<div class="card-label">PLAN LEKCJI <span>↗</span>
+</div>
+<div class="feature-visual">
+<div class="timetable">
+<span class="day">Pon</span>
+<span class="day">Wt</span>
+<span class="day">Śr</span>
+<span class="day">Czw</span>
+<span class="day">Pt</span>
+<span class="lesson ">pol</span>
+<span class="lesson ">mat</span>
+<span class="lesson ">ang</span>
+<span class="lesson ">fiz</span>
+<span class="lesson ">hist</span>
+<span class="lesson ">wf</span>
+<span class="lesson selected">geo</span>
+<span class="lesson ">bio</span>
+<span class="lesson ">inf</span>
+<span class="lesson ">pol</span>
+<span class="lesson ">mat</span>
+<span class="lesson ">ang</span>
+<span class="lesson ">fiz</span>
+<span class="lesson ">hist</span>
+<span class="lesson ">wf</span>
+<span class="lesson ">chem</span>
+<span class="lesson ">bio</span>
+<span class="lesson ">wf</span>
+<span class="lesson ">pol</span>
+<span class="lesson ">mat</span>
+<span class="lesson ">ang</span>
+<span class="lesson ">inf</span>
+<span class="lesson ">mat</span>
+<span class="lesson ">wf</span>
+<span class="lesson ">geo</span>
+</div>
+</div>
+<h3>Plan lekcji bez przybliżania.</h3>
+<p>Dopasowany widok planu oraz jasne oznaczenia zajęć. Wszystko czytelne na telefonie i dużym ekranie.</p>
+</article>
+<article class="feature-card">
+<div class="card-label">PRZEDMIOTY <span>↗</span>
+</div>
+<div class="feature-visual subject-visual">
+<span class="fine">TWOJE PRZEDMIOTY</span>
+<div class="subject-pills">
+<span>język polski</span>
+<span>matematyka</span>
+<span>fizyka</span>
+<span>geografia</span>
+<span>biologia</span>
+<span>historia</span>
+<span>informatyka</span>
+</div>
+</div>
+<h3>Uporządkowane przedmioty, łatwe do znalezienia.</h3>
+<p>Teraz już nie musisz znajdywać przedmiotu na długiej liście!</p>
+</article>
+<article class="feature-card">
+<div class="card-label">OCENY <span>↗</span>
+</div>
+<div class="feature-visual grades">
+<div>
+<span>Matematyka</span>
+<strong>5</strong>
+<strong>4+</strong>
+<strong>5−</strong>
+</div>
+<div>
+<span>Język polski</span>
+<strong>5</strong>
+<strong>4+</strong>
+<strong>5−</strong>
+</div>
+<div>
+<span>Język angielski</span>
+<strong>5</strong>
+<strong>4+</strong>
+<strong>5−</strong>
+</div>
+</div>
+<h3>Teraz oceny są czytelne!</h3>
+<p>Szybko odczytasz, co dostałeś. Dostępne różne rozmiary widżetów.</p>
+</article>
+<article class="feature-card">
+<div class="card-label">AKTUALNOŚCI <span>↗</span>
+</div>
+<div class="feature-visual announcements">
+<div>
+<time>12<small>paź</small>
+</time>
+<span>Dzień projektów uczniowskich<small>Wydarzenie · wpis przykładowy</small>
+</span>
+</div>
+<div>
+<time>16<small>paź</small>
+</time>
+<span>Spotkanie koła naukowego<small>Ogłoszenie · wpis przykładowy</small>
+</span>
+</div>
+</div>
+<h3>Wszystkie aktualności w ładnym formacie.</h3>
+<p>Duża lista, czytelny tytuł. Najważniejsze informacje zawsze pod ręką.</p>
+</article>
+</div>
+</div>
+</section>
+<section class="cta mint">
+<div class="container">
+<div>
+<span class="eyebrow">NIDU</span>
+<h2>Da się wygodniej.</h2>
+</div>
+<a class="button " href="app.html">Przejdź do aplikacji<span aria-hidden="true">↗</span>
+</a>
+</div>
+</section>
+</main>
+<footer>
+<div class="container footer-grid">
+<div>
+<a class="brand" href="index.html">NIDU</a>
+<p>Wszystko w jednym miejscu.</p>
+<span class="fine">© 2026 NIDU · Projekt niezależny.</span>
+</div>
+<div>
+<span class="footer-label">ODKRYJ NIDU</span>
+<a href="index.html">Strona główna</a>
+<a href="about.html">O nas</a>
+<a href="updates.html">Co nowego</a>
+</div>
+<div>
+<span class="footer-label">JESTEŚMY POD RĘKĄ</span>
+<a href="app.html">Zacznij z NIDU ↗</a>
+<a href="support.html">Pomoc i kontakt</a>
+<a href="privacy.html">Polityka prywatności</a>
+<a href="https://github.com/SjomaNikitin/idu-upgrade">GitHub ↗</a>
+</div>
+</div>
+</footer>
 </body>
 </html>
