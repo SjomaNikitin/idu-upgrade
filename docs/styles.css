@@ -1371,3 +1371,30 @@ footer .fine {
 main {
   overflow-x: clip;
 }
+
+/* Inline SVG icons (replace text glyphs that iOS renders as emoji) */
+.icon {
+  width:1em;
+  height:1em;
+  display:inline-block;
+  vertical-align:-.125em;
+  flex-shrink:0;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  overflow:visible
+}
+.icon-fill {
+  fill:currentColor;
+  stroke:none
+}
+.button span,.card-label span,.row-arrow,.big-arrow,.orbit,.portrait i,.search>span,.demo-bottom>div>span,.menu-toggle span {
+  display:inline-flex;
+  align-items:center;
+  line-height:1
+}
+#selected-location .icon {
+  margin-right:2px
+}

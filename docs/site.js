@@ -15,7 +15,7 @@ document.querySelectorAll('button.lesson').forEach(button => button.addEventList
  button.setAttribute('aria-pressed', 'true');
  document.querySelector('#selected-subject').textContent = button.dataset.subject;
  document.querySelector('#selected-time').textContent = button.dataset.time;
- document.querySelector('#selected-location').textContent = `⌖  ${button.dataset.location}`;
+ document.querySelector('#selected-location-text').textContent = button.dataset.location;
 }));
 const featuredVideo = document.querySelector('[data-featured-video]');
 if (featuredVideo) {
