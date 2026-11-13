@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { DROP_DURATION, DROP_EASING, getSettledRect, prefersReducedMotion } from './widgetMotion.js';
+import { GRID_COLUMNS, getWidgetSpan, pickDropOrder } from './widgetLayout.js';
 
 export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZoneRef, moveWidget, widgetID) {
 	let dragging = false;
@@ -47,49 +48,46 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		handle.className = 'widget-drag-handle';
 		widget.appendChild(handle);
 
-		function updateLayout () {
-			const widgets = document.querySelectorAll("div.widget");
-			let betWidgetIndex = -1;
-			let bestWidgetOverlap = 0;
-			const currentWidgetIndex = Array.from(widgets).findIndex(
-				(widget) => widget.dataset.widgetId === widgetID
-			);
-			for (let i=0; i< widgets.length; i++) {
-				const overlapArea = getOverlapArea(widgetClone, widgets[i]);
-				if (overlapArea > bestWidgetOverlap) {
-					bestWidgetOverlap = overlapArea;
-					betWidgetIndex = i;
-				}
-			}
-
-			if (betWidgetIndex < 0) return;
-			if (currentWidgetIndex < betWidgetIndex && widthRef.current > getCellSize() * 2) {
-				if(!widgets[betWidgetIndex + 1]) {return null}
-				moveWidget(widgetID, widgets[betWidgetIndex + 1].dataset.widgetId);
-			} else if (currentWidgetIndex !== betWidgetIndex) {
-				moveWidget(widgetID, widgets[betWidgetIndex].dataset.widgetId);
-			}
+		function getGridMetrics(grid) {
+			const rect = grid.getBoundingClientRect();
+			const style = getComputedStyle(grid);
+			const padLeft = parseFloat(style.paddingLeft) || 0;
+			const padRight = parseFloat(style.paddingRight) || 0;
+			const padTop = parseFloat(style.paddingTop) || 0;
+			const colGap = parseFloat(style.columnGap) || 16;
+			const rowGap = parseFloat(style.rowGap) || colGap;
+			const contentWidth = grid.clientWidth - padLeft - padRight;
+			const colWidth = (contentWidth - colGap * (GRID_COLUMNS - 1)) / GRID_COLUMNS;
+			const rowHeight = parseFloat(style.gridAutoRows) || colWidth;
+			return {
+				left: rect.left + grid.clientLeft + padLeft,
+				top: rect.top + grid.clientTop + padTop,
+				colPitch: colWidth + colGap,
+				rowPitch: rowHeight + rowGap,
+				colGap,
+				rowGap,
+			};
 		}
 
-		function getOverlapArea(el1, el2) {
-			const r1 = el1.getBoundingClientRect();
-			// Use the slot a widget is heading to, not where a reflow animation
-			// currently has it, so targets don't flicker mid-animation.
-			const r2 = getSettledRect(el2);
-			let newRight = r1.left + getPreviewSize(2, 2, getCellSize(), 16).width;
-			let newBottom= r1.top + getPreviewSize(2, 2, getCellSize(), 16).height;
+		// Try every position for the dragged widget and use the order whose
+		// slot is closest to where it's being held (see pickDropOrder).
+		function updateLayout () {
+			const grid = widget.parentElement;
+			if (!grid || !widgetClone) return;
+			const els = Array.from(grid.children).filter((el) => el.classList.contains('widget'));
+			const items = els.map((el) => ({ id: el.dataset.widgetId, ...getWidgetSpan(el) }));
+			const currentIndex = items.findIndex((item) => item.id === widgetID);
+			if (currentIndex < 0) return;
 
-			const overlapWidth = Math.max(
-				0,
-				Math.min(newRight, r2.right) - Math.max(r1.left, r2.left)
-			);
+			const m = getGridMetrics(grid);
+			const clone = widgetClone.getBoundingClientRect();
+			const target = {
+				x: (clone.left + clone.width / 2 - m.left + m.colGap / 2) / m.colPitch,
+				y: (clone.top + clone.height / 2 - m.top + m.rowGap / 2) / m.rowPitch,
+			};
 
-			const overlapHeight = Math.max(
-				0,
-				Math.min(newBottom, r2.bottom) - Math.max(r1.top, r2.top)
-			);
-
-			return overlapWidth * overlapHeight;
+			const order = pickDropOrder(items, widgetID, target);
+			if (order) moveWidget(widgetID, order);
 		}
 
 		function setClonePosition(clientX, clientY) {

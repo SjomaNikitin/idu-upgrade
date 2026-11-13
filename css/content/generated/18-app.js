@@ -1050,6 +1050,109 @@
     };
   }
 
+  // src/content/components/widgets/widgetLayout.js
+  var GRID_COLUMNS = 4;
+  function layoutGrid(items, columns = GRID_COLUMNS) {
+    const occupied = [];
+    const isFree = (row2, col2, w3, h3) => {
+      for (let r3 = row2; r3 < row2 + h3; r3++) {
+        const line = occupied[r3];
+        if (!line) continue;
+        for (let c3 = col2; c3 < col2 + w3; c3++) {
+          if (line[c3]) return false;
+        }
+      }
+      return true;
+    };
+    const fill = (row2, col2, w3, h3) => {
+      for (let r3 = row2; r3 < row2 + h3; r3++) {
+        occupied[r3] ||= new Array(columns).fill(false);
+        for (let c3 = col2; c3 < col2 + w3; c3++) occupied[r3][c3] = true;
+      }
+    };
+    const placements = /* @__PURE__ */ new Map();
+    let row = 0;
+    let col = 0;
+    for (const item of items) {
+      const w3 = Math.min(Math.max(1, item.w | 0), columns);
+      const h3 = Math.max(1, item.h | 0);
+      for (; ; ) {
+        if (col + w3 > columns) {
+          row++;
+          col = 0;
+          continue;
+        }
+        if (isFree(row, col, w3, h3)) break;
+        col++;
+      }
+      fill(row, col, w3, h3);
+      placements.set(item.id, { col, row, w: w3, h: h3 });
+      col += w3;
+    }
+    return { placements, rows: occupied.length, gaps: countGaps(occupied, columns) };
+  }
+  function countGaps(occupied, columns) {
+    let gaps = 0;
+    for (let r3 = 0; r3 < occupied.length - 1; r3++) {
+      for (let c3 = 0; c3 < columns; c3++) {
+        if (!occupied[r3]?.[c3]) gaps++;
+      }
+    }
+    return gaps;
+  }
+  function moveTo(list, item, index) {
+    const rest = list.filter((other) => other !== item);
+    rest.splice(index, 0, item);
+    return rest;
+  }
+  function pickDropOrder(items, draggedId, target, options = {}) {
+    const {
+      gapPenalty = 1,
+      repairPenalty = 0.35,
+      repairDistancePenalty = 0.08,
+      stickiness = 0.35
+    } = options;
+    const dragged = items.find((item) => item.id === draggedId);
+    if (!dragged) return null;
+    const currentKey = items.map((item) => item.id).join("|");
+    const current = layoutGrid(items).placements;
+    let best = null;
+    const consider = (order, repaired) => {
+      const { placements, gaps } = layoutGrid(order);
+      const slot = placements.get(draggedId);
+      let score = Math.hypot(slot.col + slot.w / 2 - target.x, slot.row + slot.h / 2 - target.y);
+      score += gaps * gapPenalty;
+      if (repaired) {
+        const before = current.get(repaired.id);
+        const after = placements.get(repaired.id);
+        score += repairPenalty + repairDistancePenalty * Math.hypot(after.col - before.col, after.row - before.row);
+      }
+      const key = order.map((item) => item.id).join("|");
+      if (key === currentKey) score -= stickiness;
+      if (!best || score < best.score - 1e-6) best = { score, key, order, gaps };
+      return gaps;
+    };
+    for (let index = 0; index < items.length; index++) {
+      const order = moveTo(items, dragged, index);
+      const gaps = consider(order, null);
+      if (gaps === 0) continue;
+      for (const other of order) {
+        if (other === dragged) continue;
+        for (let j3 = 0; j3 < order.length; j3++) {
+          if (order[j3] === other) continue;
+          consider(moveTo(order, other, j3), other);
+        }
+      }
+    }
+    if (!best || best.key === currentKey) return null;
+    return best.order.map((item) => item.id);
+  }
+  function getWidgetSpan(el) {
+    const w3 = Number(/(?:^|\s)w(\d+)(?:\s|$)/.exec(el.className)?.[1]) || 2;
+    const h3 = Number(/(?:^|\s)h(\d+)(?:\s|$)/.exec(el.className)?.[1]) || 2;
+    return { w: w3, h: h3 };
+  }
+
   // src/content/components/widgets/widgetDragging.js
   function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZoneRef, moveWidget2, widgetID) {
     let dragging = false;
@@ -1091,44 +1194,41 @@
       const handle = document.createElement("span");
       handle.className = "widget-drag-handle";
       widget.appendChild(handle);
-      function updateLayout() {
-        const widgets = document.querySelectorAll("div.widget");
-        let betWidgetIndex = -1;
-        let bestWidgetOverlap = 0;
-        const currentWidgetIndex = Array.from(widgets).findIndex(
-          (widget2) => widget2.dataset.widgetId === widgetID
-        );
-        for (let i3 = 0; i3 < widgets.length; i3++) {
-          const overlapArea = getOverlapArea(widgetClone, widgets[i3]);
-          if (overlapArea > bestWidgetOverlap) {
-            bestWidgetOverlap = overlapArea;
-            betWidgetIndex = i3;
-          }
-        }
-        if (betWidgetIndex < 0) return;
-        if (currentWidgetIndex < betWidgetIndex && widthRef.current > getCellSize() * 2) {
-          if (!widgets[betWidgetIndex + 1]) {
-            return null;
-          }
-          moveWidget2(widgetID, widgets[betWidgetIndex + 1].dataset.widgetId);
-        } else if (currentWidgetIndex !== betWidgetIndex) {
-          moveWidget2(widgetID, widgets[betWidgetIndex].dataset.widgetId);
-        }
+      function getGridMetrics(grid) {
+        const rect = grid.getBoundingClientRect();
+        const style = getComputedStyle(grid);
+        const padLeft = parseFloat(style.paddingLeft) || 0;
+        const padRight = parseFloat(style.paddingRight) || 0;
+        const padTop = parseFloat(style.paddingTop) || 0;
+        const colGap = parseFloat(style.columnGap) || 16;
+        const rowGap = parseFloat(style.rowGap) || colGap;
+        const contentWidth = grid.clientWidth - padLeft - padRight;
+        const colWidth = (contentWidth - colGap * (GRID_COLUMNS - 1)) / GRID_COLUMNS;
+        const rowHeight = parseFloat(style.gridAutoRows) || colWidth;
+        return {
+          left: rect.left + grid.clientLeft + padLeft,
+          top: rect.top + grid.clientTop + padTop,
+          colPitch: colWidth + colGap,
+          rowPitch: rowHeight + rowGap,
+          colGap,
+          rowGap
+        };
       }
-      function getOverlapArea(el1, el2) {
-        const r1 = el1.getBoundingClientRect();
-        const r22 = getSettledRect(el2);
-        let newRight = r1.left + getPreviewSize2(2, 2, getCellSize(), 16).width;
-        let newBottom = r1.top + getPreviewSize2(2, 2, getCellSize(), 16).height;
-        const overlapWidth = Math.max(
-          0,
-          Math.min(newRight, r22.right) - Math.max(r1.left, r22.left)
-        );
-        const overlapHeight = Math.max(
-          0,
-          Math.min(newBottom, r22.bottom) - Math.max(r1.top, r22.top)
-        );
-        return overlapWidth * overlapHeight;
+      function updateLayout() {
+        const grid = widget.parentElement;
+        if (!grid || !widgetClone) return;
+        const els = Array.from(grid.children).filter((el) => el.classList.contains("widget"));
+        const items = els.map((el) => ({ id: el.dataset.widgetId, ...getWidgetSpan(el) }));
+        const currentIndex = items.findIndex((item) => item.id === widgetID);
+        if (currentIndex < 0) return;
+        const m3 = getGridMetrics(grid);
+        const clone = widgetClone.getBoundingClientRect();
+        const target = {
+          x: (clone.left + clone.width / 2 - m3.left + m3.colGap / 2) / m3.colPitch,
+          y: (clone.top + clone.height / 2 - m3.top + m3.rowGap / 2) / m3.rowPitch
+        };
+        const order = pickDropOrder(items, widgetID, target);
+        if (order) moveWidget2(widgetID, order);
       }
       function setClonePosition(clientX, clientY) {
         if (!widgetClone) return;
@@ -2902,6 +3002,13 @@
     }
     return updated;
   }
+  function reorderWidgets(list, orderedIds) {
+    const byId = new Map(list.map((widget) => [widget.id, widget]));
+    const ordered = orderedIds.map((id) => byId.get(id)).filter(Boolean);
+    if (ordered.length !== list.length) return list;
+    const unchanged = ordered.every((widget, index) => widget === list[index]);
+    return unchanged ? list : ordered;
+  }
   function PlaceholderWidget({ widgetId, width = 2, height = 2 }) {
     return /* @__PURE__ */ k("div", { "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { width: "100%", height: "100%" } }));
   }
@@ -2990,7 +3097,7 @@
         }
         reflowSnapshotRef.current = snapshot;
       }
-      setWidgets((currentWidgets) => moveWidget(currentWidgets, movedId, targetId));
+      setWidgets((currentWidgets) => Array.isArray(targetId) ? reorderWidgets(currentWidgets, targetId) : moveWidget(currentWidgets, movedId, targetId));
     }
     function renderWidget(widget) {
       const WidgetComponent = widgetRegistry[widget.type];

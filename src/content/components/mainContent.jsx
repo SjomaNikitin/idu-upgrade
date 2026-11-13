@@ -69,6 +69,14 @@ function moveWidget(list, movedId, targetId) {
 	return updated;
 }
 
+function reorderWidgets(list, orderedIds) {
+	const byId = new Map(list.map((widget) => [widget.id, widget]));
+	const ordered = orderedIds.map((id) => byId.get(id)).filter(Boolean);
+	if (ordered.length !== list.length) return list;
+	const unchanged = ordered.every((widget, index) => widget === list[index]);
+	return unchanged ? list : ordered;
+}
+
 function PlaceholderWidget({ widgetId, width = 2, height = 2 }) {
 	return (
 		<div data-widget-id={widgetId} className={`widget w${width} h${height}`}>
@@ -171,6 +179,8 @@ export function MainContent({data}) {
 		}
 	}, [widgets]);
 
+	// targetId is either the id of the widget whose place the moved widget
+	// takes, or a full array of widget ids in their new order.
 	function handleMoveWidget(movedId, targetId) {
 		const grid = gridRef.current;
 		if (grid) {
@@ -182,7 +192,9 @@ export function MainContent({data}) {
 			}
 			reflowSnapshotRef.current = snapshot;
 		}
-		setWidgets((currentWidgets) => moveWidget(currentWidgets, movedId, targetId));
+		setWidgets((currentWidgets) => Array.isArray(targetId)
+			? reorderWidgets(currentWidgets, targetId)
+			: moveWidget(currentWidgets, movedId, targetId));
 	}
 
 	function renderWidget(widget) {
