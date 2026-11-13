@@ -2114,6 +2114,15 @@ html.idu-loader-fading::after {
 		box-shadow: 0 10px 24px color-mix(in srgb, var(--module-shadow-color) 72%, transparent);
 	}
 
+	.widget[data-drag-placeholder] > .inner-widget{
+		opacity: 0.3;
+	}
+
+	.widget[data-drag-placeholder] > .inner-widget *{
+		opacity: 0 !important;
+		transition: none !important;
+	}
+
 	.inner-widget *{
 		user-select: none;
 		-webkit-user-select: none;
@@ -2130,6 +2139,14 @@ html.idu-loader-fading::after {
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 24%, transparent),
 			0 10px 28px color-mix(in srgb, var(--module-shadow-color) 72%, transparent);
+	}
+
+	.widget-clone.widget-clone-dropping{
+		pointer-events: none;
+		background: var(--module-color);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, white 12%, transparent),
+			0 2px 8px color-mix(in srgb, var(--module-shadow-color) 40%, transparent);
 	}
 
 	html.dragging-widget,

@@ -28,6 +28,7 @@ a {
 }
 button,input {
   font:inherit
+
 }
 button,a,input,summary {
   -webkit-tap-highlight-color:transparent

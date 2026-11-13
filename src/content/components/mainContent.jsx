@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { Grades } from './widgets/grades.jsx';
 import { Subjects } from './widgets/subjects.jsx';
 import { Schedule } from './widgets/schedule.jsx';
@@ -10,6 +10,7 @@ import { Messages } from './widgets/messages.jsx';
 import { ComingEvents } from './widgets/comingEvents.jsx';
 import { LastReviews } from './widgets/lastReviews.jsx';
 import { LastHomeWork } from './widgets/lastHomeWork.jsx';
+import { REFLOW_DURATION, REFLOW_EASING, prefersReducedMotion } from './widgets/widgetMotion.js';
 
 window.editMode = false;
 const widgetRegistry = {
@@ -105,6 +106,9 @@ export function MainContent({data}) {
 	const [widgets, setWidgets] = useState(loadWidgetLayout);
 	const [openPopupId, setOpenPopupId] = useState(null);
 	const popupContainerRef = useRef(null);
+	const gridRef = useRef(null);
+	// Where each widget was on screen right before a reorder (FLIP "first").
+	const reflowSnapshotRef = useRef(null);
 
 	useEffect(() => {
 		saveWidgetLayout(widgets);
@@ -128,7 +132,56 @@ export function MainContent({data}) {
 		};
 	}, [openPopupId]);
 
+	// Animate widgets sliding to their new slots after a reorder (FLIP).
+	useLayoutEffect(() => {
+		const before = reflowSnapshotRef.current;
+		reflowSnapshotRef.current = null;
+		const grid = gridRef.current;
+		if (!before || !grid || prefersReducedMotion()) return;
+
+		const moved = [];
+		for (const el of grid.children) {
+			const prev = before.get(el.dataset.widgetId);
+			if (!prev) continue;
+			// Measure the new slot without any in-flight animation.
+			el.style.transition = 'none';
+			el.style.transform = '';
+			const next = el.getBoundingClientRect();
+			const dx = prev.left - next.left;
+			const dy = prev.top - next.top;
+			if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+				el.style.transition = '';
+				continue;
+			}
+			el.style.transform = `translate(${dx}px, ${dy}px)`;
+			moved.push(el);
+		}
+		if (!moved.length) return;
+
+		grid.offsetWidth; // commit the inverted positions before playing
+		for (const el of moved) {
+			el.style.transition = `transform ${REFLOW_DURATION}ms ${REFLOW_EASING}`;
+			el.style.transform = '';
+			const cleanup = (e) => {
+				if (e && (e.target !== el || e.propertyName !== 'transform')) return;
+				el.removeEventListener('transitionend', cleanup);
+				if (!el.style.transform) el.style.transition = '';
+			};
+			el.addEventListener('transitionend', cleanup);
+		}
+	}, [widgets]);
+
 	function handleMoveWidget(movedId, targetId) {
+		const grid = gridRef.current;
+		if (grid) {
+			// Visual rects (including any running animation) so an interrupted
+			// reflow continues smoothly from where it is.
+			const snapshot = new Map();
+			for (const el of grid.children) {
+				snapshot.set(el.dataset.widgetId, el.getBoundingClientRect());
+			}
+			reflowSnapshotRef.current = snapshot;
+		}
 		setWidgets((currentWidgets) => moveWidget(currentWidgets, movedId, targetId));
 	}
 
@@ -158,7 +211,7 @@ export function MainContent({data}) {
 
 	return (
 		<div>
-			<div className="widgets-grid">
+			<div className="widgets-grid" ref={gridRef}>
 				{widgets.map(renderWidget)}
 			</div>
 		</div>

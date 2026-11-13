@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { DROP_DURATION, DROP_EASING, getSettledRect, prefersReducedMotion } from './widgetMotion.js';
 
 export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZoneRef, moveWidget, widgetID) {
 	let dragging = false;
@@ -34,6 +35,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		const widget = widgetRef.current;
 		let activePointerId = null;
 		let editModePointerId = null;
+		let finishPendingDrop = null;
 		const editModeMoveTolerance = 10;
 		const detectScrollZoneHeight = 140;
 		const autoScrollDelay = 180;
@@ -67,14 +69,13 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 			} else if (currentWidgetIndex !== betWidgetIndex) {
 				moveWidget(widgetID, widgets[betWidgetIndex].dataset.widgetId);
 			}
-			widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
-				child.style.opacity = '0';
-			});
 		}
 
 		function getOverlapArea(el1, el2) {
 			const r1 = el1.getBoundingClientRect();
-			const r2 = el2.getBoundingClientRect();
+			// Use the slot a widget is heading to, not where a reflow animation
+			// currently has it, so targets don't flicker mid-animation.
+			const r2 = getSettledRect(el2);
 			let newRight = r1.left + getPreviewSize(2, 2, getCellSize(), 16).width;
 			let newBottom= r1.top + getPreviewSize(2, 2, getCellSize(), 16).height;
 
@@ -265,6 +266,7 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 					return;
 				}
 				e.preventDefault();
+				finishPendingDrop?.();
 				activePointerId = e.pointerId;
 				widget.setPointerCapture?.(e.pointerId);
 				dragging = true;
@@ -274,10 +276,9 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 				widgetClone = widgetRef.current.children[0].cloneNode(false);
 				widgetClone.className = "widget-clone inner-widget wiggle";
 				document.body.appendChild(widgetClone);
-				widgetRef.current.children[0].style.opacity = "0.3";
-				widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
-					child.style.opacity = '0';
-				});
+				// Hide the content via CSS (not per-node inline styles) so nodes that
+				// re-render while the layout preview reflows stay hidden too.
+				widget.setAttribute('data-drag-placeholder', '');
 				setClonePosition(e.clientX, e.clientY);
 			};
 			if (e.target === handle) beginDrag();
@@ -303,14 +304,95 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 				if (visualUpdateTimer && e.type === 'pointerup') updateLayout();
 				clearTimeout(visualUpdateTimer);
 				visualUpdateTimer = null;
-				document.body.removeChild(widgetClone);
-				widgetClone = null;
 				clearAutoScroll();
-				widgetRef.current.children[0].style.opacity = "1";
-				widgetRef.current.children[0].querySelectorAll('*').forEach((child) => {
-					child.style.opacity = '1';
-				});
+				dropCloneIntoSlot(widgetClone);
+				widgetClone = null;
 			}
+		}
+
+		function restoreWidget() {
+			widget.removeAttribute('data-drag-placeholder');
+		}
+
+		// Fly the floating clone from under the finger into the widget's
+		// (possibly new) slot, then hand over to the real widget.
+		function dropCloneIntoSlot(clone) {
+			finishPendingDrop?.();
+
+			// Freeze the wiggle at its current angle so stopping it doesn't jump.
+			const frozen = getComputedStyle(clone).transform;
+			clone.style.transform = frozen && frozen !== 'none' ? frozen : '';
+			clone.classList.remove('wiggle');
+
+			let frame = 0;
+			let fallback = 0;
+			let fadeTimer = 0;
+			let done = false;
+
+			const finish = () => {
+				if (done) return;
+				done = true;
+				cancelAnimationFrame(frame);
+				clearTimeout(fallback);
+				clone.removeEventListener('transitionend', onEnd);
+				if (finishPendingDrop === finishNow) finishPendingDrop = null;
+				restoreWidget();
+				// Let the glass clone melt into the real widget underneath.
+				clone.style.transition = 'opacity 140ms ease-out';
+				clone.style.opacity = '0';
+				fadeTimer = setTimeout(() => clone.remove(), 160);
+			};
+			const finishNow = () => {
+				finish();
+				clearTimeout(fadeTimer);
+				clone.remove();
+			};
+			const onEnd = (e) => {
+				if (e.target === clone && e.propertyName === 'transform') finish();
+			};
+			finishPendingDrop = finishNow;
+
+			if (prefersReducedMotion()) {
+				finish();
+				return;
+			}
+
+			// Wait a frame so a reorder committed on release has rendered and
+			// the target slot is in its final place.
+			frame = requestAnimationFrame(() => {
+				const inner = widgetRef.current?.children[0];
+				if (!inner || !clone.isConnected) {
+					finishNow();
+					return;
+				}
+
+				const keep = clone.style.transform;
+				clone.style.transition = 'none';
+				clone.style.transform = 'none';
+				const base = clone.getBoundingClientRect();
+				clone.style.transform = keep;
+				clone.offsetWidth;
+
+				const target = getSettledRect(inner);
+				const dx = target.left - base.left;
+				const dy = target.top - base.top;
+				const d = DROP_DURATION;
+
+				clone.classList.add('widget-clone-dropping');
+				clone.style.transition = [
+					`transform ${d}ms ${DROP_EASING}`,
+					`width ${d}ms ${DROP_EASING}`,
+					`height ${d}ms ${DROP_EASING}`,
+					`box-shadow ${d}ms ease-out`,
+					`background-color ${d}ms ease-out`,
+				].join(', ');
+				clone.style.transform = `translate(${dx}px, ${dy}px)`;
+				clone.style.width = `${target.width}px`;
+				clone.style.height = `${target.height}px`;
+
+				clone.addEventListener('transitionend', onEnd);
+				fallback = setTimeout(finish, d + 120);
+			});
 		}
 
 		function preventNativeScroll(e) {
@@ -371,6 +453,8 @@ export function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZ
 		document.addEventListener("scroll", cancelEditModeActivation, true)
 		document.addEventListener("touchmove", preventNativeScroll, { passive: false })
 		return () => {
+			finishPendingDrop?.();
+			widget.removeAttribute('data-drag-placeholder');
 			handle.remove();
 			cancelEditModeActivation();
 			clearTimeout(widgetDragTimeOut);

@@ -1007,6 +1007,49 @@
     };
   }
 
+  // src/content/components/widgets/widgetMotion.js
+  var REFLOW_DURATION = 380;
+  var REFLOW_EASING = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+  var DROP_DURATION = 420;
+  var DROP_EASING = "cubic-bezier(0.2, 0.9, 0.25, 1.12)";
+  function prefersReducedMotion() {
+    try {
+      return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
+    } catch {
+      return false;
+    }
+  }
+  function getTranslate(el) {
+    const transform = getComputedStyle(el).transform;
+    if (!transform || transform === "none") return { x: 0, y: 0 };
+    try {
+      const matrix = new DOMMatrixReadOnly(transform);
+      return { x: matrix.m41, y: matrix.m42 };
+    } catch {
+      return { x: 0, y: 0 };
+    }
+  }
+  function getSettledRect(el) {
+    const rect = el.getBoundingClientRect();
+    let dx = 0;
+    let dy = 0;
+    let node = el;
+    while (node && node !== document.body && !node.classList?.contains("widgets-grid")) {
+      const { x: x2, y: y3 } = getTranslate(node);
+      dx += x2;
+      dy += y3;
+      node = node.parentElement;
+    }
+    return {
+      left: rect.left - dx,
+      top: rect.top - dy,
+      right: rect.right - dx,
+      bottom: rect.bottom - dy,
+      width: rect.width,
+      height: rect.height
+    };
+  }
+
   // src/content/components/widgets/widgetDragging.js
   function useWidgetDragging(widgetRef, width, height, resizeRef, resizingZoneRef, moveWidget2, widgetID) {
     let dragging = false;
@@ -1038,6 +1081,7 @@
       const widget = widgetRef.current;
       let activePointerId = null;
       let editModePointerId = null;
+      let finishPendingDrop = null;
       const editModeMoveTolerance = 10;
       const detectScrollZoneHeight = 140;
       const autoScrollDelay = 180;
@@ -1070,13 +1114,10 @@
         } else if (currentWidgetIndex !== betWidgetIndex) {
           moveWidget2(widgetID, widgets[betWidgetIndex].dataset.widgetId);
         }
-        widgetRef.current.children[0].querySelectorAll("*").forEach((child) => {
-          child.style.opacity = "0";
-        });
       }
       function getOverlapArea(el1, el2) {
         const r1 = el1.getBoundingClientRect();
-        const r22 = el2.getBoundingClientRect();
+        const r22 = getSettledRect(el2);
         let newRight = r1.left + getPreviewSize2(2, 2, getCellSize(), 16).width;
         let newBottom = r1.top + getPreviewSize2(2, 2, getCellSize(), 16).height;
         const overlapWidth = Math.max(
@@ -1231,6 +1272,7 @@
             return;
           }
           e3.preventDefault();
+          finishPendingDrop?.();
           activePointerId = e3.pointerId;
           widget.setPointerCapture?.(e3.pointerId);
           dragging = true;
@@ -1240,10 +1282,7 @@
           widgetClone = widgetRef.current.children[0].cloneNode(false);
           widgetClone.className = "widget-clone inner-widget wiggle";
           document.body.appendChild(widgetClone);
-          widgetRef.current.children[0].style.opacity = "0.3";
-          widgetRef.current.children[0].querySelectorAll("*").forEach((child) => {
-            child.style.opacity = "0";
-          });
+          widget.setAttribute("data-drag-placeholder", "");
           setClonePosition(e3.clientX, e3.clientY);
         };
         if (e3.target === handle) beginDrag();
@@ -1269,14 +1308,78 @@
           if (visualUpdateTimer && e3.type === "pointerup") updateLayout();
           clearTimeout(visualUpdateTimer);
           visualUpdateTimer = null;
-          document.body.removeChild(widgetClone);
-          widgetClone = null;
           clearAutoScroll();
-          widgetRef.current.children[0].style.opacity = "1";
-          widgetRef.current.children[0].querySelectorAll("*").forEach((child) => {
-            child.style.opacity = "1";
-          });
+          dropCloneIntoSlot(widgetClone);
+          widgetClone = null;
         }
+      }
+      function restoreWidget() {
+        widget.removeAttribute("data-drag-placeholder");
+      }
+      function dropCloneIntoSlot(clone) {
+        finishPendingDrop?.();
+        const frozen = getComputedStyle(clone).transform;
+        clone.style.transform = frozen && frozen !== "none" ? frozen : "";
+        clone.classList.remove("wiggle");
+        let frame = 0;
+        let fallback = 0;
+        let fadeTimer = 0;
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          cancelAnimationFrame(frame);
+          clearTimeout(fallback);
+          clone.removeEventListener("transitionend", onEnd);
+          if (finishPendingDrop === finishNow) finishPendingDrop = null;
+          restoreWidget();
+          clone.style.transition = "opacity 140ms ease-out";
+          clone.style.opacity = "0";
+          fadeTimer = setTimeout(() => clone.remove(), 160);
+        };
+        const finishNow = () => {
+          finish();
+          clearTimeout(fadeTimer);
+          clone.remove();
+        };
+        const onEnd = (e3) => {
+          if (e3.target === clone && e3.propertyName === "transform") finish();
+        };
+        finishPendingDrop = finishNow;
+        if (prefersReducedMotion()) {
+          finish();
+          return;
+        }
+        frame = requestAnimationFrame(() => {
+          const inner = widgetRef.current?.children[0];
+          if (!inner || !clone.isConnected) {
+            finishNow();
+            return;
+          }
+          const keep = clone.style.transform;
+          clone.style.transition = "none";
+          clone.style.transform = "none";
+          const base = clone.getBoundingClientRect();
+          clone.style.transform = keep;
+          clone.offsetWidth;
+          const target = getSettledRect(inner);
+          const dx = target.left - base.left;
+          const dy = target.top - base.top;
+          const d3 = DROP_DURATION;
+          clone.classList.add("widget-clone-dropping");
+          clone.style.transition = [
+            `transform ${d3}ms ${DROP_EASING}`,
+            `width ${d3}ms ${DROP_EASING}`,
+            `height ${d3}ms ${DROP_EASING}`,
+            `box-shadow ${d3}ms ease-out`,
+            `background-color ${d3}ms ease-out`
+          ].join(", ");
+          clone.style.transform = `translate(${dx}px, ${dy}px)`;
+          clone.style.width = `${target.width}px`;
+          clone.style.height = `${target.height}px`;
+          clone.addEventListener("transitionend", onEnd);
+          fallback = setTimeout(finish, d3 + 120);
+        });
       }
       function preventNativeScroll(e3) {
         if (!dragging) return;
@@ -1325,6 +1428,8 @@
       document.addEventListener("scroll", cancelEditModeActivation, true);
       document.addEventListener("touchmove", preventNativeScroll, { passive: false });
       return () => {
+        finishPendingDrop?.();
+        widget.removeAttribute("data-drag-placeholder");
         handle.remove();
         cancelEditModeActivation();
         clearTimeout(widgetDragTimeOut);
@@ -2824,6 +2929,8 @@
     const [widgets, setWidgets] = d2(loadWidgetLayout);
     const [openPopupId, setOpenPopupId] = d2(null);
     const popupContainerRef = A2(null);
+    const gridRef = A2(null);
+    const reflowSnapshotRef = A2(null);
     y2(() => {
       saveWidgetLayout(widgets);
     }, [widgets]);
@@ -2840,7 +2947,49 @@
         document.removeEventListener("pointerdown", handleOutsidePointerDown);
       };
     }, [openPopupId]);
+    _2(() => {
+      const before = reflowSnapshotRef.current;
+      reflowSnapshotRef.current = null;
+      const grid = gridRef.current;
+      if (!before || !grid || prefersReducedMotion()) return;
+      const moved = [];
+      for (const el of grid.children) {
+        const prev = before.get(el.dataset.widgetId);
+        if (!prev) continue;
+        el.style.transition = "none";
+        el.style.transform = "";
+        const next = el.getBoundingClientRect();
+        const dx = prev.left - next.left;
+        const dy = prev.top - next.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+          el.style.transition = "";
+          continue;
+        }
+        el.style.transform = `translate(${dx}px, ${dy}px)`;
+        moved.push(el);
+      }
+      if (!moved.length) return;
+      grid.offsetWidth;
+      for (const el of moved) {
+        el.style.transition = `transform ${REFLOW_DURATION}ms ${REFLOW_EASING}`;
+        el.style.transform = "";
+        const cleanup = (e3) => {
+          if (e3 && (e3.target !== el || e3.propertyName !== "transform")) return;
+          el.removeEventListener("transitionend", cleanup);
+          if (!el.style.transform) el.style.transition = "";
+        };
+        el.addEventListener("transitionend", cleanup);
+      }
+    }, [widgets]);
     function handleMoveWidget(movedId, targetId) {
+      const grid = gridRef.current;
+      if (grid) {
+        const snapshot = /* @__PURE__ */ new Map();
+        for (const el of grid.children) {
+          snapshot.set(el.dataset.widgetId, el.getBoundingClientRect());
+        }
+        reflowSnapshotRef.current = snapshot;
+      }
       setWidgets((currentWidgets) => moveWidget(currentWidgets, movedId, targetId));
     }
     function renderWidget(widget) {
@@ -2866,7 +3015,7 @@
         }
       );
     }
-    return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("div", { className: "widgets-grid" }, widgets.map(renderWidget)));
+    return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("div", { className: "widgets-grid", ref: gridRef }, widgets.map(renderWidget)));
   }
 
   // src/content/mobileMessages.js
