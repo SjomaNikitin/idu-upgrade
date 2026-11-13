@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
 const loginScript = readFileSync(new URL("./25-login.js", import.meta.url), "utf8");
-const attemptKey = "iduAutoLoginAttemptInProgress";
+const legacyAttemptKey = "iduAutoLoginAttemptInProgress";
 
 function createStorage(initialValues = {}) {
 	const values = new Map(Object.entries(initialValues));
@@ -17,8 +17,6 @@ function createStorage(initialValues = {}) {
 function loadLoginPage({ local = {}, session = {}, hasLoginForm = true } = {}) {
 	let domContentLoaded;
 	let submitHandler;
-	const submitButton = { click: vi.fn() };
-	const rememberMe = { checked: false };
 	const loginForm = {
 		addEventListener: (event, handler) => {
 			if (event === "submit") submitHandler = handler;
@@ -29,25 +27,24 @@ function loadLoginPage({ local = {}, session = {}, hasLoginForm = true } = {}) {
 	const elements = {
 		user_login: loginInput,
 		user_password: passwordInput,
-		user_remember_me: hasLoginForm ? rememberMe : null,
 		new_user: hasLoginForm ? loginForm : null,
 	};
 	const localStorage = createStorage(local);
 	const sessionStorage = createStorage(session);
 	const hideVisualLoader = vi.fn();
+	const renderIduMockDashboard = vi.fn();
 	const document = {
 		addEventListener: (event, handler) => {
 			if (event === "DOMContentLoaded") domContentLoaded = handler;
 		},
 		getElementById: (id) => elements[id] || null,
-		querySelector: () => (hasLoginForm ? submitButton : null),
 	};
 
 	vm.runInNewContext(loginScript, {
 		document,
 		localStorage,
 		sessionStorage,
-		window: { hideVisualLoader },
+		window: { hideVisualLoader, renderIduMockDashboard },
 	});
 	domContentLoaded();
 
@@ -56,63 +53,65 @@ function loadLoginPage({ local = {}, session = {}, hasLoginForm = true } = {}) {
 		sessionStorage,
 		loginInput,
 		passwordInput,
-		rememberMe,
-		submitButton,
 		hideVisualLoader,
-		submit: () => submitHandler?.(),
+		renderIduMockDashboard,
+		submit: () => {
+			const event = { preventDefault: vi.fn(), stopImmediatePropagation: vi.fn() };
+			submitHandler?.(event);
+			return event;
+		},
 	};
 }
 
-describe("auto login", () => {
+describe("login page", () => {
 	beforeEach(() => vi.restoreAllMocks());
 
-	it("submits saved credentials only once", () => {
+	it("wipes credentials saved by the removed auto-login feature", () => {
 		const page = loadLoginPage({
-			local: { autoLogin: "yes", login: "student", password: "wrong" },
+			local: { autoLogin: "yes", login: "student", password: "secret", theme: "Ocean" },
+			session: { [legacyAttemptKey]: "yes" },
 		});
 
-		expect(page.loginInput.value).toBe("student");
-		expect(page.passwordInput.value).toBe("wrong");
-		expect(page.sessionStorage.getItem(attemptKey)).toBe("yes");
-		expect(page.submitButton.click).toHaveBeenCalledOnce();
+		expect(page.localStorage.getItem("autoLogin")).toBeNull();
+		expect(page.localStorage.getItem("login")).toBeNull();
+		expect(page.localStorage.getItem("password")).toBeNull();
+		expect(page.sessionStorage.getItem(legacyAttemptKey)).toBeNull();
+		expect(page.localStorage.getItem("theme")).toBe("Ocean");
+	});
+
+	it("wipes legacy credentials on pages without a login form too", () => {
+		const page = loadLoginPage({
+			hasLoginForm: false,
+			local: { autoLogin: "yes", login: "student", password: "secret" },
+		});
+
+		expect(page.localStorage.getItem("password")).toBeNull();
 		expect(page.hideVisualLoader).not.toHaveBeenCalled();
 	});
 
-	it("stops retrying and reveals the form when an attempt returns to login", () => {
-		const page = loadLoginPage({
-			local: { autoLogin: "yes", login: "student", password: "wrong" },
-			session: { [attemptKey]: "yes" },
-		});
+	it("never fills the form or saves credentials", () => {
+		const page = loadLoginPage();
 
-		expect(page.localStorage.getItem("autoLogin")).toBe("no");
-		expect(page.sessionStorage.getItem(attemptKey)).toBeNull();
-		expect(page.loginInput.value).toBe("student");
+		expect(page.loginInput.value).toBe("");
 		expect(page.passwordInput.value).toBe("");
-		expect(page.submitButton.click).not.toHaveBeenCalled();
 		expect(page.hideVisualLoader).toHaveBeenCalledOnce();
+
+		page.loginInput.value = "student";
+		page.passwordInput.value = "secret";
+		const event = page.submit();
+
+		expect(event.preventDefault).not.toHaveBeenCalled();
+		expect(page.localStorage.getItem("login")).toBeNull();
+		expect(page.localStorage.getItem("password")).toBeNull();
 	});
 
-	it("clears the pending marker after a successful navigation", () => {
-		const page = loadLoginPage({
-			hasLoginForm: false,
-			session: { [attemptKey]: "yes" },
-		});
+	it("still opens the demo dashboard for the App Store review login", () => {
+		const page = loadLoginPage();
+		page.loginInput.value = "AppleLogin";
+		page.passwordInput.value = "123";
+		const event = page.submit();
 
-		expect(page.sessionStorage.getItem(attemptKey)).toBeNull();
-	});
-
-	it("can save corrected credentials after a failed automatic attempt", () => {
-		const page = loadLoginPage({
-			local: { autoLogin: "yes", login: "student", password: "wrong" },
-			session: { [attemptKey]: "yes" },
-		});
-		page.loginInput.value = "correct-student";
-		page.passwordInput.value = "correct-password";
-		page.rememberMe.checked = true;
-		page.submit();
-
-		expect(page.localStorage.getItem("autoLogin")).toBe("yes");
-		expect(page.localStorage.getItem("login")).toBe("correct-student");
-		expect(page.localStorage.getItem("password")).toBe("correct-password");
+		expect(event.preventDefault).toHaveBeenCalledOnce();
+		expect(page.renderIduMockDashboard).toHaveBeenCalledOnce();
 	});
 });

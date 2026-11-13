@@ -27,12 +27,6 @@ if (!window.__iduContentBootstrapRegistered) {
 	}
 
 	const mockData = window.__IDU_MOCK_DATA;
-	const shouldWaitForAutoLogin =
-		localStorage.getItem("autoLogin") === "yes" &&
-		localStorage.getItem("login") &&
-		localStorage.getItem("password") &&
-		window.location.pathname === "/users/sign_in" &&
-		!mockData;
 
 	try {
 		if (window.innerWidth < window.innerHeight || mockData) {
@@ -119,10 +113,8 @@ if (!window.__iduContentBootstrapRegistered) {
 
 		}
 	} finally {
-		if (!shouldWaitForAutoLogin) {
-			window.hideVisualLoader?.();
-			console.log("Loaded");
-		}
+		window.hideVisualLoader?.();
+		console.log("Loaded");
 	}
 	})
 }

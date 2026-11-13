@@ -168,8 +168,8 @@ window.hideVisualLoader = function hideVisualLoader() {
 	window.setTimeout(finishLoading, 500);
 }
 
-// Never leave the login form hidden indefinitely when auto-login, network
-// activity, or page initialization does not complete as expected.
+// Never leave the login form hidden indefinitely when network
+// activity or page initialization does not complete as expected.
 if (window.location.pathname === "/users/sign_in") {
 	window.setTimeout(() => {
 		const documentElement = document.documentElement;

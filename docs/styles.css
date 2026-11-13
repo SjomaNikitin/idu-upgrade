@@ -243,6 +243,7 @@ nav>a:hover:after,nav>a[aria-current]:after {
 }
 .demo-top {
   display:flex;
+  align-items:center;
   justify-content:space-between;
   color:var(--mint);
   margin-bottom:16px;
@@ -256,6 +257,13 @@ nav>a:hover:after,nav>a[aria-current]:after {
   font-size:9px;
   letter-spacing:.3px;
   border-radius:30px
+}
+.demo-top .pill {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:22px;
+  line-height:1
 }
 .next-lesson,.demo-schedule {
   padding:17px;
