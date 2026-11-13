@@ -1398,3 +1398,6 @@ main {
 #selected-location .icon {
   margin-right:2px
 }
+.accent {
+  color:var(--mint)
+}
