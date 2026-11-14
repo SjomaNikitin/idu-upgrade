@@ -324,43 +324,18 @@ nav>a:hover:after,nav>a[aria-current]:after {
   gap:10px;
   margin-top:12px
 }
-/* Small 4x1 widgets (mirror Subjects41 / Grades41 in the app, dark theme) */
-.small-widget {
+.demo-bottom>div {
   display:flex;
+  gap:12px;
   align-items:center;
-  gap:8px;
-  min-width:0;
-  padding:12px 14px;
-  background:#242a32;
-  border:1px solid #2dd4be30;
-  border-radius:16px;
-  color:#7eeacc;
-  font-family:"Montserrat",sans-serif
+  background:var(--panel);
+  padding:12px;
+  border-radius:9px;
+  color:var(--mint)
 }
-.sw-icon {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex:0 0 36px;
-  height:36px;
-  background:#2dd4be15;
-  border-radius:50%
-}
-.sw-title {
-  min-width:0;
-  font-size:1.05rem;
-  font-weight:700;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis
-}
-.small-widget .nw-arrow {
-  margin-left:auto
-}
-@media(max-width:480px) {
-.demo-bottom {
-  grid-template-columns:1fr
-}
+.demo-bottom strong {
+  font-size:10px;
+  font-weight:500
 }
 .demo-caption {
   font-size:9px;
@@ -1486,7 +1461,7 @@ main {
   fill:currentColor;
   stroke:none
 }
-.button span,.card-label span,.row-arrow,.big-arrow,.orbit,.portrait i,.search>span,.menu-toggle span {
+.button span,.card-label span,.row-arrow,.big-arrow,.orbit,.portrait i,.search>span,.demo-bottom>div>span,.menu-toggle span {
   display:inline-flex;
   align-items:center;
   line-height:1
