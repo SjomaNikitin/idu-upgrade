@@ -227,3 +227,370 @@ function extractSemesterScope(form = document.querySelector('#set_semester_scope
 		selectedValue: select.value,
 	};
 }
+
+// ---------------------------------------------------------------------------
+// Student profile (/students/<id>, "Profil ucznia")
+// #student-card holds <p>Label:</p> followed by <div class="data">value</div>
+// pairs; the other modules (subjects, timetable, grades, ...) are found by
+// their <h3> title because the unique-id numbers shift between pages.
+// ---------------------------------------------------------------------------
+
+function cleanText(text) {
+	return (text || '').replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function normalizeProfileLabel(text) {
+	return cleanText(text).replace(/\s*([/,])\s*/g, '$1').replace(/[:：]\s*$/, '').trim().toLocaleLowerCase('pl-PL');
+}
+
+// Text of a node split into lines at <br> and block elements; empty lines dropped.
+function nodeLines(node) {
+	if (!node) return [];
+	if (node.nodeType === 3) return cleanText(node.textContent) ? [cleanText(node.textContent)] : [];
+	if (node.nodeType !== 1) return [];
+	const clone = node.cloneNode(true);
+	clone.querySelectorAll('script, style').forEach((el) => el.remove());
+	// Only <br> and block elements break lines; newlines in the HTML source are just spaces.
+	const BREAK = '\u2029';
+	clone.querySelectorAll('br').forEach((br) => br.replaceWith(BREAK));
+	clone.querySelectorAll('div, p, li').forEach((el) => el.append(BREAK));
+	return clone.textContent.split(BREAK).map(cleanText).filter(Boolean);
+}
+
+function nodeLinks(nodes) {
+	const links = [];
+	for (const node of nodes) {
+		if (node.nodeType !== 1) continue;
+		const anchors = node.matches('a[href]') ? [node] : Array.from(node.querySelectorAll('a[href]'));
+		for (const a of anchors) {
+			const text = cleanText(a.textContent);
+			const href = a.getAttribute('href') || '';
+			if (text && href && href !== '#') links.push({ text, href });
+		}
+	}
+	return links;
+}
+
+// Known #student-card labels -> where they go and how they're shown.
+// Anything not listed still shows up in "Dane ucznia" under its own label.
+const STUDENT_CARD_FIELDS = {
+	'rodzice/opiekunowie': { key: 'parents' },
+	'dane kontaktowe': { key: 'contactAddress', section: 'addresses', label: 'Adres kontaktowy', type: 'address' },
+	'adres kontaktowy': { key: 'contactAddress', section: 'addresses', label: 'Adres kontaktowy', type: 'address' },
+	'adres zamieszkania': { key: 'homeAddress', section: 'addresses', label: 'Adres zamieszkania', type: 'address' },
+	'adres zameldowania': { key: 'registeredAddress', section: 'addresses', label: 'Adres zameldowania', type: 'address' },
+	'kontakt elektroniczny': { key: 'email', section: 'contact', label: 'Kontakt elektroniczny', type: 'email', wide: true },
+	'telefon kom.': { key: 'mobile', section: 'contact', label: 'Telefon komórkowy', type: 'phone' },
+	'telefon komórkowy': { key: 'mobile', section: 'contact', label: 'Telefon komórkowy', type: 'phone' },
+	'telefon': { key: 'phone', section: 'contact', label: 'Telefon', type: 'phone' },
+	'uczeń w internecie': { key: 'website', section: 'contact', label: 'Uczeń w Internecie', type: 'links', wide: true },
+	'nr z księgi ucznia': { key: 'bookNumber', section: 'student', label: 'Nr z księgi uczniów' },
+	'nr z księgi uczniów': { key: 'bookNumber', section: 'student', label: 'Nr z księgi uczniów' },
+	'pesel': { key: 'pesel', section: 'student', label: 'PESEL' },
+	'data urodzenia': { key: 'birthDate', section: 'student', label: 'Data urodzenia' },
+	'miejscowość urodzenia': { key: 'birthPlace', section: 'student', label: 'Miejscowość urodzenia' },
+	'podbudowa (g,sp)': { key: 'foundation', section: 'student', label: 'Podbudowa (G, SP)' },
+	'rok przyjęcia do szkoły': { key: 'admissionYear', section: 'student', label: 'Rok przyjęcia do szkoły' },
+	'data przyjścia': { key: 'admissionDate', section: 'student', label: 'Data przyjęcia' },
+	'data przyjęcia': { key: 'admissionDate', section: 'student', label: 'Data przyjęcia' },
+	'data odejścia': { key: 'leaveDate', section: 'student', label: 'Data odejścia' },
+};
+
+function prettyLabel(text) {
+	const label = cleanText(text).replace(/[:：]\s*$/, '');
+	return label.charAt(0).toLocaleUpperCase('pl-PL') + label.slice(1);
+}
+
+// Every <p> label in the card with the nodes that follow it, up to the next <p>.
+function readStudentCardPairs(card) {
+	const pairs = [];
+	for (const p of card.querySelectorAll('p')) {
+		if (p.closest('.send-message')) continue;
+		const nodes = [];
+		for (let node = p.nextSibling; node && !(node.nodeType === 1 && node.tagName === 'P'); node = node.nextSibling) {
+			nodes.push(node);
+		}
+		pairs.push({ rawLabel: p.textContent, nodes });
+	}
+	return pairs;
+}
+
+function readStudentHeader(card) {
+	const data = card.querySelector('#student-data') || card;
+	const h3 = data.querySelector('h3');
+	let name = '';
+	let messageUrl = '';
+	if (h3) {
+		messageUrl = h3.querySelector('.send-message a[href]')?.getAttribute('href') || '';
+		const clone = h3.cloneNode(true);
+		clone.querySelectorAll('.send-message').forEach((el) => el.remove());
+		name = cleanText(clone.textContent);
+	}
+	messageUrl = messageUrl || card.querySelector('a.send[href]')?.getAttribute('href') || '';
+
+	const h6 = data.querySelector('h6');
+	const h6Text = cleanText(h6?.textContent).replace(/\s+/g, ' ');
+	const year = h6Text.match(/rocznik:\s*(.*?)\s*(?=klasa:|wychowawca:|wychowawczyni:|$)/i)?.[1] || '';
+	const klassLink = h6?.querySelector('a[href*="/klasses/"], a[title="Klasa"]');
+	const klass = cleanText(klassLink?.textContent) || h6Text.match(/klasa:\s*(.*?)\s*(?=wychowawca:|wychowawczyni:|rocznik:|$)/i)?.[1] || '';
+	const tutorLinks = Array.from(h6?.querySelectorAll('a[href*="/teachers/"]') || []);
+	const tutorText = h6Text.match(/wychowawc\w*:\s*(.*?)\s*(?=klasa:|rocznik:|$)/i)?.[1] || '';
+
+	return {
+		name,
+		messageUrl,
+		photoUrl: card.querySelector('#photo img')?.getAttribute('src') || '',
+		editUrl: card.querySelector('a.edit[href]')?.getAttribute('href') || '',
+		year,
+		klass,
+		klassUrl: klassLink?.getAttribute('href') || '',
+		tutors: tutorLinks.length
+			? tutorLinks.map((a) => ({ name: cleanText(a.textContent), href: a.getAttribute('href') || '' }))
+			: (tutorText ? [{ name: tutorText, href: '' }] : []),
+	};
+}
+
+function extractStudentProfile(doc = document) {
+	const card = doc.querySelector('#student-card');
+	if (!card) return null;
+
+	const header = readStudentHeader(card);
+	const parents = [];
+	const sections = { contact: [], addresses: [], student: [] };
+	const seen = new Set();
+
+	for (const { rawLabel, nodes } of readStudentCardPairs(card)) {
+		const known = STUDENT_CARD_FIELDS[normalizeProfileLabel(rawLabel)];
+		const dataNodes = nodes.filter((n) => n.nodeType === 1 && n.classList.contains('data'));
+		const valueNodes = dataNodes.length ? dataNodes : nodes;
+
+		if (known?.key === 'parents') {
+			for (const node of valueNodes) {
+				const link = nodeLinks([node])[0];
+				const name = link?.text || nodeLines(node).join(' ');
+				if (name) parents.push({ name, href: link?.href || '', role: node.classList?.contains('mother') ? 'mother' : node.classList?.contains('father') ? 'father' : '' });
+			}
+			continue;
+		}
+
+		// "2025\n/ 2026" -> one line; addresses keep street and postcode/city as two lines.
+		const lines = known?.type === 'address'
+			? valueNodes.flatMap(nodeLines)
+			: [cleanText(valueNodes.flatMap(nodeLines).join(' '))].filter(Boolean);
+		const links = nodeLinks(valueNodes);
+		if (!lines.length && !links.length) continue;
+
+		const key = known?.key || `extra:${normalizeProfileLabel(rawLabel)}`;
+		if (seen.has(key)) continue;
+		seen.add(key);
+
+		const field = {
+			key,
+			label: known?.label || prettyLabel(rawLabel),
+			lines: lines.length ? lines : links.map((l) => l.text),
+			links,
+			type: known?.type || 'text',
+			wide: Boolean(known?.wide || known?.type === 'address'),
+		};
+		sections[known?.section || 'student'].push(field);
+	}
+
+	// Keep "Dane ucznia" in the design's order; unknown labels go after the known ones.
+	const studentOrder = ['bookNumber', 'pesel', 'birthDate', 'birthPlace', 'foundation', 'admissionYear', 'admissionDate', 'leaveDate'];
+	const rank = (field) => {
+		const index = studentOrder.indexOf(field.key);
+		return index === -1 ? studentOrder.length : index;
+	};
+	sections.student.sort((a, b) => rank(a) - rank(b));
+	const contactOrder = ['email', 'mobile', 'phone', 'website'];
+	sections.contact.sort((a, b) => contactOrder.indexOf(a.key) - contactOrder.indexOf(b.key));
+
+	if (!header.name && !parents.length && !Object.values(sections).some((list) => list.length)) return null;
+	return { ...header, parents, sections };
+}
+
+// div.module whose <h3> starts with the given title (ignores the "zwiń" toggle).
+function findModuleByTitle(doc, title) {
+	const wanted = title.toLocaleLowerCase('pl-PL');
+	for (const module of doc.querySelectorAll('div.module')) {
+		const h3 = module.querySelector('h3');
+		if (!h3) continue;
+		const clone = h3.cloneNode(true);
+		clone.querySelectorAll('.toggle-switch').forEach((el) => el.remove());
+		if (cleanText(clone.textContent).toLocaleLowerCase('pl-PL').startsWith(wanted)) return module;
+	}
+	return null;
+}
+
+function seeMoreUrl(module) {
+	return module?.querySelector('.see-more a[href]')?.getAttribute('href') || '';
+}
+
+function extractProfileSubjects(module) {
+	if (!module) return [];
+	const subjectFromItem = (li) => {
+		const link = li.querySelector('b a[href*="/subjects/"]') || li.querySelector('a[href*="/subjects/"]');
+		if (!link) return null;
+		return {
+			name: cleanText(link.textContent),
+			url: link.getAttribute('href') || '',
+			title: link.getAttribute('title') || '',
+			italic: link.classList.contains('font-italic'),
+			teachers: Array.from(li.querySelectorAll('a[href*="/teachers/"]'))
+				.filter((a) => !a.closest('b'))
+				.map((a) => ({ name: cleanText(a.textContent), href: a.getAttribute('href') || '' })),
+		};
+	};
+
+	const topList = module.querySelector('ul');
+	if (!topList) return [];
+	const groups = [];
+	for (const levelItem of topList.children) {
+		const nested = levelItem.querySelector(':scope > ul');
+		if (nested) {
+			const level = cleanText(Array.from(levelItem.childNodes).filter((n) => n.nodeType === 3).map((n) => n.textContent).join(' '));
+			const subjects = Array.from(nested.children).map(subjectFromItem).filter(Boolean);
+			if (subjects.length) groups.push({ level, subjects });
+		} else {
+			const subject = subjectFromItem(levelItem);
+			if (!subject) continue;
+			if (!groups.length || groups[groups.length - 1].level) groups.push({ level: '', subjects: [] });
+			groups[groups.length - 1].subjects.push(subject);
+		}
+	}
+	return groups;
+}
+
+const PROFILE_WEEKDAYS = {
+	'poniedziałek': 'monday', 'wtorek': 'tuesday', 'środa': 'wednesday', 'czwartek': 'thursday',
+	'piątek': 'friday', 'sobota': 'saturday', 'niedziela': 'sunday',
+};
+
+// "Ogólny plan tygodniowy": one header row of day names, first column "(0) 7:55 - 8:40".
+function extractProfileTimetable(module) {
+	const table = module?.querySelector('.schedule table');
+	if (!table) return null;
+	const headerCells = Array.from(table.querySelectorAll('thead tr:last-child th')).slice(1);
+	const days = headerCells.map((th) => {
+		const label = cleanText(th.textContent);
+		return { key: PROFILE_WEEKDAYS[label.toLocaleLowerCase('pl-PL')] || label, label };
+	});
+
+	const rows = [];
+	for (const tr of table.querySelectorAll('tbody tr')) {
+		const cells = Array.from(tr.children);
+		const match = cleanText(cells[0]?.textContent).match(/\((\d+)\)\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+		if (!match) continue;
+		const lessons = {};
+		cells.slice(1).forEach((td, index) => {
+			const entries = Array.from(td.querySelectorAll('.lesson-cell')).map((cell) => {
+				const subject = cell.querySelector('.subject a');
+				const room = cell.querySelector('.location a[href*="/rooms/"]');
+				return {
+					subject: cleanText(subject?.textContent),
+					subjectUrl: subject?.getAttribute('href') || '',
+					teacher: cleanText(cell.querySelector('.teacher')?.textContent),
+					room: cleanText(room?.textContent),
+					roomUrl: room?.getAttribute('href') || '',
+				};
+			}).filter((lesson) => lesson.subject);
+			if (entries.length && days[index]) lessons[days[index].key] = entries;
+		});
+		rows.push({ number: match[1], start: match[2], end: match[3], lessons });
+	}
+
+	const printLink = Array.from(module.querySelectorAll('a[href]')).find((a) => /lesson_plan|do druku/i.test(`${a.getAttribute('href')} ${a.textContent}`));
+	if (!rows.some((row) => Object.keys(row.lessons).length)) return null;
+	return { days, rows: rows.filter((row) => Object.keys(row.lessons).length), url: printLink?.getAttribute('href') || '' };
+}
+
+// "(kartkówka: wartość bezwzględna)" -> "kartkówka: wartość bezwzględna"; "XVI w.: XVI w." -> "XVI w."
+function cleanEventDescription(text) {
+	const value = cleanText(text).replace(/^\((.*)\)$/, '$1').replace(/\s+:/g, ':').trim();
+	const parts = value.match(/^(.+?):\s*(.+)$/);
+	return parts && cleanText(parts[1]).toLocaleLowerCase('pl-PL') === cleanText(parts[2]).toLocaleLowerCase('pl-PL') ? cleanText(parts[1]) : value;
+}
+
+function readProfileEvent(el) {
+	const subject = el.querySelector('.subject a') || el.querySelector('.subject');
+	return {
+		subject: cleanText(subject?.textContent),
+		subjectUrl: subject?.getAttribute?.('href') || '',
+		name: cleanText(el.querySelector('.name')?.textContent),
+		description: cleanEventDescription(el.querySelector('.description')?.textContent),
+		date: cleanText(el.querySelector('.date')?.textContent),
+		unseen: el.classList.contains('unseen'),
+		issuedAt: cleanText(el.getAttribute('title')).replace(/^wystawiono:\s*/i, ''),
+	};
+}
+
+function extractProfileGrades(module, doc) {
+	if (!module) return [];
+	return Array.from(module.querySelectorAll('.profile-event.mark')).map((el) => {
+		const event = readProfileEvent(el);
+		const detailId = el.querySelector('.name a[href^="#"]')?.getAttribute('href')?.slice(1);
+		const detailEl = detailId ? doc.getElementById(detailId) : null;
+		// The hidden description ends with "data dodania 09.11.2026"; keep only the text.
+		const detail = detailEl
+			? nodeLines(detailEl).filter((line) => !/^data (dodania|modyfikacji)\b/i.test(line)).join('\n')
+			: '';
+		return { ...event, grade: event.name, detail: detail && detail !== event.name ? detail : '' };
+	});
+}
+
+function extractProfileAttendance(module) {
+	if (!module) return [];
+	return Array.from(module.querySelectorAll('.profile-event')).map((el) => {
+		const status = ['absence', 'presence', 'lateness', 'excused'].find((c) => el.classList.contains(c)) || 'other';
+		return { ...readProfileEvent(el), status };
+	});
+}
+
+function extractProfileEvents(module, selector = '.profile-event') {
+	if (!module) return [];
+	return Array.from(module.querySelectorAll(selector)).map(readProfileEvent).filter((event) => event.subject || event.name);
+}
+
+function extractProfileFiles(module) {
+	const foldable = module?.querySelector('.foldable') || module;
+	if (!foldable) return [];
+	return nodeLinks([foldable]).filter((link) => !/zwiń|zobacz wszystkie/i.test(link.text));
+}
+
+function isStudentProfilePage(pathname = window.location.pathname) {
+	return /^\/students?(\/\d+)?\/?$/.test(pathname);
+}
+
+function readStudentProfilePageData(doc) {
+	const profile = extractStudentProfile(doc);
+	if (!profile) return null;
+
+	const gradesModule = findModuleByTitle(doc, 'Ostatnio wystawione oceny');
+	const attendanceModule = findModuleByTitle(doc, 'Ostatnio wystawione obecności');
+	const reviewsModule = findModuleByTitle(doc, 'Ostatnie recenzje');
+	const timetable = extractProfileTimetable(findModuleByTitle(doc, 'Ogólny plan tygodniowy'));
+
+	return {
+		profile,
+		exams: extractProfileEvents(findModuleByTitle(doc, 'Najbliższe zapowiedziane sprawdziany'), '.profile-event.exam, .profile-event'),
+		grades: extractProfileGrades(gradesModule, doc),
+		gradesUrl: seeMoreUrl(gradesModule),
+		attendance: extractProfileAttendance(attendanceModule),
+		attendanceUrl: seeMoreUrl(attendanceModule),
+		subjectGroups: extractProfileSubjects(findModuleByTitle(doc, 'Przedmioty')),
+		timetable,
+		reviews: extractProfileEvents(reviewsModule),
+		reviewsUrl: seeMoreUrl(reviewsModule),
+		files: extractProfileFiles(findModuleByTitle(doc, 'Przypisane pliki')),
+	};
+}
+
+function extractStudentProfilePageData(doc = document) {
+	try {
+		return readStudentProfilePageData(doc);
+	} catch (error) {
+		// Fall back to the original IDU page rather than breaking the rest of the bootstrap.
+		console.warn('[IDU2] Could not read the student profile', error);
+		return null;
+	}
+}

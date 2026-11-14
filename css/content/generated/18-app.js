@@ -70,8 +70,8 @@
     }
   }
   function L(n2, l3, u3, t3, i3, r3, o3, e3, f3, c3, a3) {
-    var s3, h3, p3, v3, y3, _3, g2, m3 = t3 && t3.__k || w, b2 = l3.length;
-    for (f3 = T(u3, l3, m3, f3, b2), s3 = 0; s3 < b2; s3++) null != (p3 = u3.__k[s3]) && (h3 = -1 != p3.__i && m3[p3.__i] || d, p3.__i = s3, _3 = q(n2, p3, h3, i3, r3, o3, e3, f3, c3, a3), v3 = p3.__e, p3.ref && h3.ref != p3.ref && (h3.ref && J(h3.ref, null, p3), a3.push(p3.ref, p3.__c || v3, p3)), null == y3 && null != v3 && (y3 = v3), (g2 = !!(4 & p3.__u)) || h3.__k === p3.__k ? (f3 = j(p3, f3, n2, g2), g2 && h3.__e && (h3.__e = null)) : "function" == typeof p3.type && void 0 !== _3 ? f3 = _3 : v3 && (f3 = v3.nextSibling), p3.__u &= -7);
+    var s3, h3, p3, v3, y3, _3, g4, m3 = t3 && t3.__k || w, b2 = l3.length;
+    for (f3 = T(u3, l3, m3, f3, b2), s3 = 0; s3 < b2; s3++) null != (p3 = u3.__k[s3]) && (h3 = -1 != p3.__i && m3[p3.__i] || d, p3.__i = s3, _3 = q(n2, p3, h3, i3, r3, o3, e3, f3, c3, a3), v3 = p3.__e, p3.ref && h3.ref != p3.ref && (h3.ref && J(h3.ref, null, p3), a3.push(p3.ref, p3.__c || v3, p3)), null == y3 && null != v3 && (y3 = v3), (g4 = !!(4 & p3.__u)) || h3.__k === p3.__k ? (f3 = j(p3, f3, n2, g4), g4 && h3.__e && (h3.__e = null)) : "function" == typeof p3.type && void 0 !== _3 ? f3 = _3 : v3 && (f3 = v3.nextSibling), p3.__u &= -7);
     return u3.__e = y3, f3;
   }
   function T(n2, l3, u3, t3, i3) {
@@ -91,6 +91,11 @@
       l3 = l3 && l3.nextSibling;
     } while (null != l3 && 8 == l3.nodeType);
     return l3;
+  }
+  function F(n2, l3) {
+    return l3 = l3 || [], null == n2 || "boolean" == typeof n2 || (g(n2) ? n2.some(function(n3) {
+      F(n3, l3);
+    }) : l3.push(n2)), l3;
   }
   function O(n2, l3, u3, t3) {
     var i3, r3, o3, e3 = n2.key, f3 = n2.type, c3 = l3[u3], a3 = null != c3 && 0 == (2 & c3.__u);
@@ -132,33 +137,33 @@
     };
   }
   function q(n2, u3, t3, i3, r3, o3, e3, f3, c3, a3) {
-    var s3, h3, p3, v3, y3, d3, _3, k3, x2, M, $2, I2, P2, A3, H2, T3 = u3.type;
+    var s3, h3, p3, v3, y3, d3, _3, k3, x3, M3, $3, I2, P4, A4, H3, T4 = u3.type;
     if (void 0 !== u3.constructor) return null;
     128 & t3.__u && (c3 = !!(32 & t3.__u), o3 = [f3 = u3.__e = t3.__e]), (s3 = l.__b) && s3(u3);
-    n: if ("function" == typeof T3) try {
-      if (k3 = u3.props, x2 = T3.prototype && T3.prototype.render, M = (s3 = T3.contextType) && i3[s3.__c], $2 = s3 ? M ? M.props.value : s3.__ : i3, t3.__c ? _3 = (h3 = u3.__c = t3.__c).__ = h3.__E : (x2 ? u3.__c = h3 = new T3(k3, $2) : (u3.__c = h3 = new C(k3, $2), h3.constructor = T3, h3.render = Q), M && M.sub(h3), h3.state || (h3.state = {}), h3.__n = i3, p3 = h3.__d = true, h3.__h = [], h3._sb = []), x2 && null == h3.__s && (h3.__s = h3.state), x2 && null != T3.getDerivedStateFromProps && (h3.__s == h3.state && (h3.__s = m({}, h3.__s)), m(h3.__s, T3.getDerivedStateFromProps(k3, h3.__s))), v3 = h3.props, y3 = h3.state, h3.__v = u3, p3) x2 && null == T3.getDerivedStateFromProps && null != h3.componentWillMount && h3.componentWillMount(), x2 && null != h3.componentDidMount && h3.__h.push(h3.componentDidMount);
+    n: if ("function" == typeof T4) try {
+      if (k3 = u3.props, x3 = T4.prototype && T4.prototype.render, M3 = (s3 = T4.contextType) && i3[s3.__c], $3 = s3 ? M3 ? M3.props.value : s3.__ : i3, t3.__c ? _3 = (h3 = u3.__c = t3.__c).__ = h3.__E : (x3 ? u3.__c = h3 = new T4(k3, $3) : (u3.__c = h3 = new C(k3, $3), h3.constructor = T4, h3.render = Q), M3 && M3.sub(h3), h3.state || (h3.state = {}), h3.__n = i3, p3 = h3.__d = true, h3.__h = [], h3._sb = []), x3 && null == h3.__s && (h3.__s = h3.state), x3 && null != T4.getDerivedStateFromProps && (h3.__s == h3.state && (h3.__s = m({}, h3.__s)), m(h3.__s, T4.getDerivedStateFromProps(k3, h3.__s))), v3 = h3.props, y3 = h3.state, h3.__v = u3, p3) x3 && null == T4.getDerivedStateFromProps && null != h3.componentWillMount && h3.componentWillMount(), x3 && null != h3.componentDidMount && h3.__h.push(h3.componentDidMount);
       else {
-        if (x2 && null == T3.getDerivedStateFromProps && k3 !== v3 && null != h3.componentWillReceiveProps && h3.componentWillReceiveProps(k3, $2), u3.__v == t3.__v || !h3.__e && null != h3.shouldComponentUpdate && false === h3.shouldComponentUpdate(k3, h3.__s, $2)) {
+        if (x3 && null == T4.getDerivedStateFromProps && k3 !== v3 && null != h3.componentWillReceiveProps && h3.componentWillReceiveProps(k3, $3), u3.__v == t3.__v || !h3.__e && null != h3.shouldComponentUpdate && false === h3.shouldComponentUpdate(k3, h3.__s, $3)) {
           u3.__v != t3.__v && (h3.props = k3, h3.state = h3.__s, h3.__d = false), u3.__e = t3.__e, u3.__k = t3.__k, u3.__k.some(function(n3) {
             n3 && (n3.__ = u3);
           }), w.push.apply(h3.__h, h3._sb), h3._sb = [], h3.__h.length && e3.push(h3);
           break n;
         }
-        null != h3.componentWillUpdate && h3.componentWillUpdate(k3, h3.__s, $2), x2 && null != h3.componentDidUpdate && h3.__h.push(function() {
+        null != h3.componentWillUpdate && h3.componentWillUpdate(k3, h3.__s, $3), x3 && null != h3.componentDidUpdate && h3.__h.push(function() {
           h3.componentDidUpdate(v3, y3, d3);
         });
       }
-      if (h3.context = $2, h3.props = k3, h3.__P = n2, h3.__e = false, I2 = l.__r, P2 = 0, x2) h3.state = h3.__s, h3.__d = false, I2 && I2(u3), s3 = h3.render(h3.props, h3.state, h3.context), w.push.apply(h3.__h, h3._sb), h3._sb = [];
+      if (h3.context = $3, h3.props = k3, h3.__P = n2, h3.__e = false, I2 = l.__r, P4 = 0, x3) h3.state = h3.__s, h3.__d = false, I2 && I2(u3), s3 = h3.render(h3.props, h3.state, h3.context), w.push.apply(h3.__h, h3._sb), h3._sb = [];
       else do {
         h3.__d = false, I2 && I2(u3), s3 = h3.render(h3.props, h3.state, h3.context), h3.state = h3.__s;
-      } while (h3.__d && ++P2 < 25);
-      h3.state = h3.__s, null != h3.getChildContext && (i3 = m(m({}, i3), h3.getChildContext())), x2 && !p3 && null != h3.getSnapshotBeforeUpdate && (d3 = h3.getSnapshotBeforeUpdate(v3, y3)), A3 = null != s3 && s3.type === S && null == s3.key ? E(s3.props.children) : s3, f3 = L(n2, g(A3) ? A3 : [A3], u3, t3, i3, r3, o3, e3, f3, c3, a3), h3.base = u3.__e, u3.__u &= -161, h3.__h.length && e3.push(h3), _3 && (h3.__E = h3.__ = null);
+      } while (h3.__d && ++P4 < 25);
+      h3.state = h3.__s, null != h3.getChildContext && (i3 = m(m({}, i3), h3.getChildContext())), x3 && !p3 && null != h3.getSnapshotBeforeUpdate && (d3 = h3.getSnapshotBeforeUpdate(v3, y3)), A4 = null != s3 && s3.type === S && null == s3.key ? E(s3.props.children) : s3, f3 = L(n2, g(A4) ? A4 : [A4], u3, t3, i3, r3, o3, e3, f3, c3, a3), h3.base = u3.__e, u3.__u &= -161, h3.__h.length && e3.push(h3), _3 && (h3.__E = h3.__ = null);
     } catch (n3) {
       if (u3.__v = null, c3 || null != o3) if (n3.then) {
         for (u3.__u |= c3 ? 160 : 128; f3 && 8 == f3.nodeType && f3.nextSibling; ) f3 = f3.nextSibling;
         o3[o3.indexOf(f3)] = null, u3.__e = f3;
       } else {
-        for (H2 = o3.length; H2--; ) b(o3[H2]);
+        for (H3 = o3.length; H3--; ) b(o3[H3]);
         B(u3);
       }
       else u3.__e = t3.__e, u3.__k = t3.__k, n3.then || B(u3);
@@ -186,25 +191,25 @@
     return "object" != typeof n2 || null == n2 || n2.__b > 0 ? n2 : g(n2) ? n2.map(E) : void 0 !== n2.constructor ? null : m({}, n2);
   }
   function G(u3, t3, i3, r3, o3, e3, f3, c3, a3) {
-    var s3, h3, p3, v3, y3, w3, _3, m3 = i3.props || d, k3 = t3.props, x2 = t3.type;
-    if ("svg" == x2 ? o3 = "http://www.w3.org/2000/svg" : "math" == x2 ? o3 = "http://www.w3.org/1998/Math/MathML" : o3 || (o3 = "http://www.w3.org/1999/xhtml"), null != e3) {
-      for (s3 = 0; s3 < e3.length; s3++) if ((y3 = e3[s3]) && "setAttribute" in y3 == !!x2 && (x2 ? y3.localName == x2 : 3 == y3.nodeType)) {
+    var s3, h3, p3, v3, y3, w3, _3, m3 = i3.props || d, k3 = t3.props, x3 = t3.type;
+    if ("svg" == x3 ? o3 = "http://www.w3.org/2000/svg" : "math" == x3 ? o3 = "http://www.w3.org/1998/Math/MathML" : o3 || (o3 = "http://www.w3.org/1999/xhtml"), null != e3) {
+      for (s3 = 0; s3 < e3.length; s3++) if ((y3 = e3[s3]) && "setAttribute" in y3 == !!x3 && (x3 ? y3.localName == x3 : 3 == y3.nodeType)) {
         u3 = y3, e3[s3] = null;
         break;
       }
     }
     if (null == u3) {
-      if (null == x2) return document.createTextNode(k3);
-      u3 = document.createElementNS(o3, x2, k3.is && k3), c3 && (l.__m && l.__m(t3, e3), c3 = false), e3 = null;
+      if (null == x3) return document.createTextNode(k3);
+      u3 = document.createElementNS(o3, x3, k3.is && k3), c3 && (l.__m && l.__m(t3, e3), c3 = false), e3 = null;
     }
-    if (null == x2) m3 === k3 || c3 && u3.data == k3 || (u3.data = k3);
+    if (null == x3) m3 === k3 || c3 && u3.data == k3 || (u3.data = k3);
     else {
-      if (e3 = "textarea" == x2 && null != k3.defaultValue ? null : e3 && n.call(u3.childNodes), !c3 && null != e3) for (m3 = {}, s3 = 0; s3 < u3.attributes.length; s3++) m3[(y3 = u3.attributes[s3]).name] = y3.value;
+      if (e3 = "textarea" == x3 && null != k3.defaultValue ? null : e3 && n.call(u3.childNodes), !c3 && null != e3) for (m3 = {}, s3 = 0; s3 < u3.attributes.length; s3++) m3[(y3 = u3.attributes[s3]).name] = y3.value;
       for (s3 in m3) y3 = m3[s3], "dangerouslySetInnerHTML" == s3 ? p3 = y3 : "children" == s3 || s3 in k3 || "value" == s3 && "defaultValue" in k3 || "checked" == s3 && "defaultChecked" in k3 || N(u3, s3, null, y3, o3);
       for (s3 in k3) y3 = k3[s3], "children" == s3 ? v3 = y3 : "dangerouslySetInnerHTML" == s3 ? h3 = y3 : "value" == s3 ? w3 = y3 : "checked" == s3 ? _3 = y3 : c3 && "function" != typeof y3 || m3[s3] === y3 || N(u3, s3, y3, m3[s3], o3);
       if (h3) c3 || p3 && (h3.__html == p3.__html || h3.__html == u3.innerHTML) || (u3.innerHTML = h3.__html), t3.__k = [];
-      else if (p3 && (u3.innerHTML = ""), L("template" == t3.type ? u3.content : u3, g(v3) ? v3 : [v3], t3, i3, r3, "foreignObject" == x2 ? "http://www.w3.org/1999/xhtml" : o3, e3, f3, e3 ? e3[0] : i3.__k && $(i3, 0), c3, a3), null != e3) for (s3 = e3.length; s3--; ) b(e3[s3]);
-      c3 && "textarea" != x2 || (s3 = "value", "progress" == x2 && null == w3 ? u3.removeAttribute("value") : null != w3 && (w3 !== u3[s3] || "progress" == x2 && !w3 || "option" == x2 && w3 != m3[s3]) && N(u3, s3, w3, m3[s3], o3), s3 = "checked", null != _3 && _3 != u3[s3] && N(u3, s3, _3, m3[s3], o3));
+      else if (p3 && (u3.innerHTML = ""), L("template" == t3.type ? u3.content : u3, g(v3) ? v3 : [v3], t3, i3, r3, "foreignObject" == x3 ? "http://www.w3.org/1999/xhtml" : o3, e3, f3, e3 ? e3[0] : i3.__k && $(i3, 0), c3, a3), null != e3) for (s3 = e3.length; s3--; ) b(e3[s3]);
+      c3 && "textarea" != x3 || (s3 = "value", "progress" == x3 && null == w3 ? u3.removeAttribute("value") : null != w3 && (w3 !== u3[s3] || "progress" == x3 && !w3 || "option" == x3 && w3 != m3[s3]) && N(u3, s3, w3, m3[s3], o3), s3 = "checked", null != _3 && _3 != u3[s3] && N(u3, s3, _3, m3[s3], o3));
     }
     return u3;
   }
@@ -1035,8 +1040,8 @@
     let dy = 0;
     let node = el;
     while (node && node !== document.body && !node.classList?.contains("widgets-grid")) {
-      const { x: x2, y: y3 } = getTranslate(node);
-      dx += x2;
+      const { x: x3, y: y3 } = getTranslate(node);
+      dx += x3;
       dy += y3;
       node = node.parentElement;
     }
@@ -1138,9 +1143,9 @@
       if (gaps === 0) continue;
       for (const other of order) {
         if (other === dragged) continue;
-        for (let j3 = 0; j3 < order.length; j3++) {
-          if (order[j3] === other) continue;
-          consider(moveTo(order, other, j3), other);
+        for (let j4 = 0; j4 < order.length; j4++) {
+          if (order[j4] === other) continue;
+          consider(moveTo(order, other, j4), other);
         }
       }
     }
@@ -1897,12 +1902,12 @@
     ));
   }
 
-  // src/content/components/widgets/schedule.jsx
+  // src/content/lessonNames.js
   var LESSON_ABBREVIATIONS = [
     { abbreviation: "ang", aliases: ["j\u0119zyk angielski", "angielski", "english"] },
     { abbreviation: "pol", aliases: ["j\u0119zyk polski", "polski"] },
     { abbreviation: "nie", aliases: ["j\u0119zyk niemiecki", "niemiecki"] },
-    { abbreviation: "his", aliases: ["j\u0119zyk hiszpa\u0144ski", "hiszpa\u0144ski"] },
+    { abbreviation: "hsz", aliases: ["j\u0119zyk hiszpa\u0144ski", "hiszpa\u0144ski"] },
     { abbreviation: "fra", aliases: ["j\u0119zyk francuski", "francuski"] },
     { abbreviation: "w\u0142o", aliases: ["j\u0119zyk w\u0142oski", "w\u0142oski"] },
     { abbreviation: "ros", aliases: ["j\u0119zyk rosyjski", "rosyjski"] },
@@ -1959,6 +1964,8 @@
     if (languageName) return languageName.slice(0, 3);
     return Array.from(trimmedName.toLocaleLowerCase("pl-PL")).slice(0, 3).join("");
   }
+
+  // src/content/components/widgets/schedule.jsx
   function Schedule({ widgetId, moveWidget: moveWidget2, data }) {
     const [scheduleYear, setScheduleYear] = d2(getSelectedScheduleYear);
     const schedule = applyScheduleYearTimes(data.schedule, scheduleYear);
@@ -3125,6 +3132,510 @@
     return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("div", { className: "widgets-grid", ref: gridRef }, widgets.map(renderWidget)));
   }
 
+  // node_modules/preact/compat/dist/compat.module.js
+  function g3(n2, t3) {
+    for (var e3 in t3) n2[e3] = t3[e3];
+    return n2;
+  }
+  function E2(n2, t3) {
+    for (var e3 in n2) if ("__source" !== e3 && !(e3 in t3)) return true;
+    for (var r3 in t3) if ("__source" !== r3 && n2[r3] !== t3[r3]) return true;
+    return false;
+  }
+  function M2(n2, t3) {
+    this.props = n2, this.context = t3;
+  }
+  function N2(n2, e3) {
+    function r3(n3) {
+      var t3 = this.props.ref;
+      return t3 != n3.ref && t3 && ("function" == typeof t3 ? t3(null) : t3.current = null), e3 ? !e3(this.props, n3) || t3 != n3.ref : E2(this.props, n3);
+    }
+    function u3(e4) {
+      return this.shouldComponentUpdate = r3, k(n2, e4);
+    }
+    return u3.displayName = "Memo(" + (n2.displayName || n2.name) + ")", u3.__f = u3.prototype.isReactComponent = true, u3.type = n2, u3;
+  }
+  (M2.prototype = new C()).isPureReactComponent = true, M2.prototype.shouldComponentUpdate = function(n2, t3) {
+    return E2(this.props, n2) || E2(this.state, t3);
+  };
+  var T3 = l.__b;
+  l.__b = function(n2) {
+    n2.type && n2.type.__f && n2.ref && (n2.props.ref = n2.ref, n2.ref = null), T3 && T3(n2);
+  };
+  var A3 = "undefined" != typeof Symbol && Symbol.for && Symbol.for("react.forward_ref") || 3911;
+  var O2 = l.__e;
+  l.__e = function(n2, t3, e3, r3) {
+    if (n2.then) {
+      for (var u3, o3 = t3; o3 = o3.__; ) if ((u3 = o3.__c) && u3.__c) return null == t3.__e && (t3.__e = e3.__e, t3.__k = e3.__k), u3.__c(n2, t3);
+    }
+    O2(n2, t3, e3, r3);
+  };
+  var U2 = l.unmount;
+  function V2(n2, t3, e3) {
+    return n2 && (n2.__c && n2.__c.__H && (n2.__c.__H.__.forEach(function(n3) {
+      "function" == typeof n3.__c && n3.__c();
+    }), n2.__c.__H = null), null != (n2 = g3({}, n2)).__c && (n2.__c.__P === e3 && (n2.__c.__P = t3), n2.__c.__e = true, n2.__c = null), n2.__k = n2.__k && n2.__k.map(function(n3) {
+      return V2(n3, t3, e3);
+    })), n2;
+  }
+  function W2(n2, t3, e3) {
+    return n2 && e3 && (n2.__v = null, n2.__k = n2.__k && n2.__k.map(function(n3) {
+      return W2(n3, t3, e3);
+    }), n2.__c && n2.__c.__P === t3 && (n2.__e && e3.appendChild(n2.__e), n2.__c.__e = true, n2.__c.__P = e3)), n2;
+  }
+  function P3() {
+    this.__u = 0, this.o = null, this.__b = null;
+  }
+  function j3(n2) {
+    var t3 = n2.__ && n2.__.__c;
+    return t3 && t3.__a && t3.__a(n2);
+  }
+  function B3() {
+    this.i = null, this.l = null;
+  }
+  l.unmount = function(n2) {
+    var t3 = n2.__c;
+    t3 && (t3.__z = true), t3 && t3.__R && t3.__R(), t3 && 32 & n2.__u && (n2.type = null), U2 && U2(n2);
+  }, (P3.prototype = new C()).__c = function(n2, t3) {
+    var e3 = t3.__c, r3 = this;
+    null == r3.o && (r3.o = []), r3.o.push(e3);
+    var u3 = j3(r3.__v), o3 = false, i3 = function() {
+      o3 || r3.__z || (o3 = true, e3.__R = null, u3 ? u3(c3) : c3());
+    };
+    e3.__R = i3;
+    var l3 = e3.__P;
+    e3.__P = null;
+    var c3 = function() {
+      if (!--r3.__u) {
+        if (r3.state.__a) {
+          var n3 = r3.state.__a;
+          r3.__v.__k[0] = W2(n3, n3.__c.__P, n3.__c.__O);
+        }
+        var t4;
+        for (r3.setState({ __a: r3.__b = null }); t4 = r3.o.pop(); ) t4.__P = l3, t4.forceUpdate();
+      }
+    };
+    r3.__u++ || 32 & t3.__u || r3.setState({ __a: r3.__b = r3.__v.__k[0] }), n2.then(i3, i3);
+  }, P3.prototype.componentWillUnmount = function() {
+    this.o = [];
+  }, P3.prototype.render = function(n2, e3) {
+    if (this.__b) {
+      if (this.__v.__k) {
+        var r3 = document.createElement("div"), o3 = this.__v.__k[0].__c;
+        this.__v.__k[0] = V2(this.__b, r3, o3.__O = o3.__P);
+      }
+      this.__b = null;
+    }
+    var i3 = e3.__a && k(S, null, n2.fallback);
+    return i3 && (i3.__u &= -33), [k(S, null, e3.__a ? null : n2.children), i3];
+  };
+  var H2 = function(n2, t3, e3) {
+    if (++e3[1] === e3[0] && n2.l.delete(t3), n2.props.revealOrder && ("t" !== n2.props.revealOrder[0] || !n2.l.size)) for (e3 = n2.i; e3; ) {
+      for (; e3.length > 3; ) e3.pop()();
+      if (e3[1] < e3[0]) break;
+      n2.i = e3 = e3[2];
+    }
+  };
+  function Z(n2) {
+    return this.getChildContext = function() {
+      return n2.context;
+    }, n2.children;
+  }
+  function Y(n2) {
+    var e3 = this, r3 = n2.h;
+    if (e3.componentWillUnmount = function() {
+      R(null, e3.v), e3.v = null, e3.h = null;
+    }, e3.h && e3.h !== r3 && e3.componentWillUnmount(), !e3.v) {
+      for (var u3 = e3.__v; null !== u3 && !u3.__m && null !== u3.__; ) u3 = u3.__;
+      e3.h = r3, e3.v = { nodeType: 1, parentNode: r3, childNodes: [], __k: { __m: u3.__m }, contains: function() {
+        return true;
+      }, namespaceURI: r3.namespaceURI, insertBefore: function(n3, t3) {
+        this.childNodes.push(n3), e3.h.insertBefore(n3, t3);
+      }, removeChild: function(n3) {
+        this.childNodes.splice(this.childNodes.indexOf(n3) >>> 1, 1), e3.h.removeChild(n3);
+      } };
+    }
+    R(k(Z, { context: e3.context }, n2.__v), e3.v);
+  }
+  function $2(n2, e3) {
+    var r3 = k(Y, { __v: n2, h: e3 });
+    return r3.containerInfo = e3, r3;
+  }
+  (B3.prototype = new C()).__a = function(n2) {
+    var t3 = this, e3 = j3(t3.__v), r3 = t3.l.get(n2);
+    return r3[0]++, function(u3) {
+      var o3 = function() {
+        t3.props.revealOrder ? (r3.push(u3), H2(t3, n2, r3)) : u3();
+      };
+      e3 ? e3(o3) : o3();
+    };
+  }, B3.prototype.render = function(n2) {
+    this.i = null, this.l = /* @__PURE__ */ new Map();
+    var t3 = F(n2.children);
+    n2.revealOrder && "b" === n2.revealOrder[0] && t3.reverse();
+    for (var e3 = t3.length; e3--; ) this.l.set(t3[e3], this.i = [1, 0, this.i]);
+    return n2.children;
+  }, B3.prototype.componentDidUpdate = B3.prototype.componentDidMount = function() {
+    var n2 = this;
+    this.l.forEach(function(t3, e3) {
+      H2(n2, e3, t3);
+    });
+  };
+  var q3 = "undefined" != typeof Symbol && Symbol.for && Symbol.for("react.element") || 60103;
+  var G2 = /^(?:accent|alignment|arabic|baseline|cap|clip(?!PathU)|color|dominant|fill|flood|font|glyph(?!R)|horiz|image(!S)|letter|lighting|marker(?!H|W|U)|overline|paint|pointer|shape|stop|strikethrough|stroke|text(?!L)|transform|underline|unicode|units|v|vector|vert|word|writing|x(?!C))[A-Z]/;
+  var J2 = /^on(Ani|Tra|Tou|BeforeInp|Compo)/;
+  var K2 = /[A-Z0-9]/g;
+  var Q2 = "undefined" != typeof document;
+  var X2 = function(n2) {
+    return ("undefined" != typeof Symbol && "symbol" == typeof Symbol() ? /fil|che|rad/ : /fil|che|ra/).test(n2);
+  };
+  C.prototype.isReactComponent = true, ["componentWillMount", "componentWillReceiveProps", "componentWillUpdate"].forEach(function(t3) {
+    Object.defineProperty(C.prototype, t3, { configurable: true, get: function() {
+      return this["UNSAFE_" + t3];
+    }, set: function(n2) {
+      Object.defineProperty(this, t3, { configurable: true, writable: true, value: n2 });
+    } });
+  });
+  var en = l.event;
+  l.event = function(n2) {
+    return en && (n2 = en(n2)), n2.persist = function() {
+    }, n2.isPropagationStopped = function() {
+      return this.cancelBubble;
+    }, n2.isDefaultPrevented = function() {
+      return this.defaultPrevented;
+    }, n2.nativeEvent = n2;
+  };
+  var rn;
+  var un = { configurable: true, get: function() {
+    return this.class;
+  } };
+  var on = l.vnode;
+  l.vnode = function(n2) {
+    "string" == typeof n2.type && function(n3) {
+      var t3 = n3.props, e3 = n3.type, u3 = {}, o3 = -1 == e3.indexOf("-");
+      for (var i3 in t3) {
+        var l3 = t3[i3];
+        if (!("value" === i3 && "defaultValue" in t3 && null == l3 || Q2 && "children" === i3 && "noscript" === e3 || "class" === i3 || "className" === i3)) {
+          var c3 = i3.toLowerCase();
+          "defaultValue" === i3 && "value" in t3 && null == t3.value ? i3 = "value" : "download" === i3 && true === l3 ? l3 = "" : "translate" === c3 && "no" === l3 ? l3 = false : "o" === c3[0] && "n" === c3[1] ? "ondoubleclick" === c3 ? i3 = "ondblclick" : "onchange" !== c3 || "input" !== e3 && "textarea" !== e3 || X2(t3.type) ? "onfocus" === c3 ? i3 = "onfocusin" : "onblur" === c3 ? i3 = "onfocusout" : J2.test(i3) && (i3 = c3) : c3 = i3 = "oninput" : o3 && G2.test(i3) ? i3 = i3.replace(K2, "-$&").toLowerCase() : null === l3 && (l3 = void 0), "oninput" === c3 && u3[i3 = c3] && (i3 = "oninputCapture"), u3[i3] = l3;
+        }
+      }
+      "select" == e3 && (u3.multiple && Array.isArray(u3.value) && (u3.value = F(t3.children).forEach(function(n4) {
+        n4.props.selected = -1 != u3.value.indexOf(n4.props.value);
+      })), null != u3.defaultValue && (u3.value = F(t3.children).forEach(function(n4) {
+        n4.props.selected = u3.multiple ? -1 != u3.defaultValue.indexOf(n4.props.value) : u3.defaultValue == n4.props.value;
+      }))), t3.class && !t3.className ? (u3.class = t3.class, Object.defineProperty(u3, "className", un)) : t3.className && (u3.class = u3.className = t3.className), n3.props = u3;
+    }(n2), n2.$$typeof = q3, on && on(n2);
+  };
+  var ln = l.__r;
+  l.__r = function(n2) {
+    ln && ln(n2), rn = n2.__c;
+  };
+  var cn = l.diffed;
+  l.diffed = function(n2) {
+    cn && cn(n2);
+    var t3 = n2.props, e3 = n2.__e;
+    null != e3 && "textarea" === n2.type && "value" in t3 && t3.value !== e3.value && (e3.value = null == t3.value ? "" : t3.value), rn = null;
+  };
+
+  // src/content/components/studentProfile.jsx
+  var LIST_PREVIEW_COUNT = 5;
+  var WEEKDAY_SHORT = {
+    monday: "Pon",
+    tuesday: "Wt",
+    wednesday: "\u015Ar",
+    thursday: "Czw",
+    friday: "Pt",
+    saturday: "Sob",
+    sunday: "Nd"
+  };
+  var LEVEL_LABELS = { P: "Poziom podstawowy", R: "Poziom rozszerzony" };
+  var MONTHS = { sty: 0, lut: 1, mar: 2, kwi: 3, maj: 4, cze: 5, lip: 6, sie: 7, wrz: 8, pa\u017A: 9, paz: 9, lis: 10, gru: 11 };
+  var ATTENDANCE_LABELS = { presence: "Obecno\u015B\u0107", absence: "Nieobecno\u015B\u0107", lateness: "Sp\xF3\u017Anienie", excused: "Usprawiedliwione", other: "Inne" };
+  function parsePolishDate(text) {
+    const match = (text || "").match(/(\d{1,2})\s+([a-ząćęłńóśźż]{3})\w*\s+(\d{4})/i);
+    if (!match) return null;
+    const month = MONTHS[match[2].toLocaleLowerCase("pl-PL")];
+    return month === void 0 ? null : new Date(Number(match[3]), month, Number(match[1]));
+  }
+  function daysUntilLabel(date) {
+    if (!date) return "";
+    const today = /* @__PURE__ */ new Date();
+    today.setHours(0, 0, 0, 0);
+    const days = Math.round((date - today) / 864e5);
+    if (days < 0) return "";
+    if (days === 0) return "dzi\u015B";
+    if (days === 1) return "jutro";
+    return `za ${days} dni`;
+  }
+  function phoneHref(value) {
+    const digits = (value || "").replace(/[^\d+]/g, "");
+    return digits.length >= 6 ? `tel:${digits}` : "";
+  }
+  function initialsOf(name) {
+    return (name || "").split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toLocaleUpperCase("pl-PL");
+  }
+  function layoutFields(fields) {
+    const result = [];
+    let column = 0;
+    fields.forEach((field, index) => {
+      if (field.wide) {
+        result.push(field);
+        column = 0;
+        return;
+      }
+      const next = fields[index + 1];
+      const alone = column === 0 && (!next || next.wide);
+      result.push(alone ? { ...field, wide: true } : field);
+      column = alone ? 0 : (column + 1) % 2;
+    });
+    return result;
+  }
+  function Chevron({ open = false }) {
+    return /* @__PURE__ */ k("svg", { className: `idu-profile-chevron-icon${open ? " open" : ""}`, width: "14", height: "14", viewBox: "0 0 42 42", fill: "currentColor", "aria-hidden": "true" }, /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933" }));
+  }
+  function Card({ index, title, href, subtitle, children, className = "" }) {
+    const heading = /* @__PURE__ */ k("h2", { className: "idu-profile-card-title" }, title);
+    return /* @__PURE__ */ k("article", { className: `idu-profile-card ${className}`, style: { "--i": index } }, title && /* @__PURE__ */ k("div", { className: "idu-profile-card-head" }, href ? /* @__PURE__ */ k("a", { className: "idu-profile-card-link", href }, heading, /* @__PURE__ */ k(Chevron, null)) : heading, subtitle && /* @__PURE__ */ k("p", { className: "idu-profile-card-subtitle" }, subtitle)), children);
+  }
+  function MoreButton({ expanded, total, onClick }) {
+    return /* @__PURE__ */ k("button", { type: "button", className: "idu-profile-more", onClick, "aria-expanded": expanded }, expanded ? "Poka\u017C mniej \u2191" : `Poka\u017C wszystkie (${total}) \u2193`);
+  }
+  function SeeAllLink({ href }) {
+    return href ? /* @__PURE__ */ k("a", { className: "idu-profile-see-all", href }, "Zobacz wszystkie \u2192") : null;
+  }
+  function CardFoot({ button, href }) {
+    if (!button && !href) return null;
+    return /* @__PURE__ */ k("div", { className: "idu-profile-card-foot" }, button, /* @__PURE__ */ k(SeeAllLink, { href }));
+  }
+  function usePreview(items) {
+    const [expanded, setExpanded] = d2(false);
+    const canExpand = items.length > LIST_PREVIEW_COUNT;
+    return {
+      visible: expanded || !canExpand ? items : items.slice(0, LIST_PREVIEW_COUNT),
+      button: canExpand ? /* @__PURE__ */ k(MoreButton, { expanded, total: items.length, onClick: () => setExpanded(!expanded) }) : null
+    };
+  }
+  function PhotoViewer({ src, fallback, name, onClose }) {
+    const closeRef = A2(null);
+    const [current, setCurrent] = d2(src);
+    const [closing, setClosing] = d2(false);
+    const close = () => {
+      if (closing) return;
+      const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) return onClose();
+      setClosing(true);
+      setTimeout(onClose, 180);
+    };
+    y2(() => {
+      const previousFocus = document.activeElement;
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      closeRef.current?.focus();
+      const onKey = (event) => {
+        if (event.key === "Escape") close();
+      };
+      document.addEventListener("keydown", onKey);
+      return () => {
+        document.removeEventListener("keydown", onKey);
+        document.body.style.overflow = previousOverflow;
+        previousFocus?.focus?.();
+      };
+    }, []);
+    return $2(
+      /* @__PURE__ */ k(
+        "div",
+        {
+          className: `idu-photo-viewer${closing ? " closing" : ""}`,
+          role: "dialog",
+          "aria-modal": "true",
+          "aria-label": name ? `Zdj\u0119cie: ${name}` : "Zdj\u0119cie",
+          onClick: (event) => {
+            if (event.target === event.currentTarget) close();
+          }
+        },
+        /* @__PURE__ */ k("button", { ref: closeRef, type: "button", className: "idu-photo-viewer-close", "aria-label": "Zamknij", onClick: close }, /* @__PURE__ */ k("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ k("path", { d: "M6 6l12 12M18 6L6 18", stroke: "currentColor", "stroke-width": "2.4", "stroke-linecap": "round" }))),
+        /* @__PURE__ */ k("figure", { className: "idu-photo-viewer-figure", onClick: (event) => event.stopPropagation() }, /* @__PURE__ */ k(
+          "img",
+          {
+            src: current,
+            alt: name,
+            className: current === fallback && fallback !== src ? "blurred" : "",
+            onError: () => {
+              if (fallback && current !== fallback) setCurrent(fallback);
+            }
+          }
+        ), name && /* @__PURE__ */ k("figcaption", null, name))
+      ),
+      document.body
+    );
+  }
+  var Avatar = N2(function Avatar2({ name, photoUrl }) {
+    const imgRef = A2(null);
+    const [viewer, setViewer] = d2(null);
+    const replacement = window.getProfileImageReplacement?.(name) || null;
+    const src = replacement ? replacement.tiny : photoUrl;
+    _2(() => {
+      if (replacement && imgRef.current) window.upgradeProfileImage?.(imgRef.current, name);
+    }, [name]);
+    if (!src) {
+      return /* @__PURE__ */ k("div", { className: "idu-profile-avatar" }, /* @__PURE__ */ k("span", { className: "idu-profile-avatar-initials" }, initialsOf(name) || "?"));
+    }
+    const open = () => {
+      const shown = imgRef.current?.currentSrc || imgRef.current?.src || src;
+      setViewer({ src: replacement ? replacement.full : shown, fallback: replacement ? shown : "" });
+    };
+    return [
+      /* @__PURE__ */ k("button", { key: "avatar", type: "button", className: "idu-profile-avatar clickable", onClick: open, "aria-label": "Powi\u0119ksz zdj\u0119cie", "aria-haspopup": "dialog" }, /* @__PURE__ */ k("img", { ref: imgRef, src, alt: name, "data-idu-profile-photo": "", "data-student-name": name })),
+      viewer && /* @__PURE__ */ k(PhotoViewer, { key: "viewer", src: viewer.src, fallback: viewer.fallback, name, onClose: () => setViewer(null) })
+    ];
+  });
+  function FieldValue({ field }) {
+    if (field.type === "email") {
+      const address = field.lines.join(" ").match(/\S+@\S+/)?.[0];
+      return address ? /* @__PURE__ */ k("a", { href: `mailto:${address}` }, field.lines.join(" ")) : field.lines.join(" ");
+    }
+    if (field.type === "phone") {
+      const href = phoneHref(field.lines.join(" "));
+      return href ? /* @__PURE__ */ k("a", { href }, field.lines.join(" ")) : field.lines.join(" ");
+    }
+    if (field.type === "links" && field.links.length) {
+      return field.links.map((link, index) => /* @__PURE__ */ k("span", { key: link.href }, index > 0 && ", ", /* @__PURE__ */ k("a", { href: link.href, target: "_blank", rel: "noopener noreferrer" }, link.text)));
+    }
+    if (field.href) return /* @__PURE__ */ k("a", { href: field.href }, field.lines.join(" "));
+    return field.lines.map((line, index) => /* @__PURE__ */ k("span", { key: index, className: "idu-profile-line" }, line));
+  }
+  function FieldGrid({ fields }) {
+    if (!fields.length) return null;
+    return /* @__PURE__ */ k("dl", { className: "idu-profile-grid" }, layoutFields(fields).map((field) => /* @__PURE__ */ k("div", { key: field.key, className: `idu-profile-field${field.wide ? " wide" : ""}` }, /* @__PURE__ */ k("dt", null, field.label), /* @__PURE__ */ k("dd", null, /* @__PURE__ */ k(FieldValue, { field })))));
+  }
+  function Section({ title, children }) {
+    return /* @__PURE__ */ k("section", { className: "idu-profile-section" }, /* @__PURE__ */ k("h3", { className: "idu-profile-section-title" }, title), children);
+  }
+  function mergeAddresses(fields) {
+    const merged = [];
+    for (const field of fields) {
+      const same = merged.find((other) => other.lines.join("\n") === field.lines.join("\n"));
+      if (same) {
+        same.labels.push(field.label);
+      } else {
+        merged.push({ ...field, labels: [field.label] });
+      }
+    }
+    return merged.map((field) => ({
+      ...field,
+      label: field.labels.length === 1 ? field.labels[0] : `Adres ${field.labels.map((label) => label.replace(/^Adres\s+/i, "")).join(" \xB7 ")}`
+    }));
+  }
+  function ProfileCard({ profile, index }) {
+    const headerFields = [
+      profile.year && { key: "year", label: "Rocznik", lines: [profile.year] },
+      profile.klass && { key: "klass", label: "Klasa", lines: [profile.klass], href: profile.klassUrl }
+    ].filter(Boolean);
+    const tutors = profile.tutors || [];
+    const { contact, addresses, student } = profile.sections;
+    return /* @__PURE__ */ k(Card, { index, className: "idu-profile-main" }, /* @__PURE__ */ k("div", { className: "idu-profile-identity" }, /* @__PURE__ */ k(Avatar, { name: profile.name, photoUrl: profile.photoUrl }), /* @__PURE__ */ k("div", { className: "idu-profile-identity-text" }, /* @__PURE__ */ k("h2", { className: "idu-profile-name" }, profile.name || "Ucze\u0144"), profile.editUrl && /* @__PURE__ */ k("a", { className: "idu-profile-edit", href: profile.editUrl }, "Edytuj profil"))), profile.messageUrl && /* @__PURE__ */ k("a", { className: "idu-profile-action", href: profile.messageUrl }, /* @__PURE__ */ k("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ k("path", { d: "M4 6.5h16v11H4z", stroke: "currentColor", "stroke-width": "2", "stroke-linejoin": "round" }), /* @__PURE__ */ k("path", { d: "m4.5 7 7.5 6 7.5-6", stroke: "currentColor", "stroke-width": "2", "stroke-linejoin": "round" })), "Wy\u015Blij wiadomo\u015B\u0107"), (headerFields.length > 0 || tutors.length > 0) && /* @__PURE__ */ k("dl", { className: "idu-profile-grid idu-profile-header-grid" }, layoutFields([
+      ...headerFields,
+      ...tutors.length ? [{ key: "tutor", label: tutors.length > 1 ? "Wychowawcy" : "Wychowawca", tutors, wide: true }] : []
+    ]).map((field) => /* @__PURE__ */ k("div", { key: field.key, className: `idu-profile-field${field.wide ? " wide" : ""}` }, /* @__PURE__ */ k("dt", null, field.label), /* @__PURE__ */ k("dd", null, field.tutors ? field.tutors.map((tutor, i3) => /* @__PURE__ */ k("span", { key: i3 }, i3 > 0 && ", ", tutor.href ? /* @__PURE__ */ k("a", { href: tutor.href }, tutor.name) : tutor.name)) : /* @__PURE__ */ k(FieldValue, { field }))))), profile.parents.length > 0 && /* @__PURE__ */ k(Section, { title: "Rodzice / opiekunowie" }, /* @__PURE__ */ k("div", { className: "idu-profile-chips parents" }, profile.parents.map((parent, i3) => parent.href ? /* @__PURE__ */ k("a", { key: i3, className: "idu-profile-chip", style: { "--i": i3 }, href: parent.href }, parent.name) : /* @__PURE__ */ k("span", { key: i3, className: "idu-profile-chip", style: { "--i": i3 } }, parent.name)))), contact.length > 0 && /* @__PURE__ */ k(Section, { title: "Dane kontaktowe" }, /* @__PURE__ */ k(FieldGrid, { fields: contact })), addresses.length > 0 && /* @__PURE__ */ k(Section, { title: "Adresy" }, /* @__PURE__ */ k(FieldGrid, { fields: mergeAddresses(addresses) })), student.length > 0 && /* @__PURE__ */ k(Section, { title: "Dane ucznia" }, /* @__PURE__ */ k(FieldGrid, { fields: student })));
+  }
+  function ExamsCard({ exams, index }) {
+    const { visible, button } = usePreview(exams);
+    return /* @__PURE__ */ k(Card, { index, title: "Sprawdziany", subtitle: "Najbli\u017Csze zapowiedziane" }, /* @__PURE__ */ k("ul", { className: "idu-profile-list" }, visible.map((exam, i3) => {
+      const date = parsePolishDate(exam.date);
+      const until = daysUntilLabel(date);
+      return /* @__PURE__ */ k("li", { key: i3, className: "idu-profile-row", style: { "--i": i3 } }, /* @__PURE__ */ k("div", { className: "idu-profile-date-badge" }, date && /* @__PURE__ */ k("span", { className: "day" }, date.getDate()), /* @__PURE__ */ k("span", { className: "month" }, date ? exam.date.split(/\s+/)[1] : exam.date)), /* @__PURE__ */ k("div", { className: "idu-profile-row-main" }, /* @__PURE__ */ k("div", { className: "idu-profile-row-top" }, exam.subjectUrl ? /* @__PURE__ */ k("a", { className: "idu-profile-row-title", href: exam.subjectUrl }, exam.subject) : /* @__PURE__ */ k("span", { className: "idu-profile-row-title" }, exam.subject), until && /* @__PURE__ */ k("span", { className: `idu-profile-tag${/dziś|jutro/.test(until) ? " soon" : ""}` }, until)), (exam.name || exam.description) && /* @__PURE__ */ k("p", { className: "idu-profile-row-text" }, exam.name, exam.name && exam.description && exam.description !== exam.name ? " \xB7 " : "", exam.description !== exam.name ? exam.description : "")));
+    })), /* @__PURE__ */ k(CardFoot, { button }));
+  }
+  function GradesCard({ grades, href, index }) {
+    const { visible, button } = usePreview(grades);
+    const [open, setOpen] = d2(null);
+    const unseen = grades.filter((grade) => grade.unseen).length;
+    return /* @__PURE__ */ k(Card, { index, title: "Ostatnie oceny", href, subtitle: unseen ? `${unseen} ${unseen === 1 ? "nowa" : unseen < 5 ? "nowe" : "nowych"}` : "" }, /* @__PURE__ */ k("ul", { className: "idu-profile-list" }, visible.map((grade, i3) => {
+      const isShort = grade.grade.length <= 6;
+      const isOpen = open === i3;
+      const expandable = Boolean(grade.detail);
+      return /* @__PURE__ */ k("li", { key: i3, className: `idu-profile-row grade${grade.unseen ? " unseen" : ""}${isOpen ? " open" : ""}`, style: { "--i": i3 } }, /* @__PURE__ */ k("div", { className: `idu-profile-grade-badge${isShort ? "" : " text"}`, "aria-hidden": !isShort }, isShort ? grade.grade : /* @__PURE__ */ k("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none" }, /* @__PURE__ */ k("path", { d: "M5 5h14v10H9l-4 4z", stroke: "currentColor", "stroke-width": "2", "stroke-linejoin": "round" }))), /* @__PURE__ */ k("div", { className: "idu-profile-row-main" }, /* @__PURE__ */ k("div", { className: "idu-profile-row-top" }, grade.subjectUrl ? /* @__PURE__ */ k("a", { className: "idu-profile-row-title", href: grade.subjectUrl }, grade.subject) : /* @__PURE__ */ k("span", { className: "idu-profile-row-title" }, grade.subject), grade.unseen && /* @__PURE__ */ k("span", { className: "idu-profile-tag new" }, "nowa")), grade.description && /* @__PURE__ */ k("p", { className: "idu-profile-row-text" }, grade.description), !isShort && !isOpen && /* @__PURE__ */ k("p", { className: "idu-profile-row-quote" }, grade.grade), isOpen && /* @__PURE__ */ k("p", { className: "idu-profile-row-detail" }, grade.detail), /* @__PURE__ */ k("div", { className: "idu-profile-row-meta" }, /* @__PURE__ */ k("span", null, grade.date), expandable && /* @__PURE__ */ k("button", { type: "button", className: "idu-profile-link-button", onClick: () => setOpen(isOpen ? null : i3), "aria-expanded": isOpen }, isOpen ? "Zwi\u0144" : "Poka\u017C opis"))));
+    })), /* @__PURE__ */ k(CardFoot, { button, href }));
+  }
+  function AttendanceCard({ attendance, href, index }) {
+    const { visible, button } = usePreview(attendance);
+    const counts = attendance.reduce((acc, item) => ({ ...acc, [item.status]: (acc[item.status] || 0) + 1 }), {});
+    return /* @__PURE__ */ k(Card, { index, title: "Frekwencja", href, subtitle: "Ostatnio wystawione" }, /* @__PURE__ */ k("div", { className: "idu-profile-chips summary" }, Object.entries(counts).map(([status, count], i3) => /* @__PURE__ */ k("span", { key: status, className: "idu-profile-chip summary", style: { "--i": i3 } }, /* @__PURE__ */ k("span", { className: `idu-profile-dot ${status}` }), ATTENDANCE_LABELS[status] || status, " ", count))), /* @__PURE__ */ k("ul", { className: "idu-profile-list compact" }, visible.map((item, i3) => /* @__PURE__ */ k("li", { key: i3, className: `idu-profile-row compact${item.unseen ? " unseen" : ""}`, style: { "--i": i3 }, title: item.issuedAt ? `wystawiono: ${item.issuedAt}` : void 0 }, /* @__PURE__ */ k("span", { className: `idu-profile-dot ${item.status}`, "aria-hidden": "true" }), /* @__PURE__ */ k("div", { className: "idu-profile-row-main" }, /* @__PURE__ */ k("div", { className: "idu-profile-row-top" }, item.subjectUrl ? /* @__PURE__ */ k("a", { className: "idu-profile-row-title", href: item.subjectUrl }, item.subject) : /* @__PURE__ */ k("span", { className: "idu-profile-row-title" }, item.subject), /* @__PURE__ */ k("span", { className: "idu-profile-row-date" }, item.date)), /* @__PURE__ */ k("p", { className: "idu-profile-row-text" }, item.name || ATTENDANCE_LABELS[item.status]))))), /* @__PURE__ */ k(CardFoot, { button, href }));
+  }
+  function EventsCard({ title, events, href, index }) {
+    const { visible, button } = usePreview(events);
+    return /* @__PURE__ */ k(Card, { index, title, href }, /* @__PURE__ */ k("ul", { className: "idu-profile-list" }, visible.map((event, i3) => /* @__PURE__ */ k("li", { key: i3, className: "idu-profile-row", style: { "--i": i3 } }, /* @__PURE__ */ k("div", { className: "idu-profile-row-main" }, /* @__PURE__ */ k("div", { className: "idu-profile-row-top" }, event.subjectUrl ? /* @__PURE__ */ k("a", { className: "idu-profile-row-title", href: event.subjectUrl }, event.subject) : /* @__PURE__ */ k("span", { className: "idu-profile-row-title" }, event.subject || event.name), event.date && /* @__PURE__ */ k("span", { className: "idu-profile-row-date" }, event.date)), event.subject && event.name && /* @__PURE__ */ k("p", { className: "idu-profile-row-text" }, event.name), event.description && /* @__PURE__ */ k("p", { className: "idu-profile-row-text" }, event.description))))), /* @__PURE__ */ k(CardFoot, { button, href }));
+  }
+  function FilesCard({ files, index }) {
+    return /* @__PURE__ */ k(Card, { index, title: "Przypisane pliki" }, /* @__PURE__ */ k("div", { className: "idu-profile-chips" }, files.map((file, i3) => /* @__PURE__ */ k("a", { key: file.href, className: "idu-profile-chip", style: { "--i": i3 }, href: file.href }, file.text))));
+  }
+  function SubjectsCard({ groups, className, index }) {
+    const [selected, setSelected] = d2(null);
+    const total = groups.reduce((sum, group) => sum + group.subjects.length, 0);
+    return /* @__PURE__ */ k(Card, { index, title: "Przedmioty", subtitle: [className, `${total} ${total === 1 ? "przedmiot" : "przedmiot\xF3w"}`].filter(Boolean).join(" \xB7 ") }, groups.map((group, groupIndex) => /* @__PURE__ */ k("div", { key: groupIndex, className: "idu-profile-subject-group" }, group.level && /* @__PURE__ */ k("h3", { className: "idu-profile-group-title" }, LEVEL_LABELS[group.level] || group.level), /* @__PURE__ */ k("div", { className: "idu-profile-chips" }, group.subjects.map((subject, i3) => {
+      const id = `${groupIndex}-${i3}`;
+      const isOpen = selected === id;
+      return /* @__PURE__ */ k(
+        "button",
+        {
+          key: id,
+          type: "button",
+          className: `idu-profile-chip subject${subject.italic ? " extra" : ""}${isOpen ? " active" : ""}`,
+          style: { "--i": i3 },
+          "aria-expanded": isOpen,
+          onClick: () => setSelected(isOpen ? null : id)
+        },
+        subject.name
+      );
+    })), group.subjects.map((subject, i3) => selected === `${groupIndex}-${i3}` && /* @__PURE__ */ k("div", { key: i3, className: "idu-profile-detail" }, /* @__PURE__ */ k("div", { className: "idu-profile-detail-title" }, subject.name), subject.title && subject.title !== subject.name && /* @__PURE__ */ k("div", { className: "idu-profile-detail-text" }, subject.title), subject.teachers.length > 0 && /* @__PURE__ */ k("div", { className: "idu-profile-detail-text" }, subject.teachers.length > 1 ? "Nauczyciele: " : "Nauczyciel: ", subject.teachers.map((teacher, t3) => /* @__PURE__ */ k("span", { key: t3 }, t3 > 0 && ", ", /* @__PURE__ */ k("a", { href: teacher.href }, teacher.name)))), subject.url && /* @__PURE__ */ k("a", { className: "idu-profile-see-all", href: subject.url }, "Otw\xF3rz przedmiot \u2192"))))));
+  }
+  function TimetableCard({ timetable, subjectNames, index }) {
+    const [selected, setSelected] = d2(null);
+    const todayKey = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][(/* @__PURE__ */ new Date()).getDay()];
+    const days = timetable.days;
+    const columns = `30px repeat(${days.length}, minmax(0, 1fr))`;
+    const selectedLesson = selected && timetable.rows[selected.row]?.lessons[selected.day];
+    const selectedRow = selected && timetable.rows[selected.row];
+    const nameOf = (lesson) => subjectNames.get(lesson.subjectUrl) || lesson.subject;
+    return /* @__PURE__ */ k(Card, { index, title: "Plan lekcji", href: timetable.url }, /* @__PURE__ */ k("div", { className: "idu-profile-timetable", role: "table", "aria-label": "Plan lekcji" }, /* @__PURE__ */ k("div", { className: "idu-profile-tt-row head", role: "row", style: { gridTemplateColumns: columns } }, /* @__PURE__ */ k("span", { className: "idu-profile-tt-num", role: "columnheader", "aria-label": "Lekcja" }), days.map((day) => /* @__PURE__ */ k("span", { key: day.key, role: "columnheader", className: `idu-profile-tt-day${day.key === todayKey ? " today" : ""}` }, WEEKDAY_SHORT[day.key] || day.label.slice(0, 3)))), timetable.rows.map((row, rowIndex) => /* @__PURE__ */ k("div", { key: row.number, className: "idu-profile-tt-row", role: "row", style: { gridTemplateColumns: columns } }, /* @__PURE__ */ k("span", { className: "idu-profile-tt-num", role: "rowheader", title: `${row.start}\u2013${row.end}` }, /* @__PURE__ */ k("span", { className: "num" }, row.number), /* @__PURE__ */ k("span", { className: "time" }, row.start)), days.map((day) => {
+      const lessons = row.lessons[day.key];
+      if (!lessons) return /* @__PURE__ */ k("span", { key: day.key, role: "cell", className: "idu-profile-tt-cell empty" });
+      const isSelected = selected?.row === rowIndex && selected?.day === day.key;
+      const label = lessons.map(nameOf).join(" / ");
+      return /* @__PURE__ */ k(
+        "button",
+        {
+          key: day.key,
+          type: "button",
+          role: "cell",
+          "aria-label": `${label}, ${row.start}\u2013${row.end}`,
+          "aria-pressed": isSelected,
+          className: `idu-profile-tt-cell${day.key === todayKey ? " today" : ""}${isSelected ? " active" : ""}`,
+          style: { "--i": rowIndex },
+          onClick: () => setSelected(isSelected ? null : { row: rowIndex, day: day.key })
+        },
+        shortenLessonName(nameOf(lessons[0])),
+        lessons.length > 1 ? "+" : ""
+      );
+    })))), selectedLesson && /* @__PURE__ */ k("div", { className: "idu-profile-detail" }, selectedLesson.map((lesson, i3) => /* @__PURE__ */ k("div", { key: i3, className: "idu-profile-detail-lesson" }, /* @__PURE__ */ k("div", { className: "idu-profile-detail-title" }, lesson.subjectUrl ? /* @__PURE__ */ k("a", { href: lesson.subjectUrl }, nameOf(lesson)) : nameOf(lesson), nameOf(lesson) !== lesson.subject && /* @__PURE__ */ k("span", { className: "idu-profile-detail-raw" }, " \xB7 ", lesson.subject)), /* @__PURE__ */ k("div", { className: "idu-profile-detail-text" }, [`${days.find((d3) => d3.key === selected.day)?.label}, lekcja ${selectedRow.number}`, `${selectedRow.start}\u2013${selectedRow.end}`].join(" \xB7 ")), (lesson.room || lesson.teacher) && /* @__PURE__ */ k("div", { className: "idu-profile-detail-text" }, [lesson.room && `Sala: ${lesson.room}`, lesson.teacher].filter(Boolean).join(" \xB7 "))))));
+  }
+  function StudentProfile({ data }) {
+    const { profile } = data;
+    const cards = [];
+    const add = (key, render) => cards.push({ key, render });
+    add("profile", (index) => /* @__PURE__ */ k(ProfileCard, { profile, index }));
+    if (data.exams?.length) add("exams", (index) => /* @__PURE__ */ k(ExamsCard, { exams: data.exams, index }));
+    if (data.grades?.length) add("grades", (index) => /* @__PURE__ */ k(GradesCard, { grades: data.grades, href: data.gradesUrl, index }));
+    if (data.attendance?.length) add("attendance", (index) => /* @__PURE__ */ k(AttendanceCard, { attendance: data.attendance, href: data.attendanceUrl, index }));
+    if (data.subjectGroups?.length) add("subjects", (index) => /* @__PURE__ */ k(SubjectsCard, { groups: data.subjectGroups, className: profile.klass, index }));
+    const subjectNames = new Map((data.subjectGroups || []).flatMap((group) => group.subjects.map((subject) => [subject.url, subject.name])));
+    if (data.timetable?.rows?.length) add("timetable", (index) => /* @__PURE__ */ k(TimetableCard, { timetable: data.timetable, subjectNames, index }));
+    if (data.reviews?.length) add("reviews", (index) => /* @__PURE__ */ k(EventsCard, { title: "Ostatnie recenzje", events: data.reviews, href: data.reviewsUrl, index }));
+    if (data.files?.length) add("files", (index) => /* @__PURE__ */ k(FilesCard, { files: data.files, index }));
+    return /* @__PURE__ */ k("div", { id: "idu-profile", className: "idu-profile" }, /* @__PURE__ */ k("h1", { className: "idu-profile-title" }, "Profil ucznia"), cards.map((card, index) => /* @__PURE__ */ k("div", { key: card.key, className: "idu-profile-card-slot" }, card.render(index))));
+  }
+
   // src/content/mobileMessages.js
   function compactSearch(form) {
     const fields = [...form.querySelectorAll(".field")].map((field) => ({
@@ -3676,6 +4187,14 @@
     if (!oldMainContent) return false;
     oldMainContent.innerHTML = "";
     R(/* @__PURE__ */ k(MainContent, { data }), oldMainContent);
+    return true;
+  };
+  window.replaceStudentProfile = function replaceStudentProfile(profileData) {
+    const content = document.getElementById("content");
+    if (!content || !profileData?.profile) return false;
+    content.innerHTML = "";
+    content.classList.add("idu-profile-content");
+    R(/* @__PURE__ */ k(StudentProfile, { data: profileData }), content);
     return true;
   };
   window.replaceFooter = function replaceFooter() {

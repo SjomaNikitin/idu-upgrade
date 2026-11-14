@@ -2,6 +2,7 @@
 import { h, render } from "preact";
 import { Header } from "./components/header.jsx";
 import { MainContent } from "./components/mainContent.jsx";
+import { StudentProfile } from "./components/studentProfile.jsx";
 import { setupMobileMessages } from "./mobileMessages.js";
 window.setupMobileMessages = setupMobileMessages;
 import { Footer } from "./components/footer.jsx";
@@ -82,6 +83,17 @@ window.replaceMainContent = function replaceMainContent(data) {
 	oldMainContent.innerHTML = "";
 	render(<MainContent data={data}/>, oldMainContent);
 
+	return true;
+};
+
+// /student ("Profil ucznia"): data comes from extractStudentProfilePageData() in 28-extracter.js.
+window.replaceStudentProfile = function replaceStudentProfile(profileData) {
+	const content = document.getElementById("content");
+	if (!content || !profileData?.profile) return false;
+
+	content.innerHTML = "";
+	content.classList.add("idu-profile-content");
+	render(<StudentProfile data={profileData}/>, content);
 	return true;
 };
 

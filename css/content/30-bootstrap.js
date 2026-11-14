@@ -41,7 +41,15 @@ if (!window.__iduContentBootstrapRegistered) {
 			subjects: extractSubjects(document.querySelector("#unique-id192")),
 			schedule: getScheduleLessons(),
 			subjectAnnouncements: extractSubjectAnnouncements(document.querySelector("#unique-id11")),
-			semesterScope: extractSemesterScope()
+			semesterScope: extractSemesterScope(),
+			studentProfile: isStudentProfilePage() ? extractStudentProfilePageData() : null
+		};
+		// Swap in the Preact "Profil ucznia" page once the header/footer are in place.
+		const replaceProfileIfNeeded = () => {
+			if (!pageData.studentProfile || typeof replaceStudentProfile !== "function") return false;
+			const loaded = replaceStudentProfile(pageData.studentProfile);
+			console.log("Custom student profile loaded:", loaded);
+			return loaded;
 		};
 		if (
 			window.location.pathname === "/" &&
@@ -64,14 +72,16 @@ if (!window.__iduContentBootstrapRegistered) {
 				const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent(pageData)
 				console.log("Custom content loaded:", customContentLoaded)
 			}
+			else replaceProfileIfNeeded();
 		} else {
 			const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader(pageData);
 			console.log("Custom header loaded:", customHeaderLoaded)
 			const customFooterLoaded = typeof replaceFooter === "function" && replaceFooter();
 			console.log("Custom footer loaded:", customFooterLoaded)
+			const profileLoaded = replaceProfileIfNeeded();
 			const news = document.querySelector("div.module:has(div#unique-id1)");
 			const lastContainer = document.querySelector("#content:last-child");
-			if (news && lastContainer) {
+			if (!profileLoaded && news && lastContainer) {
 				news.parentElement.removeChild(news);
 				lastContainer.appendChild(news);
 			}
