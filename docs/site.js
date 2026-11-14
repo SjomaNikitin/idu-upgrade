@@ -13,8 +13,7 @@ document.querySelectorAll('button.lesson').forEach(button => button.addEventList
  document.querySelectorAll('button.lesson').forEach(cell => { cell.classList.remove('selected'); cell.setAttribute('aria-pressed', 'false'); });
  button.classList.add('selected');
  button.setAttribute('aria-pressed', 'true');
- document.querySelector('#selected-subject').textContent = button.dataset.subject;
- document.querySelector('#selected-time').textContent = button.dataset.time;
+ document.querySelector('#selected-subject').textContent = `${button.dataset.subject} ${button.dataset.time.split(' ')[0]}`;
  document.querySelector('#selected-location-text').textContent = button.dataset.location;
 }));
 const featuredVideo = document.querySelector('[data-featured-video]');

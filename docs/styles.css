@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Montserrat:wght@500;700&display=swap');
 :root {
   --bg:#1a2024;
   --panel:#232b31;
@@ -266,7 +266,7 @@ nav>a:hover:after,nav>a[aria-current]:after {
   min-height:22px;
   line-height:1
 }
-.next-lesson,.demo-schedule {
+.demo-schedule {
   padding:17px;
   background:var(--panel);
   border-radius:10px;
@@ -283,24 +283,6 @@ nav>a:hover:after,nav>a[aria-current]:after {
 .mini-heading span {
   color:var(--muted);
   font-size:9px
-}
-.next-lesson h3 {
-  font-size:21px;
-  margin-bottom:10px
-}
-.next-lesson p {
-  font-size:10px
-}
-.progress {
-  height:2px;
-  background:#36494a;
-  margin-top:16px
-}
-.progress span {
-  display:block;
-  width:62%;
-  height:100%;
-  background:var(--mint)
 }
 .timetable {
   display:grid;
@@ -342,23 +324,43 @@ nav>a:hover:after,nav>a[aria-current]:after {
   gap:10px;
   margin-top:12px
 }
-.demo-bottom>div {
+/* Small 4x1 widgets (mirror Subjects41 / Grades41 in the app, dark theme) */
+.small-widget {
   display:flex;
-  gap:12px;
   align-items:center;
-  background:var(--panel);
-  padding:12px;
-  border-radius:9px;
-  color:var(--mint)
+  gap:8px;
+  min-width:0;
+  padding:12px 14px;
+  background:#242a32;
+  border:1px solid #2dd4be30;
+  border-radius:16px;
+  color:#7eeacc;
+  font-family:"Montserrat",sans-serif
 }
-.demo-bottom strong {
-  font-size:10px;
-  font-weight:500
+.sw-icon {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 36px;
+  height:36px;
+  background:#2dd4be15;
+  border-radius:50%
 }
-.demo-bottom small {
-  display:block;
-  font-size:8px;
-  color:var(--muted)
+.sw-title {
+  min-width:0;
+  font-size:1.05rem;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+.small-widget .nw-arrow {
+  margin-left:auto
+}
+@media(max-width:480px) {
+.demo-bottom {
+  grid-template-columns:1fr
+}
 }
 .demo-caption {
   font-size:9px;
@@ -466,33 +468,6 @@ nav>a:hover:after,nav>a[aria-current]:after {
   padding:3px 8px;
   border-radius:5px;
   font-weight:500
-}
-.announcements {
-  gap:23px
-}
-.announcements>div {
-  display:flex;
-  gap:16px;
-  align-items:center;
-  font-size:13px
-}
-.announcements time {
-  background:#7ce7ce0c;
-  color:var(--mint);
-  padding:7px 11px;
-  font-size:22px;
-  line-height:1.1;
-  border-radius:7px
-}
-.announcements small {
-  display:block;
-  font-size:10px;
-  color:var(--muted);
-  margin-top:4px
-}
-.announcements time small {
-  color:var(--mint);
-  text-align:center
 }
 .cta {
   padding-block:48px;
@@ -1018,6 +993,126 @@ footer .fine {
 
 }
 
+/* iOS "Next Lesson" widget preview (mirrors ios/IDU2/IDU2Widget, dark appearance) */
+.ios-widget-wrap {
+  margin-top:12px
+}
+.ios-widget {
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:8px;
+  min-height:150px;
+  padding:16px 18px;
+  background:#1c1c1e;
+  border-radius:22px;
+  box-shadow:0 10px 30px #0006,inset 0 0 0 1px #ffffff0d;
+  font-family:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"DM Sans",sans-serif
+}
+.ios-widget-title {
+  color:#ff544a;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.2px;
+  text-transform:uppercase
+}
+.ios-widget-main {
+  color:#fff;
+  font-size:20px;
+  font-weight:700;
+  line-height:1.2;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden
+}
+.ios-widget-detail {
+  color:#ffffffb8;
+  font-size:13px;
+  font-weight:500
+}
+/* Aktualności widget preview (mirrors src/content/components/widgets/news.jsx + css/styles.css, dark theme) */
+.news-widget {
+  position:relative;
+  height:100%;
+  max-height:200px;
+  overflow:hidden;
+  padding:16px;
+  background:#242a32;
+  border:1px solid #2dd4be30;
+  border-radius:16px;
+  color:#7eeacc;
+  font-family:"Montserrat",sans-serif
+}
+.nw-title {
+  display:flex;
+  align-items:center;
+  margin-bottom:8px;
+  font-size:1.2rem;
+  font-weight:700
+}
+.nw-arrow {
+  margin-left:auto;
+  flex:0 0 16px
+}
+.nw-row {
+  display:flex;
+  align-items:stretch;
+  height:48px;
+  margin:8px 0;
+  background:#2dd4be07;
+  border-radius:8px
+}
+.nw-date {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  flex:0 0 48px;
+  margin-right:8px;
+  background:#2dd4be15;
+  border-radius:8px;
+  text-align:center;
+  line-height:16px
+}
+.nw-day {
+  font-size:1rem;
+  font-weight:700
+}
+.nw-month {
+  font-size:.85rem
+}
+.nw-text {
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  padding:8px 8px 0 0;
+  font-size:.9rem;
+  line-height:16px
+}
+.nw-text strong {
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+.nw-text span {
+  font-size:.8rem
+}
+.nw-fade {
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-2px;
+  height:max(30%,5rem);
+  background:linear-gradient(0deg,#242a32 0%,#242a3200 100%);
+  pointer-events:none
+}
+.nw-all {
+  position:absolute;
+  right:8px;
+  bottom:8px;
+  font-size:1rem;
+  font-weight:700
+}
 @media(min-width:1500px) {
   .hero {
   min-height:750px
@@ -1391,7 +1486,7 @@ main {
   fill:currentColor;
   stroke:none
 }
-.button span,.card-label span,.row-arrow,.big-arrow,.orbit,.portrait i,.search>span,.demo-bottom>div>span,.menu-toggle span {
+.button span,.card-label span,.row-arrow,.big-arrow,.orbit,.portrait i,.search>span,.menu-toggle span {
   display:inline-flex;
   align-items:center;
   line-height:1
