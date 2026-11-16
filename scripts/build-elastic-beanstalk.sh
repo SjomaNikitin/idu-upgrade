@@ -21,7 +21,8 @@ cp package.json package-lock.json Procfile dev-server.js "$staging_dir/"
 cp -R .ebextensions "$staging_dir/"
 mkdir -p "$staging_dir/src" "$staging_dir/css/content/generated"
 cp src/worker.js src/mockDashboardData.js "$staging_dir/src/"
-cp css/styles.css "$staging_dir/css/"
+cp css/styles.css css/inline-assets.js "$staging_dir/css/"
+cp -R css/assets "$staging_dir/css/"
 cp \
   css/content/00-globals.js \
   css/content/10-theme.js \

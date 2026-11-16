@@ -1,4 +1,5 @@
 import { build, transform } from 'esbuild';
+import { inlineCssAssets } from '../css/inline-assets.js';
 import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 
 const outputDirectory = 'dist';
@@ -54,7 +55,10 @@ async function buildJavascript() {
 }
 
 async function buildCss() {
-  const source = await readFile('css/styles.css', 'utf8');
+  const source = await inlineCssAssets(
+    await readFile('css/styles.css', 'utf8'),
+    (assetPath) => readFile(`css/${assetPath}`),
+  );
   const result = await transform(source, {
     loader: 'css',
     target: ['safari15'],

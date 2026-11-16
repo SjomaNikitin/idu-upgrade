@@ -92,17 +92,13 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 		left: 50%;
 		top: 50%;
 		z-index: 2147483647;
-		width: 48px;
-		height: 48px;
-		box-sizing: border-box;
-		border: 4px solid rgba(128, 128, 128, 0.25);
-		border-top-color: var(--idu-loader-spinner-color);
-		border-radius: 50%;
+		width: 83px;
+		height: 72px;
+		/* --idu-loader-image is defined in css/styles.css (inlined data URI). */
+		background: var(--idu-loader-image, none) center / contain no-repeat;
 		opacity: 0;
-		transform: translate(-50%, -50%) rotate(0deg);
-		animation:
-			idu-loader-spinner-show 150ms ease 1s forwards,
-			idu-loader-spinner-spin 750ms linear 1s infinite;
+		transform: translate(-50%, -50%);
+		animation: idu-loader-spinner-show 150ms ease 1s forwards;
 	}
 
 	html.idu-ready::after {
@@ -121,31 +117,17 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 		to { opacity: 1; }
 	}
 
-	@keyframes idu-loader-spinner-spin {
-		to { transform: translate(-50%, -50%) rotate(360deg); }
-	}
-
 	@keyframes idu-loader-fade-out {
 		from { opacity: 1; }
 		to { opacity: 0; }
 	}
 
 	@keyframes idu-loader-spinner-fade-out {
-		from {
-			opacity: 1;
-			transform: translate(-50%, -50%) rotate(0deg);
-		}
-		to {
-			opacity: 0;
-			transform: translate(-50%, -50%) rotate(180deg);
-		}
+		from { opacity: 1; }
+		to { opacity: 0; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		html.idu-loading::after {
-			animation: idu-loader-spinner-show 150ms ease 1s forwards;
-		}
-
 		html.idu-loader-fading::before,
 		html.idu-loader-fading::after {
 			animation-duration: 1ms;
@@ -159,8 +141,10 @@ async function getCssText() {
 		try {
 			const fs = await import('node:fs/promises');
 			const path = await import('node:path');
+			const { inlineCssAssets } = await import('../css/inline-assets.js');
 			const cssPath = path.resolve(process.cwd(), 'css/styles.css');
-			return await fs.readFile(cssPath, 'utf8');
+			const css = await fs.readFile(cssPath, 'utf8');
+			return await inlineCssAssets(css, (assetPath) => fs.readFile(path.resolve(process.cwd(), 'css', assetPath)));
 		} catch (e) {
 			return '/* failed to read css/styles.css in dev */';
 		}

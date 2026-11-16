@@ -72,6 +72,8 @@
 html {
 	--idu-loader-color: #e5f8f2;
 	--idu-loader-spinner-color: #0b5f5d;
+	/* Test asset: running cartoon shown while the page loads. */
+	--idu-loader-image: url("assets/loader.webp");
 }
 
 html[data-theme="Ocean"] {
@@ -105,16 +107,13 @@ html.idu-loading::after {
 	left: 50%;
 	top: 50%;
 	z-index: 2147483647;
-	width: 48px;
-	height: 48px;
-	box-sizing: border-box;
-	border: 4px solid rgba(128, 128, 128, 0.25);
-	border-top-color: var(--idu-loader-spinner-color);
-	border-radius: 50%;
+	/* 1.5x the old 48px circle height; width follows the image ratio. */
+	width: 83px;
+	height: 72px;
+	background: var(--idu-loader-image) center / contain no-repeat;
 	opacity: 0;
-	transform: translate(-50%, -50%) rotate(0deg);
-	animation: idu-loader-spinner-show 150ms ease 1s forwards,
-		idu-loader-spinner-spin 750ms linear 1s infinite;
+	transform: translate(-50%, -50%);
+	animation: idu-loader-spinner-show 150ms ease 1s forwards;
 }
 
 html.idu-ready::before,
@@ -134,31 +133,17 @@ html.idu-loader-fading::after {
 	to { opacity: 1; }
 }
 
-@keyframes idu-loader-spinner-spin {
-	to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
 @keyframes idu-loader-fade-out {
 	from { opacity: 1; }
 	to { opacity: 0; }
 }
 
 @keyframes idu-loader-spinner-fade-out {
-	from {
-		opacity: 1;
-		transform: translate(-50%, -50%) rotate(0deg);
-	}
-	to {
-		opacity: 0;
-		transform: translate(-50%, -50%) rotate(180deg);
-	}
+	from { opacity: 1; }
+	to { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	html.idu-loading::after {
-		animation: idu-loader-spinner-show 150ms ease 1s forwards;
-	}
-
 	html.idu-loader-fading::before,
 	html.idu-loader-fading::after {
 		animation-duration: 1ms;
@@ -1878,7 +1863,7 @@ html.idu-loader-fading::after {
 		width: calc(100% - var(--padding-4));
 		min-height: 200px;
 		padding: var(--padding-2);
-		padding-right: calc(48px + var(--padding-2));
+		/*padding-right: calc(48px + var(--padding-2));*/
 		box-sizing: border-box;
 		background-color: var(--module-color);
 		border-radius: var(--padding-1);
@@ -3803,13 +3788,14 @@ html.idu-loader-fading::after {
 }
 
 .idu-photo-viewer {
+	/* Status-bar height: the iOS app injects --ios-safe-top (its WebView reports env() as 0,
+	   same value the header uses); mobile Safari with viewport-fit=cover reports env().
+	   Both are 0 on desktop/Android, so nothing moves there. */
+	--idu-photo-safe-top: max(env(safe-area-inset-top, 0px), var(--ios-safe-top, 0px));
+	--idu-photo-safe-bottom: env(safe-area-inset-bottom, 0px);
 	position: fixed;
 	inset: 0;
 	z-index: 2147483000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: calc(env(safe-area-inset-top, 0px) + 64px) 20px calc(env(safe-area-inset-bottom, 0px) + 32px);
 	box-sizing: border-box;
 	background: rgba(8, 12, 16, 0.82);
 	-webkit-backdrop-filter: blur(10px);
@@ -3817,18 +3803,33 @@ html.idu-loader-fading::after {
 	animation: idu-photo-backdrop-in 220ms ease both;
 }
 
+.idu-photo-viewer-scroll {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	box-sizing: border-box;
+	padding: calc(var(--idu-photo-safe-top) + 64px) 20px calc(var(--idu-photo-safe-bottom) + 32px);
+	/* A tall photo on a short screen scrolls instead of shrinking below full width. */
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	-webkit-overflow-scrolling: touch;
+}
+
 .idu-photo-viewer.closing {
 	animation: idu-photo-backdrop-out 180ms ease both;
 }
 
 .idu-photo-viewer-figure {
-	margin: 0;
+	margin: auto 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 14px;
-	max-width: 100%;
-	max-height: 100%;
+	/* Always the full width between the side margins (capped on tablets/desktop). */
+	width: 100%;
+	max-width: 560px;
 	animation: idu-photo-zoom-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -3836,21 +3837,39 @@ html.idu-loader-fading::after {
 	animation: idu-photo-zoom-out 180ms ease both;
 }
 
-.idu-photo-viewer-figure img {
-	display: block;
-	max-width: min(100%, 520px);
-	max-height: calc(100dvh - 180px);
-	width: auto;
-	height: auto;
+.idu-photo-viewer-frame {
+	position: relative;
+	width: 100%;
 	border-radius: 24px;
-	object-fit: contain;
+	overflow: hidden;
 	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 	background: var(--module-color);
 }
 
-.idu-photo-viewer-figure img.blurred {
-	min-width: min(70vw, 320px);
-	filter: blur(14px);
+.idu-photo-viewer-frame img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* Tiny inline preview scaled up to full width: blurred so it reads as a soft photo, not pixels. */
+.idu-photo-viewer-frame img.idu-photo-viewer-preview {
+	filter: blur(16px);
+	transform: scale(1.08);
+}
+
+/* With a preview the sharp photo sits on top of it and fades in once downloaded. */
+.idu-photo-viewer-frame.has-preview img.idu-photo-viewer-full {
+	position: absolute;
+	inset: 0;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0;
+	transition: opacity 0.4s ease;
+}
+
+.idu-photo-viewer-frame.has-preview img.idu-photo-viewer-full.loaded {
+	opacity: 1;
 }
 
 .idu-photo-viewer-figure figcaption {
@@ -3863,7 +3882,8 @@ html.idu-loader-fading::after {
 
 .idu-photo-viewer button.idu-photo-viewer-close {
 	position: absolute;
-	top: calc(env(safe-area-inset-top, 0px) + 14px);
+	z-index: 1;
+	top: calc(var(--idu-photo-safe-top) + 12px);
 	right: 14px;
 	width: 44px;
 	height: 44px;

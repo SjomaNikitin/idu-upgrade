@@ -3418,7 +3418,8 @@
   }
   function PhotoViewer({ src, fallback, name, onClose }) {
     const closeRef = A2(null);
-    const [current, setCurrent] = d2(src);
+    const [loaded, setLoaded] = d2(false);
+    const [failed, setFailed] = d2(false);
     const [closing, setClosing] = d2(false);
     const close = () => {
       if (closing) return;
@@ -3455,17 +3456,18 @@
           }
         },
         /* @__PURE__ */ k("button", { ref: closeRef, type: "button", className: "idu-photo-viewer-close", "aria-label": "Zamknij", onClick: close }, /* @__PURE__ */ k("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ k("path", { d: "M6 6l12 12M18 6L6 18", stroke: "currentColor", "stroke-width": "2.4", "stroke-linecap": "round" }))),
-        /* @__PURE__ */ k("figure", { className: "idu-photo-viewer-figure", onClick: (event) => event.stopPropagation() }, /* @__PURE__ */ k(
+        /* @__PURE__ */ k("div", { className: "idu-photo-viewer-scroll", onClick: (event) => {
+          if (event.target === event.currentTarget) close();
+        } }, /* @__PURE__ */ k("figure", { className: "idu-photo-viewer-figure", onClick: (event) => event.stopPropagation() }, /* @__PURE__ */ k("div", { className: `idu-photo-viewer-frame${fallback ? " has-preview" : ""}` }, fallback && /* @__PURE__ */ k("img", { className: "idu-photo-viewer-preview", src: fallback, alt: "", "aria-hidden": "true" }), !failed && /* @__PURE__ */ k(
           "img",
           {
-            src: current,
+            className: `idu-photo-viewer-full${loaded ? " loaded" : ""}`,
+            src,
             alt: name,
-            className: current === fallback && fallback !== src ? "blurred" : "",
-            onError: () => {
-              if (fallback && current !== fallback) setCurrent(fallback);
-            }
+            onLoad: () => setLoaded(true),
+            onError: () => setFailed(true)
           }
-        ), name && /* @__PURE__ */ k("figcaption", null, name))
+        )), name && /* @__PURE__ */ k("figcaption", null, name)))
       ),
       document.body
     );

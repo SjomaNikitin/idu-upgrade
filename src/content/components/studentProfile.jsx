@@ -114,7 +114,9 @@ function usePreview(items) {
 // can't trap the fixed overlay. Closes with the X, a tap on the backdrop, or Escape.
 function PhotoViewer({ src, fallback, name, onClose }) {
 	const closeRef = useRef(null);
-	const [current, setCurrent] = useState(src);
+	// The blurred preview (if any) fills the frame straight away; the sharp photo fades in over it.
+	const [loaded, setLoaded] = useState(false);
+	const [failed, setFailed] = useState(false);
 	const [closing, setClosing] = useState(false);
 
 	const close = () => {
@@ -152,15 +154,24 @@ function PhotoViewer({ src, fallback, name, onClose }) {
 					<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
 				</svg>
 			</button>
+			{/* Scrolls on its own layer so the X above stays put (the backdrop blur makes position: fixed relative to the popup). */}
+			<div className="idu-photo-viewer-scroll" onClick={(event) => { if (event.target === event.currentTarget) close(); }}>
 			<figure className="idu-photo-viewer-figure" onClick={(event) => event.stopPropagation()}>
-				<img
-					src={current}
-					alt={name}
-					className={current === fallback && fallback !== src ? 'blurred' : ''}
-					onError={() => { if (fallback && current !== fallback) setCurrent(fallback); }}
-				/>
+				<div className={`idu-photo-viewer-frame${fallback ? ' has-preview' : ''}`}>
+					{fallback && <img className="idu-photo-viewer-preview" src={fallback} alt="" aria-hidden="true" />}
+					{!failed && (
+						<img
+							className={`idu-photo-viewer-full${loaded ? ' loaded' : ''}`}
+							src={src}
+							alt={name}
+							onLoad={() => setLoaded(true)}
+							onError={() => setFailed(true)}
+						/>
+					)}
+				</div>
 				{name && <figcaption>{name}</figcaption>}
 			</figure>
+			</div>
 		</div>,
 		document.body
 	);
