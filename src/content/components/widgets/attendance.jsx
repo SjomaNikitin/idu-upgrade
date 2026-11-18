@@ -6,6 +6,146 @@ import { useWidgetDragging } from './widgetDragging.js';
 const attendanceStatsStorageKey = 'attendance.stats';
 
 
+function normalizePercentage(value) {
+	const number = Number(value);
+	return Number.isFinite(number) ? number : 0;
+}
+
+function normalizeLessonName(lessonName) {
+	let names = ['fizyczne', 'WF', 'godzina', 'GW', 'biznes', 'BIZ', 'kultura', 'kultura']
+	for (let i=0; i<names.length; i+=2) {
+		if (lessonName.includes(names[i])){
+			return names[i+1]
+		}
+	}
+	return lessonName;
+}
+
+function loadData(storageKey) {
+	const saved = localStorage.getItem(storageKey);
+
+	if (!saved) return null;
+
+	try {
+		return JSON.parse(saved);
+	} catch {
+		return null;
+	}
+}
+
+async function fetchAttendanceStats(seeMoreUrl) {
+	let attendanceData = loadData(attendanceStatsStorageKey)
+	if (attendanceData && attendanceData.date === new Date().getDate()) {
+		return attendanceData.summary;
+	}
+	const res = await fetch(seeMoreUrl, {
+		credentials: 'include',
+	});
+
+	const html = await res.text();
+	const doc = new DOMParser().parseFromString(html, 'text/html');
+
+	const table = doc.querySelectorAll('table')[1];
+	if (!table) return null;
+
+	const summaryRow = table.querySelector('tbody tr');
+
+	const summaryCells = summaryRow?.querySelectorAll('td span');
+	if (summaryCells.length < 3) return null
+	const summary = {
+		presence: Number(
+			summaryCells?.[0].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(',', '.')
+		),
+		absence: Number(
+			summaryCells?.[1].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(',', '.')
+		),
+		lateness: Number(
+			summaryCells?.[2].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(',', '.')
+		),
+	};
+	localStorage.setItem(attendanceStatsStorageKey, JSON.stringify({summary: summary, date: new Date().getDate()}));
+	return summary;
+}
+
+// Coloured dot instead of the OB / NB / SP text (green / red / orange, blue for excused),
+// with the full status name for screen readers and on hover.
+export function attendanceStatus(item) {
+	const type = (item.type || item.name || '').toLocaleLowerCase('pl-PL');
+	if (item.lateness || item.status === 'lateness' || type.includes('spóźn')) return { key: 'lateness', label: 'Spóźnienie' };
+	if (type.includes('uspraw') || item.status === 'excused') return { key: 'excused', label: 'Nieobecność usprawiedliwiona' };
+	if (item.absence || item.status === 'absence' || type.includes('nieobec')) return { key: 'absence', label: 'Nieobecność' };
+	if (item.presence || item.status === 'presence' || type.includes('obecn')) return { key: 'presence', label: 'Obecność' };
+	return { key: 'other', label: item.type || item.name || 'Inne' };
+}
+
+export function AttendanceRow ({item, rowWidth}){
+	const status = attendanceStatus(item);
+	return(<div className="attendance-row" style={{width: rowWidth}} title={item.date ? `${status.label} · ${item.date}` : status.label}>
+		<div className="attendance-row-subject" >{normalizeLessonName(item.subject)}</div>
+		<div className={`attendance-row-value ${status.key}`}>
+			<span className={`attendance-dot ${status.key}`} role="img" aria-label={status.label}></span>
+		</div>
+	</div>)
+}
+
+// Shared with the student profile page (studentProfile.jsx).
+export function AttendanceChart({width = "100%", seeMoreUrl, mockData = false}) {
+	const [stats, setStats] = useState(null);
+
+	if (mockData) {
+		return <div style={{ padding: '16px' }}>...</div>;
+
+	}
+
+	useEffect(() => {
+		let cancelled = false;
+
+		async function loadStats() {
+			const data = await fetchAttendanceStats(seeMoreUrl);
+			data.lateness = normalizePercentage(data.lateness);
+			data.absence = normalizePercentage(data.absence);
+			data.presence = normalizePercentage(data.presence);
+
+			if (!cancelled) {
+				setStats(data);
+			}
+		}
+
+		loadStats();
+
+		return () => {
+			cancelled = true;
+		};
+	}, []);
+
+	if (!stats) {
+		return <div style={{ padding: '16px' }}>Loading...</div>;
+	}
+
+	let attendancePercentage = stats.presence;
+	if (Number.isNaN(attendancePercentage)) attendancePercentage = 0;
+
+	let latenessPercentage = stats.lateness;
+	if (Number.isNaN(latenessPercentage)) latenessPercentage = 0;
+
+	let absencePercentage = stats.absence;
+	if (Number.isNaN(absencePercentage)) absencePercentage = 0;
+
+	return (
+		<div
+			className="donut-3"
+			style={{
+				'--part1': `${attendancePercentage}%`,
+				'--part2': `${latenessPercentage}%`,
+				'--part3': `${absencePercentage}%`,
+				'width': width,
+			}}
+		>
+			<div className="donut-inner">{Math.round(attendancePercentage)}%</div>
+		</div>
+	);
+}
+
 export function Attendance({ widgetId, moveWidget, data }) {
 	const attendance = data.attendance;
 	const mockData = data.attendance[0].mockData;
@@ -41,74 +181,6 @@ export function Attendance({ widgetId, moveWidget, data }) {
 	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, {w: 4, h: 1});
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
 
-	function normalizePercentage(value) {
-		const number = Number(value);
-		return Number.isFinite(number) ? number : 0;
-	}
-
-	function normalizeLessonName(lessonName) {
-		let names = ['fizyczne', 'WF', 'godzina', 'GW', 'biznes', 'BIZ', 'kultura', 'kultura']
-		for (let i=0; i<names.length; i+=2) {
-			if (lessonName.includes(names[i])){
-				return names[i+1]
-			}
-		}
-		return lessonName;
-	}
-
-	function loadData(storageKey) {
-		const saved = localStorage.getItem(storageKey);
-
-		if (!saved) return null;
-
-		try {
-			return JSON.parse(saved);
-		} catch {
-			return null;
-		}
-	}
-
-	async function fetchAttendanceStats() {
-		let attendanceData = loadData(attendanceStatsStorageKey)
-		if (attendanceData && attendanceData.date === new Date().getDate()) {
-			return attendanceData.summary;
-		}
-		const res = await fetch(attendance[0].seeMoreUrl, {
-			credentials: 'include',
-		});
-
-		const html = await res.text();
-		const doc = new DOMParser().parseFromString(html, 'text/html');
-
-		const table = doc.querySelectorAll('table')[1];
-		if (!table) return null;
-
-		const summaryRow = table.querySelector('tbody tr');
-
-		const summaryCells = summaryRow?.querySelectorAll('td span');
-		if (summaryCells.length < 3) return null
-		const summary = {
-			presence: Number(
-				summaryCells?.[0].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(',', '.')
-			),
-			absence: Number(
-				summaryCells?.[1].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(',', '.')
-			),
-			lateness: Number(
-				summaryCells?.[2].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(',', '.')
-			),
-		};
-		localStorage.setItem(attendanceStatsStorageKey, JSON.stringify({summary: summary, date: new Date().getDate()}));
-		return summary;
-	}
-
-	function AttendanceRow ({item, rowWidth}){
-		return(<div className="attendance-row" style={{width: rowWidth}}>
-			<div className="attendance-row-subject" >{normalizeLessonName(item.subject)}</div>
-			<div className={`attendance-row-value ${item.presence? 'ob' : ''} ${item.absence? 'nob' : ''} ${item.lateness? 'sp' : ''}`}>{item.presence? `OB` : ''} {item.absence? `NOB` : ''} {item.lateness? `SP` : ''}</div>
-		</div>)
-	}
-
 	function AttendanceGrid ({limit, width = "100%", graph = false, rowWidth = "100%", showMore = false}) {
 		let usableData = attendance.slice(0, limit);
 		const seeMoreHref = attendance[0]?.seeMoreUrl;
@@ -132,71 +204,14 @@ export function Attendance({ widgetId, moveWidget, data }) {
 					/>
 				))}
 			</div>
-			{graph? <AttendanceChart width={width}/> : null}
+			{graph? <AttendanceChart width={width} seeMoreUrl={attendance[0]?.seeMoreUrl} mockData={mockData}/> : null}
 			{shouldShowSeeMore ? <a href={seeMoreHref} className="grades-all-link">Zobacz więcej</a> : null}
 		</div>)
 	}
 
-	function AttendanceChart({width = "100%"}) {
-		const [stats, setStats] = useState(null);
-
-		if (mockData) {
-			return <div style={{ padding: '16px' }}>...</div>;
-
-		}
-
-		useEffect(() => {
-			let cancelled = false;
-
-			async function loadStats() {
-				const data = await fetchAttendanceStats();
-				data.lateness = normalizePercentage(data.lateness);
-				data.absence = normalizePercentage(data.absence);
-				data.presence = normalizePercentage(data.presence);
-
-				if (!cancelled) {
-					setStats(data);
-				}
-			}
-
-			loadStats();
-
-			return () => {
-				cancelled = true;
-			};
-		}, []);
-
-		if (!stats) {
-			return <div style={{ padding: '16px' }}>Loading...</div>;
-		}
-
-		let attendancePercentage = stats.presence;
-		if (Number.isNaN(attendancePercentage)) attendancePercentage = 0;
-
-		let latenessPercentage = stats.lateness;
-		if (Number.isNaN(latenessPercentage)) latenessPercentage = 0;
-
-		let absencePercentage = stats.absence;
-		if (Number.isNaN(absencePercentage)) absencePercentage = 0;
-
-		return (
-			<div
-				className="donut-3"
-				style={{
-					'--part1': `${attendancePercentage}%`,
-					'--part2': `${latenessPercentage}%`,
-					'--part3': `${absencePercentage}%`,
-					'width': width,
-				}}
-			>
-				<div className="donut-inner">{Math.round(attendancePercentage)}%</div>
-			</div>
-		);
-	}
-
 	function Attendance22 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">
-			<AttendanceChart/>
+			<AttendanceChart seeMoreUrl={attendance[0]?.seeMoreUrl} mockData={mockData}/>
 		</div>)
 	}
 

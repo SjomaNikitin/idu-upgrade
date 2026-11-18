@@ -2203,6 +2203,33 @@ html.idu-loader-fading::after {
 		overflow: visible;
 	}
 
+	/* Home subjects widget grouped by level (same groups as the profile's Przedmioty card). */
+	.widget-subjects-groups{
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		scrollbar-width: none;
+		/* Soft fade at the bottom hints that the list scrolls; the padding lets the last row clear it. */
+		padding-bottom: 14px;
+		box-sizing: border-box;
+		-webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 18px), transparent);
+		mask-image: linear-gradient(to bottom, #000 calc(100% - 18px), transparent);
+	}
+
+	.widget-subjects-groups::-webkit-scrollbar{
+		display: none;
+	}
+
+	.widget-subjects-level{
+		margin-bottom: 6px;
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: color-mix(in srgb, var(--main-text-color) 62%, transparent);
+	}
+
 	.widget-subjects-class{
 		padding-top: var(--padding-1);
 		padding-bottom: var(--padding-1);
@@ -2392,7 +2419,10 @@ html.idu-loader-fading::after {
 		width: 100% !important;
 		height: calc(var(--padding-2) * 4);
 		.widget-grade-box-value{
+			/* Square, like the smaller grade boxes (was 48px wide x 64px tall). */
+			width: calc(var(--padding-2) * 4);
 			height: calc(var(--padding-2) * 4);
+			flex: 0 0 auto;
 		}
 	}
 
@@ -2770,15 +2800,24 @@ html.idu-loader-fading::after {
 		flex-wrap: wrap;
 	}
 
-	.attendance-row-value.ob{
-		color: var(--attendance-text-color);
+	.attendance-row-value{
+		align-items: center;
+		justify-content: flex-end;
 	}
-	.attendance-row-value.nob{
-		color: var(--absence-text-color);
+
+	/* Status dots replacing the OB / NB / SP text (also used on the profile page). */
+	.attendance-dot{
+		display: inline-block;
+		flex: 0 0 auto;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--main-text-color);
 	}
-	.attendance-row-value.sp{
-		color: var(--lateness-text-color);
-	}
+	.attendance-dot.presence{ background: #3fb984; }
+	.attendance-dot.absence{ background: #e5484d; }
+	.attendance-dot.lateness{ background: #f5a524; }
+	.attendance-dot.excused{ background: #5b9cf5; }
 
 	.edit-block{
 		position: fixed;
@@ -3925,13 +3964,108 @@ html.idu-loader-fading::after {
 	}
 }
 
+/* Profile cards built from the home-page widgets: full width instead of a grid cell. */
+.idu-profile-widget .widget {
+	display: block;
+	width: 100%;
+	user-select: auto;
+	-webkit-user-select: auto;
+}
+
+.idu-profile-widget .inner-widget {
+	width: 100%;
+	height: auto;
+	user-select: auto;
+	-webkit-user-select: auto;
+}
+
+.idu-profile-widget .inner-widget * {
+	user-select: auto;
+	-webkit-user-select: auto;
+}
+
+.idu-profile-widget .widget-content-container {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* Room for the absolutely positioned "Wszystkie oceny" / "Zobacz więcej" link. */
+.idu-profile-widget .widget-content-container.with-footer-link {
+	padding-bottom: calc(var(--padding-2) * 2.5);
+}
+
+.idu-profile-widget a.idu-profile-widget-arrow {
+	margin-left: auto;
+	display: flex;
+	color: var(--main-text-color) !important;
+}
+
+/* Fixed-height rows: the grade square fills the row top to bottom (64x64), and the
+   subject and description stay on one line each, cut with "..." when too long. */
+.idu-profile-widget .widget.h6 .widget-grade-box {
+	height: calc(var(--padding-2) * 4);
+	padding: 0 var(--padding-1) 0 0;
+	align-items: stretch;
+	overflow: hidden;
+}
+
+.idu-profile-widget .widget.h6 .widget-grade-box .widget-grade-box-value {
+	display: flex;
+	margin: 0 var(--padding-1) 0 0;
+	box-sizing: border-box;
+	border-radius: var(--padding-1);
+}
+
+.idu-profile-widget .widget-grade-box .grade-text {
+	min-width: 0;
+	justify-content: center;
+	gap: 4px;
+}
+
+.idu-profile-widget .widget-grade-box .grade-text > a,
+.idu-profile-widget .widget-grade-box .grade-description {
+	display: block;
+	max-width: 100%;
+	min-width: 0;
+	white-space: nowrap !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.idu-profile-widget button.idu-profile-grade-toggle {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	max-width: 100%;
+}
+
+/* Full teacher comment, shown under its row when the description is tapped. */
+.idu-profile-widget p.idu-profile-grade-detail {
+	width: 100%;
+	margin: 0;
+	padding: var(--padding-1) 12px;
+	box-sizing: border-box;
+	border-radius: var(--padding-1);
+	background-color: var(--grades-box-bg);
+	font-size: 0.8rem;
+	line-height: 1.4;
+	white-space: pre-line;
+	color: var(--main-text-color);
+}
+
+
 /* Load animations: run once the visual loader has gone (html.idu-ready). */
 @media (prefers-reduced-motion: no-preference) {
 	html.idu-ready .idu-profile-title {
 		animation: idu-profile-rise 420ms var(--profile-ease) backwards;
 	}
 
-	html.idu-ready .idu-profile-card {
+	html.idu-ready .idu-profile-card,
+	html.idu-ready .idu-profile-widget {
 		animation: idu-profile-rise 480ms var(--profile-ease) backwards;
 		animation-delay: calc(70ms + var(--i, 0) * 80ms);
 	}

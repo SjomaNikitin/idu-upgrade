@@ -1555,6 +1555,31 @@
   }
 
   // src/content/components/widgets/grades.jsx
+  function normalizeGrade(grade) {
+    const value = grade.trim().toLowerCase();
+    if (/^[0-9]+[+-]?$/.test(value) || value === "+" || value === "-") {
+      return value;
+    }
+    if (["zal", "zaliczone"].includes(value)) {
+      return "zal";
+    }
+    if (["brak pracy"].includes(value)) {
+      return "BP";
+    }
+    if (["nzal", "niezal", "niezaliczone"].includes(value)) {
+      return "nzal";
+    }
+    return "...";
+  }
+  function shortageNames(name) {
+    const names = ["ang", "angielski", "pol", "polski", "biol", "biologia", "his", "historia", "biz", "biznes", "kul", "kultura", "wiedza", "wos", "fizyczne", "wf"];
+    for (let i3 = 0; i3 < names.length / 2; i3 += 2) {
+      if (name.includes(names[i3])) {
+        return names[i3 + 1];
+      }
+    }
+    return name;
+  }
   function Grades({ widgetId, moveWidget: moveWidget2, data }) {
     const gradesData = data.grades;
     const possibleLayout = [
@@ -1575,31 +1600,6 @@
       resizingRef
     } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 4, h: 2 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
-    function normalizeGrade(grade) {
-      const value = grade.trim().toLowerCase();
-      if (/^[0-9]+[+-]?$/.test(value) || value === "+" || value === "-") {
-        return value;
-      }
-      if (["zal", "zaliczone"].includes(value)) {
-        return "zal";
-      }
-      if (["brak pracy"].includes(value)) {
-        return "BP";
-      }
-      if (["nzal", "niezal", "niezaliczone"].includes(value)) {
-        return "nzal";
-      }
-      return "...";
-    }
-    function shortageNames(name) {
-      const names = ["ang", "angielski", "pol", "polski", "biol", "biologia", "his", "historia", "biz", "biznes", "kul", "kultura", "wiedza", "wos", "fizyczne", "wf"];
-      for (let i3 = 0; i3 < names.length / 2; i3 += 2) {
-        if (name.includes(names[i3])) {
-          return names[i3 + 1];
-        }
-      }
-      return name;
-    }
     function truncateSubject(name, maxLength = 10) {
       return name.length > maxLength ? `${name.slice(0, maxLength)}...` : name;
     }
@@ -1780,9 +1780,57 @@
     ));
   }
 
+  // src/content/subjectLevels.js
+  var LEVEL_LABELS = { P: "Poziom podstawowy", R: "Poziom rozszerzony" };
+  var LEVEL_ORDER = ["P", "R"];
+  function levelLabel(level) {
+    return LEVEL_LABELS[level] || level || "Pozosta\u0142e";
+  }
+  function subjectPath(href) {
+    if (!href) return "";
+    try {
+      return new URL(href, window.location.origin).pathname.replace(/\/+$/, "");
+    } catch {
+      return href;
+    }
+  }
+  function groupSubjectsByLevel(subjects) {
+    if (!subjects.some((subject) => subject.level)) return [{ level: "", subjects }];
+    const groups = /* @__PURE__ */ new Map();
+    for (const subject of subjects) {
+      const level = subject.level || "";
+      if (!groups.has(level)) groups.set(level, []);
+      groups.get(level).push(subject);
+    }
+    const rank = (level) => {
+      if (!level) return Number.MAX_SAFE_INTEGER;
+      const index = LEVEL_ORDER.indexOf(level);
+      return index === -1 ? LEVEL_ORDER.length : index;
+    };
+    return Array.from(groups, ([level, items]) => ({ level, subjects: items })).sort((a3, b2) => rank(a3.level) - rank(b2.level));
+  }
+
   // src/content/components/widgets/subjects.jsx
   function Subjects({ widgetId, moveWidget: moveWidget2, data }) {
     const subjects = data.subjects;
+    const [levelMap, setLevelMap] = d2(null);
+    y2(() => {
+      const list = subjects?.subjects || [];
+      if (!list.length || list.every((subject) => subject.level)) return void 0;
+      if (typeof window.loadSubjectLevels !== "function") return void 0;
+      let cancelled = false;
+      window.loadSubjectLevels(data.ownProfileUrl).then((map) => {
+        if (!cancelled && map) setLevelMap(map);
+      }).catch((error) => console.warn("[IDU2] Could not load subject levels", error));
+      return () => {
+        cancelled = true;
+      };
+    }, []);
+    const subjectGroups = groupSubjectsByLevel((subjects?.subjects || []).map((subject) => ({
+      ...subject,
+      level: subject.level || levelMap?.[subjectPath(subject.url)] || ""
+    })));
+    const hasLevels = subjectGroups.some((group) => group.level);
     const possibleLayout = [
       { w: 4, h: 5 },
       { w: 2, h: 1 },
@@ -1823,7 +1871,10 @@
           "xml:space": "preserve"
         },
         /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " })
-      )), /* @__PURE__ */ k("div", { className: "widget-subjects-list" }, subjects.subjects.map((item, index) => /* @__PURE__ */ k(
+      )), hasLevels ? (
+        // Grouped by level like the profile's Przedmioty card; scrolls inside the widget if it doesn't fit.
+        /* @__PURE__ */ k("div", { className: "widget-subjects-groups", style: { maxHeight: `${Math.max(previewHeight - 80, 48)}px` } }, subjectGroups.map((group) => /* @__PURE__ */ k("div", { key: group.level || "none", className: "widget-subjects-group" }, /* @__PURE__ */ k("div", { className: "widget-subjects-level" }, levelLabel(group.level)), /* @__PURE__ */ k("div", { className: "widget-subjects-list" }, group.subjects.map((item, index) => /* @__PURE__ */ k(SubjectRow, { key: `${item.name}-${index}`, item }))))))
+      ) : /* @__PURE__ */ k("div", { className: "widget-subjects-list" }, subjects.subjects.map((item, index) => /* @__PURE__ */ k(
         SubjectRow,
         {
           key: `${item.name}-${index}`,
@@ -1966,6 +2017,81 @@
   }
 
   // src/content/components/widgets/schedule.jsx
+  function formatTodayKey() {
+    const weekdayKeys = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    return weekdayKeys[(/* @__PURE__ */ new Date()).getDay()];
+  }
+  function compareTimes(left, right) {
+    const leftStart = left.split("-")[0];
+    const rightStart = right.split("-")[0];
+    const [leftHour, leftMinute] = leftStart.split(":").map(Number);
+    const [rightHour, rightMinute] = rightStart.split(":").map(Number);
+    return leftHour * 60 + leftMinute - (rightHour * 60 + rightMinute);
+  }
+  function formatDayLabel(day, label) {
+    const dayLabels = {
+      monday: "Pon",
+      tuesday: "Wt",
+      wednesday: "\u015Ar",
+      thursday: "Czw",
+      friday: "Pt",
+      saturday: "Sob",
+      sunday: "Niedz"
+    };
+    return dayLabels[day] || label;
+  }
+  function ScheduleGrid({ scheduleData, mode = "today" }) {
+    const allDays = Object.keys(scheduleData || {});
+    const todayKey = formatTodayKey();
+    const visibleDays = mode === "today" ? allDays.filter((day) => day === todayKey) : allDays;
+    const fallbackDays = mode === "today" && visibleDays.length === 0 && allDays.length > 0 ? [allDays[0]] : visibleDays;
+    const scheduleDays = fallbackDays;
+    const visibleTimes = Array.from(
+      new Set(
+        scheduleDays.flatMap((day) => Object.keys(scheduleData?.[day] || {}))
+      )
+    ).sort(compareTimes);
+    if (scheduleDays.length === 0 || visibleTimes.length === 0) {
+      return null;
+    }
+    if (mode === "today") {
+      const day = scheduleDays[0];
+      return /* @__PURE__ */ k("div", { className: "schedule-grid today" }, visibleTimes.map((time) => /* @__PURE__ */ k(
+        "div",
+        {
+          key: `${day}-${time}`,
+          className: "schedule-row",
+          style: { gridTemplateColumns: "42px minmax(0, 1fr)" }
+        },
+        /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])),
+        /* @__PURE__ */ k("div", { className: "lesson-cell" }, /* @__PURE__ */ k("a", { href: scheduleData?.[day]?.[time]?.subjectHref }, shortenLessonName(scheduleData?.[day]?.[time]?.subject || "")))
+      )));
+    }
+    return /* @__PURE__ */ k("div", { className: "schedule-grid weekly" }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "schedule-days-header",
+        style: { gridTemplateColumns: `repeat(${scheduleDays.length}, minmax(0, 1fr))` }
+      },
+      scheduleDays.map((day) => {
+        const firstLesson = Object.values(scheduleData?.[day] || {})[0];
+        const label = firstLesson?.day || day;
+        return /* @__PURE__ */ k("div", { key: day, className: "schedule-head" }, formatDayLabel(day, label));
+      })
+    ), visibleTimes.map((time) => /* @__PURE__ */ k(
+      "div",
+      {
+        key: time,
+        className: "schedule-row",
+        style: { gridTemplateColumns: `42px repeat(${scheduleDays.length}, minmax(0, 1fr))` }
+      },
+      /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])),
+      scheduleDays.map((day) => {
+        const lesson = scheduleData?.[day]?.[time];
+        return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell" }, /* @__PURE__ */ k("a", { href: lesson?.subjectHref }, shortenLessonName(lesson?.subject || "")));
+      })
+    )));
+  }
   function Schedule({ widgetId, moveWidget: moveWidget2, data }) {
     const [scheduleYear, setScheduleYear] = d2(getSelectedScheduleYear);
     const schedule = applyScheduleYearTimes(data.schedule, scheduleYear);
@@ -2002,81 +2128,6 @@
         window.removeEventListener("storage", handleStorageChange);
       };
     }, []);
-    function formatTodayKey() {
-      const weekdayKeys = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-      return weekdayKeys[(/* @__PURE__ */ new Date()).getDay()];
-    }
-    function compareTimes(left, right) {
-      const leftStart = left.split("-")[0];
-      const rightStart = right.split("-")[0];
-      const [leftHour, leftMinute] = leftStart.split(":").map(Number);
-      const [rightHour, rightMinute] = rightStart.split(":").map(Number);
-      return leftHour * 60 + leftMinute - (rightHour * 60 + rightMinute);
-    }
-    function formatDayLabel(day, label) {
-      const dayLabels = {
-        monday: "Pon",
-        tuesday: "Wt",
-        wednesday: "\u015Ar",
-        thursday: "Czw",
-        friday: "Pt",
-        saturday: "Sob",
-        sunday: "Niedz"
-      };
-      return dayLabels[day] || label;
-    }
-    function ScheduleGrid({ scheduleData, mode = "today" }) {
-      const allDays = Object.keys(scheduleData || {});
-      const todayKey = formatTodayKey();
-      const visibleDays = mode === "today" ? allDays.filter((day) => day === todayKey) : allDays;
-      const fallbackDays = mode === "today" && visibleDays.length === 0 && allDays.length > 0 ? [allDays[0]] : visibleDays;
-      const scheduleDays = fallbackDays;
-      const visibleTimes = Array.from(
-        new Set(
-          scheduleDays.flatMap((day) => Object.keys(scheduleData?.[day] || {}))
-        )
-      ).sort(compareTimes);
-      if (scheduleDays.length === 0 || visibleTimes.length === 0) {
-        return null;
-      }
-      if (mode === "today") {
-        const day = scheduleDays[0];
-        return /* @__PURE__ */ k("div", { className: "schedule-grid today" }, visibleTimes.map((time) => /* @__PURE__ */ k(
-          "div",
-          {
-            key: `${day}-${time}`,
-            className: "schedule-row",
-            style: { gridTemplateColumns: "42px minmax(0, 1fr)" }
-          },
-          /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])),
-          /* @__PURE__ */ k("div", { className: "lesson-cell" }, /* @__PURE__ */ k("a", { href: scheduleData?.[day]?.[time]?.subjectHref }, shortenLessonName(scheduleData?.[day]?.[time]?.subject || "")))
-        )));
-      }
-      return /* @__PURE__ */ k("div", { className: "schedule-grid weekly" }, /* @__PURE__ */ k(
-        "div",
-        {
-          className: "schedule-days-header",
-          style: { gridTemplateColumns: `repeat(${scheduleDays.length}, minmax(0, 1fr))` }
-        },
-        scheduleDays.map((day) => {
-          const firstLesson = Object.values(scheduleData?.[day] || {})[0];
-          const label = firstLesson?.day || day;
-          return /* @__PURE__ */ k("div", { key: day, className: "schedule-head" }, formatDayLabel(day, label));
-        })
-      ), visibleTimes.map((time) => /* @__PURE__ */ k(
-        "div",
-        {
-          key: time,
-          className: "schedule-row",
-          style: { gridTemplateColumns: `42px repeat(${scheduleDays.length}, minmax(0, 1fr))` }
-        },
-        /* @__PURE__ */ k("div", { className: "time-cell" }, /* @__PURE__ */ k("span", null, time.split("-")[0]), /* @__PURE__ */ k("span", null, time.split("-")[1])),
-        scheduleDays.map((day) => {
-          const lesson = scheduleData?.[day]?.[time];
-          return /* @__PURE__ */ k("div", { key: `${day}-${time}`, className: "lesson-cell" }, /* @__PURE__ */ k("a", { href: lesson?.subjectHref }, shortenLessonName(lesson?.subject || "")));
-        })
-      )));
-    }
     function Schedule21() {
       return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("h1", null, "Plan Lekcji"), /* @__PURE__ */ k(
         "svg",
@@ -2473,6 +2524,113 @@
 
   // src/content/components/widgets/attendance.jsx
   var attendanceStatsStorageKey = "attendance.stats";
+  function normalizePercentage(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : 0;
+  }
+  function normalizeLessonName2(lessonName) {
+    let names = ["fizyczne", "WF", "godzina", "GW", "biznes", "BIZ", "kultura", "kultura"];
+    for (let i3 = 0; i3 < names.length; i3 += 2) {
+      if (lessonName.includes(names[i3])) {
+        return names[i3 + 1];
+      }
+    }
+    return lessonName;
+  }
+  function loadData(storageKey) {
+    const saved = localStorage.getItem(storageKey);
+    if (!saved) return null;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return null;
+    }
+  }
+  async function fetchAttendanceStats(seeMoreUrl) {
+    let attendanceData = loadData(attendanceStatsStorageKey);
+    if (attendanceData && attendanceData.date === (/* @__PURE__ */ new Date()).getDate()) {
+      return attendanceData.summary;
+    }
+    const res = await fetch(seeMoreUrl, {
+      credentials: "include"
+    });
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const table = doc.querySelectorAll("table")[1];
+    if (!table) return null;
+    const summaryRow = table.querySelector("tbody tr");
+    const summaryCells = summaryRow?.querySelectorAll("td span");
+    if (summaryCells.length < 3) return null;
+    const summary = {
+      presence: Number(
+        summaryCells?.[0].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(",", ".")
+      ),
+      absence: Number(
+        summaryCells?.[1].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(",", ".")
+      ),
+      lateness: Number(
+        summaryCells?.[2].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(",", ".")
+      )
+    };
+    localStorage.setItem(attendanceStatsStorageKey, JSON.stringify({ summary, date: (/* @__PURE__ */ new Date()).getDate() }));
+    return summary;
+  }
+  function attendanceStatus(item) {
+    const type = (item.type || item.name || "").toLocaleLowerCase("pl-PL");
+    if (item.lateness || item.status === "lateness" || type.includes("sp\xF3\u017An")) return { key: "lateness", label: "Sp\xF3\u017Anienie" };
+    if (type.includes("uspraw") || item.status === "excused") return { key: "excused", label: "Nieobecno\u015B\u0107 usprawiedliwiona" };
+    if (item.absence || item.status === "absence" || type.includes("nieobec")) return { key: "absence", label: "Nieobecno\u015B\u0107" };
+    if (item.presence || item.status === "presence" || type.includes("obecn")) return { key: "presence", label: "Obecno\u015B\u0107" };
+    return { key: "other", label: item.type || item.name || "Inne" };
+  }
+  function AttendanceRow({ item, rowWidth }) {
+    const status = attendanceStatus(item);
+    return /* @__PURE__ */ k("div", { className: "attendance-row", style: { width: rowWidth }, title: item.date ? `${status.label} \xB7 ${item.date}` : status.label }, /* @__PURE__ */ k("div", { className: "attendance-row-subject" }, normalizeLessonName2(item.subject)), /* @__PURE__ */ k("div", { className: `attendance-row-value ${status.key}` }, /* @__PURE__ */ k("span", { className: `attendance-dot ${status.key}`, role: "img", "aria-label": status.label })));
+  }
+  function AttendanceChart({ width = "100%", seeMoreUrl, mockData = false }) {
+    const [stats, setStats] = d2(null);
+    if (mockData) {
+      return /* @__PURE__ */ k("div", { style: { padding: "16px" } }, "...");
+    }
+    y2(() => {
+      let cancelled = false;
+      async function loadStats() {
+        const data = await fetchAttendanceStats(seeMoreUrl);
+        data.lateness = normalizePercentage(data.lateness);
+        data.absence = normalizePercentage(data.absence);
+        data.presence = normalizePercentage(data.presence);
+        if (!cancelled) {
+          setStats(data);
+        }
+      }
+      loadStats();
+      return () => {
+        cancelled = true;
+      };
+    }, []);
+    if (!stats) {
+      return /* @__PURE__ */ k("div", { style: { padding: "16px" } }, "Loading...");
+    }
+    let attendancePercentage = stats.presence;
+    if (Number.isNaN(attendancePercentage)) attendancePercentage = 0;
+    let latenessPercentage = stats.lateness;
+    if (Number.isNaN(latenessPercentage)) latenessPercentage = 0;
+    let absencePercentage = stats.absence;
+    if (Number.isNaN(absencePercentage)) absencePercentage = 0;
+    return /* @__PURE__ */ k(
+      "div",
+      {
+        className: "donut-3",
+        style: {
+          "--part1": `${attendancePercentage}%`,
+          "--part2": `${latenessPercentage}%`,
+          "--part3": `${absencePercentage}%`,
+          "width": width
+        }
+      },
+      /* @__PURE__ */ k("div", { className: "donut-inner" }, Math.round(attendancePercentage), "%")
+    );
+  }
   function Attendance({ widgetId, moveWidget: moveWidget2, data }) {
     const attendance = data.attendance;
     const mockData = data.attendance[0].mockData;
@@ -2506,60 +2664,6 @@
       resizingRef
     } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, { w: 4, h: 1 });
     useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
-    function normalizePercentage(value) {
-      const number = Number(value);
-      return Number.isFinite(number) ? number : 0;
-    }
-    function normalizeLessonName2(lessonName) {
-      let names = ["fizyczne", "WF", "godzina", "GW", "biznes", "BIZ", "kultura", "kultura"];
-      for (let i3 = 0; i3 < names.length; i3 += 2) {
-        if (lessonName.includes(names[i3])) {
-          return names[i3 + 1];
-        }
-      }
-      return lessonName;
-    }
-    function loadData(storageKey) {
-      const saved = localStorage.getItem(storageKey);
-      if (!saved) return null;
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return null;
-      }
-    }
-    async function fetchAttendanceStats() {
-      let attendanceData = loadData(attendanceStatsStorageKey);
-      if (attendanceData && attendanceData.date === (/* @__PURE__ */ new Date()).getDate()) {
-        return attendanceData.summary;
-      }
-      const res = await fetch(attendance[0].seeMoreUrl, {
-        credentials: "include"
-      });
-      const html = await res.text();
-      const doc = new DOMParser().parseFromString(html, "text/html");
-      const table = doc.querySelectorAll("table")[1];
-      if (!table) return null;
-      const summaryRow = table.querySelector("tbody tr");
-      const summaryCells = summaryRow?.querySelectorAll("td span");
-      if (summaryCells.length < 3) return null;
-      const summary = {
-        presence: Number(
-          summaryCells?.[0].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(",", ".")
-        ),
-        absence: Number(
-          summaryCells?.[1].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(",", ".")
-        ),
-        lateness: Number(
-          summaryCells?.[2].innerHTML.match(/\(([\d,]+)%\)/)?.[1].replace(",", ".")
-        )
-      };
-      localStorage.setItem(attendanceStatsStorageKey, JSON.stringify({ summary, date: (/* @__PURE__ */ new Date()).getDate() }));
-      return summary;
-    }
-    function AttendanceRow({ item, rowWidth }) {
-      return /* @__PURE__ */ k("div", { className: "attendance-row", style: { width: rowWidth } }, /* @__PURE__ */ k("div", { className: "attendance-row-subject" }, normalizeLessonName2(item.subject)), /* @__PURE__ */ k("div", { className: `attendance-row-value ${item.presence ? "ob" : ""} ${item.absence ? "nob" : ""} ${item.lateness ? "sp" : ""}` }, item.presence ? `OB` : "", " ", item.absence ? `NOB` : "", " ", item.lateness ? `SP` : ""));
-    }
     function AttendanceGrid({ limit, width: width2 = "100%", graph = false, rowWidth = "100%", showMore = false }) {
       let usableData = attendance.slice(0, limit);
       const seeMoreHref = attendance[0]?.seeMoreUrl;
@@ -2591,54 +2695,10 @@
           item,
           rowWidth
         }
-      ))), graph ? /* @__PURE__ */ k(AttendanceChart, { width: width2 }) : null, shouldShowSeeMore ? /* @__PURE__ */ k("a", { href: seeMoreHref, className: "grades-all-link" }, "Zobacz wi\u0119cej") : null);
-    }
-    function AttendanceChart({ width: width2 = "100%" }) {
-      const [stats, setStats] = d2(null);
-      if (mockData) {
-        return /* @__PURE__ */ k("div", { style: { padding: "16px" } }, "...");
-      }
-      y2(() => {
-        let cancelled = false;
-        async function loadStats() {
-          const data2 = await fetchAttendanceStats();
-          data2.lateness = normalizePercentage(data2.lateness);
-          data2.absence = normalizePercentage(data2.absence);
-          data2.presence = normalizePercentage(data2.presence);
-          if (!cancelled) {
-            setStats(data2);
-          }
-        }
-        loadStats();
-        return () => {
-          cancelled = true;
-        };
-      }, []);
-      if (!stats) {
-        return /* @__PURE__ */ k("div", { style: { padding: "16px" } }, "Loading...");
-      }
-      let attendancePercentage = stats.presence;
-      if (Number.isNaN(attendancePercentage)) attendancePercentage = 0;
-      let latenessPercentage = stats.lateness;
-      if (Number.isNaN(latenessPercentage)) latenessPercentage = 0;
-      let absencePercentage = stats.absence;
-      if (Number.isNaN(absencePercentage)) absencePercentage = 0;
-      return /* @__PURE__ */ k(
-        "div",
-        {
-          className: "donut-3",
-          style: {
-            "--part1": `${attendancePercentage}%`,
-            "--part2": `${latenessPercentage}%`,
-            "--part3": `${absencePercentage}%`,
-            "width": width2
-          }
-        },
-        /* @__PURE__ */ k("div", { className: "donut-inner" }, Math.round(attendancePercentage), "%")
-      );
+      ))), graph ? /* @__PURE__ */ k(AttendanceChart, { width: width2, seeMoreUrl: attendance[0]?.seeMoreUrl, mockData }) : null, shouldShowSeeMore ? /* @__PURE__ */ k("a", { href: seeMoreHref, className: "grades-all-link" }, "Zobacz wi\u0119cej") : null);
     }
     function Attendance22() {
-      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k(AttendanceChart, null));
+      return /* @__PURE__ */ k("div", { style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k(AttendanceChart, { seeMoreUrl: attendance[0]?.seeMoreUrl, mockData }));
     }
     function Attendance24() {
       return /* @__PURE__ */ k(AttendanceGrid, { limit: 10 });
@@ -3340,18 +3400,7 @@
 
   // src/content/components/studentProfile.jsx
   var LIST_PREVIEW_COUNT = 5;
-  var WEEKDAY_SHORT = {
-    monday: "Pon",
-    tuesday: "Wt",
-    wednesday: "\u015Ar",
-    thursday: "Czw",
-    friday: "Pt",
-    saturday: "Sob",
-    sunday: "Nd"
-  };
-  var LEVEL_LABELS = { P: "Poziom podstawowy", R: "Poziom rozszerzony" };
   var MONTHS = { sty: 0, lut: 1, mar: 2, kwi: 3, maj: 4, cze: 5, lip: 6, sie: 7, wrz: 8, pa\u017A: 9, paz: 9, lis: 10, gru: 11 };
-  var ATTENDANCE_LABELS = { presence: "Obecno\u015B\u0107", absence: "Nieobecno\u015B\u0107", lateness: "Sp\xF3\u017Anienie", excused: "Usprawiedliwione", other: "Inne" };
   function parsePolishDate(text) {
     const match = (text || "").match(/(\d{1,2})\s+([a-ząćęłńóśźż]{3})\w*\s+(\d{4})/i);
     if (!match) return null;
@@ -3549,21 +3598,29 @@
       return /* @__PURE__ */ k("li", { key: i3, className: "idu-profile-row", style: { "--i": i3 } }, /* @__PURE__ */ k("div", { className: "idu-profile-date-badge" }, date && /* @__PURE__ */ k("span", { className: "day" }, date.getDate()), /* @__PURE__ */ k("span", { className: "month" }, date ? exam.date.split(/\s+/)[1] : exam.date)), /* @__PURE__ */ k("div", { className: "idu-profile-row-main" }, /* @__PURE__ */ k("div", { className: "idu-profile-row-top" }, exam.subjectUrl ? /* @__PURE__ */ k("a", { className: "idu-profile-row-title", href: exam.subjectUrl }, exam.subject) : /* @__PURE__ */ k("span", { className: "idu-profile-row-title" }, exam.subject), until && /* @__PURE__ */ k("span", { className: `idu-profile-tag${/dziś|jutro/.test(until) ? " soon" : ""}` }, until)), (exam.name || exam.description) && /* @__PURE__ */ k("p", { className: "idu-profile-row-text" }, exam.name, exam.name && exam.description && exam.description !== exam.name ? " \xB7 " : "", exam.description !== exam.name ? exam.description : "")));
     })), /* @__PURE__ */ k(CardFoot, { button }));
   }
-  function GradesCard({ grades, href, index }) {
-    const { visible, button } = usePreview(grades);
-    const [open, setOpen] = d2(null);
-    const unseen = grades.filter((grade) => grade.unseen).length;
-    return /* @__PURE__ */ k(Card, { index, title: "Ostatnie oceny", href, subtitle: unseen ? `${unseen} ${unseen === 1 ? "nowa" : unseen < 5 ? "nowe" : "nowych"}` : "" }, /* @__PURE__ */ k("ul", { className: "idu-profile-list" }, visible.map((grade, i3) => {
-      const isShort = grade.grade.length <= 6;
-      const isOpen = open === i3;
-      const expandable = Boolean(grade.detail);
-      return /* @__PURE__ */ k("li", { key: i3, className: `idu-profile-row grade${grade.unseen ? " unseen" : ""}${isOpen ? " open" : ""}`, style: { "--i": i3 } }, /* @__PURE__ */ k("div", { className: `idu-profile-grade-badge${isShort ? "" : " text"}`, "aria-hidden": !isShort }, isShort ? grade.grade : /* @__PURE__ */ k("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none" }, /* @__PURE__ */ k("path", { d: "M5 5h14v10H9l-4 4z", stroke: "currentColor", "stroke-width": "2", "stroke-linejoin": "round" }))), /* @__PURE__ */ k("div", { className: "idu-profile-row-main" }, /* @__PURE__ */ k("div", { className: "idu-profile-row-top" }, grade.subjectUrl ? /* @__PURE__ */ k("a", { className: "idu-profile-row-title", href: grade.subjectUrl }, grade.subject) : /* @__PURE__ */ k("span", { className: "idu-profile-row-title" }, grade.subject), grade.unseen && /* @__PURE__ */ k("span", { className: "idu-profile-tag new" }, "nowa")), grade.description && /* @__PURE__ */ k("p", { className: "idu-profile-row-text" }, grade.description), !isShort && !isOpen && /* @__PURE__ */ k("p", { className: "idu-profile-row-quote" }, grade.grade), isOpen && /* @__PURE__ */ k("p", { className: "idu-profile-row-detail" }, grade.detail), /* @__PURE__ */ k("div", { className: "idu-profile-row-meta" }, /* @__PURE__ */ k("span", null, grade.date), expandable && /* @__PURE__ */ k("button", { type: "button", className: "idu-profile-link-button", onClick: () => setOpen(isOpen ? null : i3), "aria-expanded": isOpen }, isOpen ? "Zwi\u0144" : "Poka\u017C opis"))));
-    })), /* @__PURE__ */ k(CardFoot, { button, href }));
+  function WidgetTitle({ title, href }) {
+    const arrow = /* @__PURE__ */ k("svg", { className: "titleArrow", fill: "currentColor", width: "16px", height: "16px", viewBox: "0 0 42 42", "aria-hidden": "true" }, /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " }));
+    return /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "var(--padding-1)" } }, /* @__PURE__ */ k("h1", null, title), href ? /* @__PURE__ */ k("a", { className: "idu-profile-widget-arrow", href, "aria-label": `${title}: zobacz wszystkie` }, arrow) : arrow);
   }
-  function AttendanceCard({ attendance, href, index }) {
-    const { visible, button } = usePreview(attendance);
-    const counts = attendance.reduce((acc, item) => ({ ...acc, [item.status]: (acc[item.status] || 0) + 1 }), {});
-    return /* @__PURE__ */ k(Card, { index, title: "Frekwencja", href, subtitle: "Ostatnio wystawione" }, /* @__PURE__ */ k("div", { className: "idu-profile-chips summary" }, Object.entries(counts).map(([status, count], i3) => /* @__PURE__ */ k("span", { key: status, className: "idu-profile-chip summary", style: { "--i": i3 } }, /* @__PURE__ */ k("span", { className: `idu-profile-dot ${status}` }), ATTENDANCE_LABELS[status] || status, " ", count))), /* @__PURE__ */ k("ul", { className: "idu-profile-list compact" }, visible.map((item, i3) => /* @__PURE__ */ k("li", { key: i3, className: `idu-profile-row compact${item.unseen ? " unseen" : ""}`, style: { "--i": i3 }, title: item.issuedAt ? `wystawiono: ${item.issuedAt}` : void 0 }, /* @__PURE__ */ k("span", { className: `idu-profile-dot ${item.status}`, "aria-hidden": "true" }), /* @__PURE__ */ k("div", { className: "idu-profile-row-main" }, /* @__PURE__ */ k("div", { className: "idu-profile-row-top" }, item.subjectUrl ? /* @__PURE__ */ k("a", { className: "idu-profile-row-title", href: item.subjectUrl }, item.subject) : /* @__PURE__ */ k("span", { className: "idu-profile-row-title" }, item.subject), /* @__PURE__ */ k("span", { className: "idu-profile-row-date" }, item.date)), /* @__PURE__ */ k("p", { className: "idu-profile-row-text" }, item.name || ATTENDANCE_LABELS[item.status]))))), /* @__PURE__ */ k(CardFoot, { button, href }));
+  function WidgetCard({ id, size, index, gap = "var(--padding-1)", hasFooterLink = false, children }) {
+    return /* @__PURE__ */ k("div", { className: "idu-profile-widget", style: { "--i": index } }, /* @__PURE__ */ k("div", { id, className: `widget ${size}` }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { position: "relative" } }, /* @__PURE__ */ k("div", { className: `widget-content-container${hasFooterLink ? " with-footer-link" : ""}`, style: { gap } }, children))));
+  }
+  var GRADES_WIDGET_LIMIT = 6;
+  function GradesCard({ grades, href, index }) {
+    const [open, setOpen] = d2(null);
+    const items = grades.slice(0, GRADES_WIDGET_LIMIT);
+    return /* @__PURE__ */ k(WidgetCard, { id: "gradesWidget", size: "w4 h6", index, hasFooterLink: Boolean(href) }, /* @__PURE__ */ k(WidgetTitle, { title: "Oceny", href }), items.map((grade, i3) => {
+      const isOpen = open === i3;
+      const description = grade.description || grade.grade;
+      return [
+        /* @__PURE__ */ k("div", { key: `row-${i3}`, className: "widget-grade-box with-description", title: description }, /* @__PURE__ */ k("div", { className: "widget-grade-box-value" }, /* @__PURE__ */ k("span", null, normalizeGrade(grade.grade))), /* @__PURE__ */ k("div", { className: "grade-text" }, /* @__PURE__ */ k("a", { href: grade.subjectUrl, title: grade.subject }, shortageNames(grade.subject || "")), grade.detail ? /* @__PURE__ */ k("button", { type: "button", className: "grade-description idu-profile-grade-toggle", "aria-expanded": isOpen, onClick: () => setOpen(isOpen ? null : i3) }, description) : /* @__PURE__ */ k("span", { className: "grade-description" }, description))),
+        isOpen && /* @__PURE__ */ k("p", { key: `detail-${i3}`, className: "idu-profile-grade-detail" }, grade.detail)
+      ];
+    }), href && /* @__PURE__ */ k("a", { className: "grades-all-link", href }, "Wszystkie oceny"));
+  }
+  function AttendanceCard({ attendance, href, showChart, index }) {
+    const half = "calc(50% - var(--padding-1))";
+    return /* @__PURE__ */ k(WidgetCard, { id: "attendanceWidget", size: "w4 h4", index, gap: "8px", hasFooterLink: Boolean(href) }, /* @__PURE__ */ k(WidgetTitle, { title: "Obecno\u015Bci", href }), /* @__PURE__ */ k("div", { className: "attendance-grid", style: { width: showChart ? half : "100%" } }, attendance.slice(0, 10).map((item, i3) => /* @__PURE__ */ k(AttendanceRow, { key: `${item.subjectUrl}-${i3}`, item, rowWidth: "100%" }))), showChart && /* @__PURE__ */ k(AttendanceChart, { width: half, seeMoreUrl: href }), href && /* @__PURE__ */ k("a", { href, className: "grades-all-link" }, "Zobacz wi\u0119cej"));
   }
   function EventsCard({ title, events, href, index }) {
     const { visible, button } = usePreview(events);
@@ -3575,7 +3632,7 @@
   function SubjectsCard({ groups, className, index }) {
     const [selected, setSelected] = d2(null);
     const total = groups.reduce((sum, group) => sum + group.subjects.length, 0);
-    return /* @__PURE__ */ k(Card, { index, title: "Przedmioty", subtitle: [className, `${total} ${total === 1 ? "przedmiot" : "przedmiot\xF3w"}`].filter(Boolean).join(" \xB7 ") }, groups.map((group, groupIndex) => /* @__PURE__ */ k("div", { key: groupIndex, className: "idu-profile-subject-group" }, group.level && /* @__PURE__ */ k("h3", { className: "idu-profile-group-title" }, LEVEL_LABELS[group.level] || group.level), /* @__PURE__ */ k("div", { className: "idu-profile-chips" }, group.subjects.map((subject, i3) => {
+    return /* @__PURE__ */ k(Card, { index, title: "Przedmioty", subtitle: [className, `${total} ${total === 1 ? "przedmiot" : "przedmiot\xF3w"}`].filter(Boolean).join(" \xB7 ") }, groups.map((group, groupIndex) => /* @__PURE__ */ k("div", { key: groupIndex, className: "idu-profile-subject-group" }, group.level && /* @__PURE__ */ k("h3", { className: "idu-profile-group-title" }, levelLabel(group.level)), /* @__PURE__ */ k("div", { className: "idu-profile-chips" }, group.subjects.map((subject, i3) => {
       const id = `${groupIndex}-${i3}`;
       const isOpen = selected === id;
       return /* @__PURE__ */ k(
@@ -3593,34 +3650,22 @@
     })), group.subjects.map((subject, i3) => selected === `${groupIndex}-${i3}` && /* @__PURE__ */ k("div", { key: i3, className: "idu-profile-detail" }, /* @__PURE__ */ k("div", { className: "idu-profile-detail-title" }, subject.name), subject.title && subject.title !== subject.name && /* @__PURE__ */ k("div", { className: "idu-profile-detail-text" }, subject.title), subject.teachers.length > 0 && /* @__PURE__ */ k("div", { className: "idu-profile-detail-text" }, subject.teachers.length > 1 ? "Nauczyciele: " : "Nauczyciel: ", subject.teachers.map((teacher, t3) => /* @__PURE__ */ k("span", { key: t3 }, t3 > 0 && ", ", /* @__PURE__ */ k("a", { href: teacher.href }, teacher.name)))), subject.url && /* @__PURE__ */ k("a", { className: "idu-profile-see-all", href: subject.url }, "Otw\xF3rz przedmiot \u2192"))))));
   }
   function TimetableCard({ timetable, subjectNames, index }) {
-    const [selected, setSelected] = d2(null);
-    const todayKey = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][(/* @__PURE__ */ new Date()).getDay()];
-    const days = timetable.days;
-    const columns = `30px repeat(${days.length}, minmax(0, 1fr))`;
-    const selectedLesson = selected && timetable.rows[selected.row]?.lessons[selected.day];
-    const selectedRow = selected && timetable.rows[selected.row];
     const nameOf = (lesson) => subjectNames.get(lesson.subjectUrl) || lesson.subject;
-    return /* @__PURE__ */ k(Card, { index, title: "Plan lekcji", href: timetable.url }, /* @__PURE__ */ k("div", { className: "idu-profile-timetable", role: "table", "aria-label": "Plan lekcji" }, /* @__PURE__ */ k("div", { className: "idu-profile-tt-row head", role: "row", style: { gridTemplateColumns: columns } }, /* @__PURE__ */ k("span", { className: "idu-profile-tt-num", role: "columnheader", "aria-label": "Lekcja" }), days.map((day) => /* @__PURE__ */ k("span", { key: day.key, role: "columnheader", className: `idu-profile-tt-day${day.key === todayKey ? " today" : ""}` }, WEEKDAY_SHORT[day.key] || day.label.slice(0, 3)))), timetable.rows.map((row, rowIndex) => /* @__PURE__ */ k("div", { key: row.number, className: "idu-profile-tt-row", role: "row", style: { gridTemplateColumns: columns } }, /* @__PURE__ */ k("span", { className: "idu-profile-tt-num", role: "rowheader", title: `${row.start}\u2013${row.end}` }, /* @__PURE__ */ k("span", { className: "num" }, row.number), /* @__PURE__ */ k("span", { className: "time" }, row.start)), days.map((day) => {
-      const lessons = row.lessons[day.key];
-      if (!lessons) return /* @__PURE__ */ k("span", { key: day.key, role: "cell", className: "idu-profile-tt-cell empty" });
-      const isSelected = selected?.row === rowIndex && selected?.day === day.key;
-      const label = lessons.map(nameOf).join(" / ");
-      return /* @__PURE__ */ k(
-        "button",
-        {
-          key: day.key,
-          type: "button",
-          role: "cell",
-          "aria-label": `${label}, ${row.start}\u2013${row.end}`,
-          "aria-pressed": isSelected,
-          className: `idu-profile-tt-cell${day.key === todayKey ? " today" : ""}${isSelected ? " active" : ""}`,
-          style: { "--i": rowIndex },
-          onClick: () => setSelected(isSelected ? null : { row: rowIndex, day: day.key })
-        },
-        shortenLessonName(nameOf(lessons[0])),
-        lessons.length > 1 ? "+" : ""
-      );
-    })))), selectedLesson && /* @__PURE__ */ k("div", { className: "idu-profile-detail" }, selectedLesson.map((lesson, i3) => /* @__PURE__ */ k("div", { key: i3, className: "idu-profile-detail-lesson" }, /* @__PURE__ */ k("div", { className: "idu-profile-detail-title" }, lesson.subjectUrl ? /* @__PURE__ */ k("a", { href: lesson.subjectUrl }, nameOf(lesson)) : nameOf(lesson), nameOf(lesson) !== lesson.subject && /* @__PURE__ */ k("span", { className: "idu-profile-detail-raw" }, " \xB7 ", lesson.subject)), /* @__PURE__ */ k("div", { className: "idu-profile-detail-text" }, [`${days.find((d3) => d3.key === selected.day)?.label}, lekcja ${selectedRow.number}`, `${selectedRow.start}\u2013${selectedRow.end}`].join(" \xB7 ")), (lesson.room || lesson.teacher) && /* @__PURE__ */ k("div", { className: "idu-profile-detail-text" }, [lesson.room && `Sala: ${lesson.room}`, lesson.teacher].filter(Boolean).join(" \xB7 "))))));
+    const scheduleData = {};
+    for (const day of timetable.days) scheduleData[day.key] = {};
+    for (const row of timetable.rows) {
+      for (const [dayKey, lessons] of Object.entries(row.lessons)) {
+        const lesson = lessons[0];
+        const day = timetable.days.find((d3) => d3.key === dayKey);
+        scheduleData[dayKey][`${row.start}-${row.end}`] = {
+          lessonNumber: row.number,
+          subject: nameOf(lesson),
+          subjectHref: lesson.subjectUrl,
+          day: day?.label || dayKey
+        };
+      }
+    }
+    return /* @__PURE__ */ k(WidgetCard, { id: "scheduleWidget", size: "w4 h6", index }, /* @__PURE__ */ k(WidgetTitle, { title: "Plan Lekcji", href: timetable.url }), /* @__PURE__ */ k(ScheduleGrid, { scheduleData, mode: "all" }));
   }
   function StudentProfile({ data }) {
     const { profile } = data;
@@ -3629,7 +3674,7 @@
     add("profile", (index) => /* @__PURE__ */ k(ProfileCard, { profile, index }));
     if (data.exams?.length) add("exams", (index) => /* @__PURE__ */ k(ExamsCard, { exams: data.exams, index }));
     if (data.grades?.length) add("grades", (index) => /* @__PURE__ */ k(GradesCard, { grades: data.grades, href: data.gradesUrl, index }));
-    if (data.attendance?.length) add("attendance", (index) => /* @__PURE__ */ k(AttendanceCard, { attendance: data.attendance, href: data.attendanceUrl, index }));
+    if (data.attendance?.length) add("attendance", (index) => /* @__PURE__ */ k(AttendanceCard, { attendance: data.attendance, href: data.attendanceUrl, showChart: Boolean(profile.editUrl && data.attendanceUrl), index }));
     if (data.subjectGroups?.length) add("subjects", (index) => /* @__PURE__ */ k(SubjectsCard, { groups: data.subjectGroups, className: profile.klass, index }));
     const subjectNames = new Map((data.subjectGroups || []).flatMap((group) => group.subjects.map((subject) => [subject.url, subject.name])));
     if (data.timetable?.rows?.length) add("timetable", (index) => /* @__PURE__ */ k(TimetableCard, { timetable: data.timetable, subjectNames, index }));

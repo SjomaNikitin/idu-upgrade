@@ -2,10 +2,29 @@ import { h } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { useWidgetResize } from './widgetResize.js';
 import { useWidgetDragging } from './widgetDragging.js';
+import { groupSubjectsByLevel, levelLabel, subjectPath } from '../../subjectLevels.js';
 
 
 export function Subjects({ widgetId, moveWidget, data }) {
 	const subjects = data.subjects;
+	// Levels come from the home markup when it has them, else from the user's own
+	// profile (cached by loadSubjectLevels in 28-extracter.js).
+	const [levelMap, setLevelMap] = useState(null);
+	useEffect(() => {
+		const list = subjects?.subjects || [];
+		if (!list.length || list.every((subject) => subject.level)) return undefined;
+		if (typeof window.loadSubjectLevels !== 'function') return undefined;
+		let cancelled = false;
+		window.loadSubjectLevels(data.ownProfileUrl)
+			.then((map) => { if (!cancelled && map) setLevelMap(map); })
+			.catch((error) => console.warn('[IDU2] Could not load subject levels', error));
+		return () => { cancelled = true; };
+	}, []);
+	const subjectGroups = groupSubjectsByLevel((subjects?.subjects || []).map((subject) => ({
+		...subject,
+		level: subject.level || levelMap?.[subjectPath(subject.url)] || '',
+	})));
+	const hasLevels = subjectGroups.some((group) => group.level);
 	const possibleLayout = [
 		{ w: 4, h: 5 },
 		{ w: 2, h: 1 },
@@ -42,15 +61,33 @@ export function Subjects({ widgetId, moveWidget, data }) {
 					<polygon fill-rule="evenodd" points="13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 "/>
 					</svg>
 				</div>
-				<div className="widget-subjects-list">
-					{subjects.subjects.map((item, index) => (
-						<SubjectRow
-							key={`${item.name}-${index}`}
-							item={item}
-							isLast={index === subjects.subjects.length - lastLine || index === subjects.subjects.length - 1}
-						/>
-					))}
-				</div>
+				{hasLevels
+					? (
+						// Grouped by level like the profile's Przedmioty card; scrolls inside the widget if it doesn't fit.
+						<div className="widget-subjects-groups" style={{ maxHeight: `${Math.max(previewHeight - 80, 48)}px` }}>
+							{subjectGroups.map((group) => (
+								<div key={group.level || 'none'} className="widget-subjects-group">
+									<div className="widget-subjects-level">{levelLabel(group.level)}</div>
+									<div className="widget-subjects-list">
+										{group.subjects.map((item, index) => (
+											<SubjectRow key={`${item.name}-${index}`} item={item} />
+										))}
+									</div>
+								</div>
+							))}
+						</div>
+					)
+					: (
+						<div className="widget-subjects-list">
+							{subjects.subjects.map((item, index) => (
+								<SubjectRow
+									key={`${item.name}-${index}`}
+									item={item}
+									isLast={index === subjects.subjects.length - lastLine || index === subjects.subjects.length - 1}
+								/>
+							))}
+						</div>
+					)}
 
 			</div>
 		);

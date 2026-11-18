@@ -11,6 +11,123 @@ import {
 } from '../../scheduleYear.js';
 import { shortenLessonName } from '../../lessonNames.js';
 
+function formatTodayKey() {
+	const weekdayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+	return weekdayKeys[new Date().getDay()];
+}
+
+function compareTimes(left, right) {
+	const leftStart = left.split('-')[0];
+	const rightStart = right.split('-')[0];
+	const [leftHour, leftMinute] = leftStart.split(':').map(Number);
+	const [rightHour, rightMinute] = rightStart.split(':').map(Number);
+
+	return leftHour * 60 + leftMinute - (rightHour * 60 + rightMinute);
+}
+
+function formatDayLabel(day, label) {
+	const dayLabels = {
+		monday: 'Pon',
+		tuesday: 'Wt',
+		wednesday: 'Śr',
+		thursday: 'Czw',
+		friday: 'Pt',
+		saturday: 'Sob',
+		sunday: 'Niedz',
+	};
+
+	return dayLabels[day] || label;
+}
+
+// Shared with the student profile page (studentProfile.jsx).
+export function ScheduleGrid({ scheduleData, mode = 'today' }) {
+	const allDays = Object.keys(scheduleData || {});
+	const todayKey = formatTodayKey();
+	const visibleDays = mode === 'today'
+		? allDays.filter((day) => day === todayKey)
+		: allDays;
+	const fallbackDays = mode === 'today' && visibleDays.length === 0 && allDays.length > 0
+		? [allDays[0]]
+		: visibleDays;
+	const scheduleDays = fallbackDays;
+	const visibleTimes = Array.from(
+		new Set(
+			scheduleDays.flatMap((day) => Object.keys(scheduleData?.[day] || {}))
+		)
+	).sort(compareTimes);
+
+	if (scheduleDays.length === 0 || visibleTimes.length === 0) {
+		return null;
+	}
+
+	if (mode === 'today') {
+		const day = scheduleDays[0];
+
+		return (
+			<div className="schedule-grid today">
+				{visibleTimes.map((time) => (
+					<div
+						key={`${day}-${time}`}
+						className="schedule-row"
+						style={{ gridTemplateColumns: '42px minmax(0, 1fr)' }}
+					>
+						<div className="time-cell">
+							<span>{time.split('-')[0]}</span>
+							<span>{time.split('-')[1]}</span>
+						</div>
+						<div className="lesson-cell">
+							<a href={scheduleData?.[day]?.[time]?.subjectHref}>
+								{shortenLessonName(scheduleData?.[day]?.[time]?.subject || '')}
+							</a>
+						</div>
+					</div>
+				))}
+			</div>
+		);
+	}
+
+	return (
+		<div className="schedule-grid weekly">
+			<div
+				className="schedule-days-header"
+				style={{ gridTemplateColumns: `repeat(${scheduleDays.length}, minmax(0, 1fr))` }}
+			>
+				{scheduleDays.map((day) => {
+					const firstLesson = Object.values(scheduleData?.[day] || {})[0];
+					const label = firstLesson?.day || day;
+
+					return <div key={day} className="schedule-head">{formatDayLabel(day, label)}</div>;
+				})}
+			</div>
+
+			{visibleTimes.map((time) => (
+				<div
+					key={time}
+					className="schedule-row"
+					style={{ gridTemplateColumns: `42px repeat(${scheduleDays.length}, minmax(0, 1fr))` }}
+				>
+					<div className="time-cell">
+						<span>{time.split('-')[0]}</span>
+						<span>{time.split('-')[1]}</span>
+					</div>
+
+					{scheduleDays.map((day) => {
+						const lesson = scheduleData?.[day]?.[time];
+
+						return (
+							<div key={`${day}-${time}`} className="lesson-cell">
+								<a href={lesson?.subjectHref}>
+									{shortenLessonName(lesson?.subject || '')}
+								</a>
+							</div>
+						);
+					})}
+				</div>
+			))}
+		</div>
+	);
+}
+
 export function Schedule({ widgetId, moveWidget, data }) {
 	const [scheduleYear, setScheduleYear] = useState(getSelectedScheduleYear);
 	const schedule = applyScheduleYearTimes(data.schedule, scheduleYear);
@@ -50,124 +167,6 @@ export function Schedule({ widgetId, moveWidget, data }) {
 			window.removeEventListener('storage', handleStorageChange);
 		};
 	}, []);
-
-	function formatTodayKey() {
-		const weekdayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-		return weekdayKeys[new Date().getDay()];
-	}
-
-	function compareTimes(left, right) {
-		const leftStart = left.split('-')[0];
-		const rightStart = right.split('-')[0];
-		const [leftHour, leftMinute] = leftStart.split(':').map(Number);
-		const [rightHour, rightMinute] = rightStart.split(':').map(Number);
-
-		return leftHour * 60 + leftMinute - (rightHour * 60 + rightMinute);
-	}
-
-	function formatDayLabel(day, label) {
-		const dayLabels = {
-			monday: 'Pon',
-			tuesday: 'Wt',
-			wednesday: 'Śr',
-			thursday: 'Czw',
-			friday: 'Pt',
-			saturday: 'Sob',
-			sunday: 'Niedz',
-		};
-
-		return dayLabels[day] || label;
-	}
-
-	function ScheduleGrid({ scheduleData, mode = 'today' }) {
-		const allDays = Object.keys(scheduleData || {});
-		const todayKey = formatTodayKey();
-		const visibleDays = mode === 'today'
-			? allDays.filter((day) => day === todayKey)
-			: allDays;
-		const fallbackDays = mode === 'today' && visibleDays.length === 0 && allDays.length > 0
-			? [allDays[0]]
-			: visibleDays;
-		const scheduleDays = fallbackDays;
-		const visibleTimes = Array.from(
-			new Set(
-				scheduleDays.flatMap((day) => Object.keys(scheduleData?.[day] || {}))
-			)
-		).sort(compareTimes);
-
-		if (scheduleDays.length === 0 || visibleTimes.length === 0) {
-			return null;
-		}
-
-		if (mode === 'today') {
-			const day = scheduleDays[0];
-
-			return (
-				<div className="schedule-grid today">
-					{visibleTimes.map((time) => (
-						<div
-							key={`${day}-${time}`}
-							className="schedule-row"
-							style={{ gridTemplateColumns: '42px minmax(0, 1fr)' }}
-						>
-							<div className="time-cell">
-								<span>{time.split('-')[0]}</span>
-								<span>{time.split('-')[1]}</span>
-							</div>
-							<div className="lesson-cell">
-								<a href={scheduleData?.[day]?.[time]?.subjectHref}>
-									{shortenLessonName(scheduleData?.[day]?.[time]?.subject || '')}
-								</a>
-							</div>
-						</div>
-					))}
-				</div>
-			);
-		}
-
-		return (
-			<div className="schedule-grid weekly">
-				<div
-					className="schedule-days-header"
-					style={{ gridTemplateColumns: `repeat(${scheduleDays.length}, minmax(0, 1fr))` }}
-				>
-					{scheduleDays.map((day) => {
-						const firstLesson = Object.values(scheduleData?.[day] || {})[0];
-						const label = firstLesson?.day || day;
-
-						return <div key={day} className="schedule-head">{formatDayLabel(day, label)}</div>;
-					})}
-				</div>
-
-				{visibleTimes.map((time) => (
-					<div
-						key={time}
-						className="schedule-row"
-						style={{ gridTemplateColumns: `42px repeat(${scheduleDays.length}, minmax(0, 1fr))` }}
-					>
-						<div className="time-cell">
-							<span>{time.split('-')[0]}</span>
-							<span>{time.split('-')[1]}</span>
-						</div>
-
-						{scheduleDays.map((day) => {
-							const lesson = scheduleData?.[day]?.[time];
-
-							return (
-								<div key={`${day}-${time}`} className="lesson-cell">
-									<a href={lesson?.subjectHref}>
-										{shortenLessonName(lesson?.subject || '')}
-									</a>
-								</div>
-							);
-						})}
-					</div>
-				))}
-			</div>
-		);
-	}
-
-
 
 	function Schedule21 () {
 		return(<div style={{ width: `${previewWidth}px`, height: `${previewHeight}px`}} className="widget-content-container">

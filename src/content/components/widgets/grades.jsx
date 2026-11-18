@@ -4,6 +4,39 @@ import { useWidgetResize } from './widgetResize.js';
 import { useWidgetDragging } from './widgetDragging.js';
 
 
+// Shared with the student profile page (studentProfile.jsx).
+export function normalizeGrade(grade) {
+	const value = grade.trim().toLowerCase();
+
+	if (/^[0-9]+[+-]?$/.test(value) || value === '+' || value === '-') {
+		return value;
+	}
+
+	if (['zal', 'zaliczone'].includes(value)) {
+		return 'zal';
+	}
+
+	if (['brak pracy'].includes(value)) {
+		return 'BP';
+	}
+
+	if (['nzal', 'niezal', 'niezaliczone'].includes(value)) {
+		return 'nzal';
+	}
+
+	return '...';
+}
+
+export function shortageNames(name) {
+	const names = ['ang', 'angielski', 'pol', 'polski', 'biol', 'biologia', 'his', 'historia', 'biz', 'biznes', 'kul', 'kultura', 'wiedza', 'wos', 'fizyczne', 'wf'];
+	for (let i = 0; i < names.length / 2; i += 2) {
+		if (name.includes(names[i])) {
+			return names[i + 1];
+		}
+	}
+	return name;
+}
+
 export function Grades({ widgetId, moveWidget, data }) {
 	const gradesData = data.grades;
 	const possibleLayout = [
@@ -24,38 +57,6 @@ export function Grades({ widgetId, moveWidget, data }) {
 		resizingRef,
 	} = useWidgetResize(possibleLayout, widgetId, 16, fullSize, true, {w: 4, h: 2});
 	useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget, widgetId);
-
-	function normalizeGrade(grade) {
-		const value = grade.trim().toLowerCase();
-
-		if (/^[0-9]+[+-]?$/.test(value) || value === '+' || value === '-') {
-			return value;
-		}
-
-		if (['zal', 'zaliczone'].includes(value)) {
-			return 'zal';
-		}
-
-		if (['brak pracy'].includes(value)) {
-			return 'BP';
-		}
-
-		if (['nzal', 'niezal', 'niezaliczone'].includes(value)) {
-			return 'nzal';
-		}
-
-		return '...';
-	}
-
-	function shortageNames(name) {
-		const names = ['ang', 'angielski', 'pol', 'polski', 'biol', 'biologia', 'his', 'historia', 'biz', 'biznes', 'kul', 'kultura', 'wiedza', 'wos', 'fizyczne', 'wf'];
-		for (let i = 0; i < names.length / 2; i += 2) {
-			if (name.includes(names[i])) {
-				return names[i + 1];
-			}
-		}
-		return name;
-	}
 
 	function truncateSubject(name, maxLength = 10) {
 		return name.length > maxLength

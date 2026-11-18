@@ -42,6 +42,7 @@ function extractSubjects(container) {
 				url: link.getAttribute('href') || '',
 				title: link.getAttribute('title') || '',
 				italic: link.classList.contains('font-italic'),
+				level: subjectLevelFromMarkup(row, container),
 			};
 		})
 		.filter(Boolean);
@@ -57,6 +58,23 @@ function extractSubjects(container) {
 		},
 		subjects,
 	};
+}
+
+// Level of a subject row when the list is grouped like on the profile page:
+// <li>P<ul><li><b><a href="/subjects/…">…</a></b> …</li></ul></li>. '' when it isn't.
+function subjectLevelFromMarkup(row, container) {
+	for (let el = row.parentElement; el && el !== container; el = el.parentElement) {
+		if (el.tagName !== 'LI') continue;
+		const nested = el.querySelector(':scope > ul');
+		if (!nested || !nested.contains(row)) continue;
+		return Array.from(el.childNodes)
+			.filter((node) => node.nodeType === 3)
+			.map((node) => node.textContent)
+			.join(' ')
+			.replace(/\s+/g, ' ')
+			.trim();
+	}
+	return '';
 }
 
 function getScheduleLessons(schedule = document.querySelector(".schedule")) {
@@ -367,7 +385,8 @@ function extractStudentProfile(doc = document) {
 		if (known?.key === 'parents') {
 			for (const node of valueNodes) {
 				const link = nodeLinks([node])[0];
-				const name = link?.text || nodeLines(node).join(' ');
+				const shownName = link?.text || nodeLines(node).join(' ');
+				const name = window.replaceParentName?.(header.name, shownName) ?? shownName;
 				if (name) parents.push({ name, href: link?.href || '', role: node.classList?.contains('mother') ? 'mother' : node.classList?.contains('father') ? 'father' : '' });
 			}
 			continue;
@@ -570,6 +589,10 @@ function readStudentProfilePageData(doc) {
 	const reviewsModule = findModuleByTitle(doc, 'Ostatnie recenzje');
 	const timetable = extractProfileTimetable(findModuleByTitle(doc, 'Ogólny plan tygodniowy'));
 
+	const subjectGroups = extractProfileSubjects(findModuleByTitle(doc, 'Przedmioty'));
+	// Own profile: remember subject levels for the home subjects widget.
+	if (profile.editUrl && doc === document) saveSubjectLevels(subjectGroups);
+
 	return {
 		profile,
 		exams: extractProfileEvents(findModuleByTitle(doc, 'Najbliższe zapowiedziane sprawdziany'), '.profile-event.exam, .profile-event'),
@@ -577,7 +600,7 @@ function readStudentProfilePageData(doc) {
 		gradesUrl: seeMoreUrl(gradesModule),
 		attendance: extractProfileAttendance(attendanceModule),
 		attendanceUrl: seeMoreUrl(attendanceModule),
-		subjectGroups: extractProfileSubjects(findModuleByTitle(doc, 'Przedmioty')),
+		subjectGroups,
 		timetable,
 		reviews: extractProfileEvents(reviewsModule),
 		reviewsUrl: seeMoreUrl(reviewsModule),
@@ -594,3 +617,50 @@ function extractStudentProfilePageData(doc = document) {
 		return null;
 	}
 }
+
+// ---------------------------------------------------------------------------
+// Subject levels for the home subjects widget. The home page may not group its
+// subjects by level, so the map {"/subjects/ID": "P" | "R" | "Brak poziomu"} is
+// taken from the user's own profile page: saved whenever it is opened, otherwise
+// fetched once in the background and kept for a week.
+// ---------------------------------------------------------------------------
+
+const SUBJECT_LEVELS_STORAGE_KEY = 'iduSubjectLevels';
+const SUBJECT_LEVELS_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+function subjectLevelPath(href) {
+	try {
+		return new URL(href, window.location.origin).pathname.replace(/\/+$/, '');
+	} catch {
+		return href || '';
+	}
+}
+
+function saveSubjectLevels(groups) {
+	const map = {};
+	for (const group of groups || []) {
+		for (const subject of group.subjects) {
+			if (group.level && subject.url) map[subjectLevelPath(subject.url)] = group.level;
+		}
+	}
+	if (!Object.keys(map).length) return null;
+	try {
+		localStorage.setItem(SUBJECT_LEVELS_STORAGE_KEY, JSON.stringify({ savedAt: Date.now(), map }));
+	} catch {}
+	return map;
+}
+
+async function loadSubjectLevels(ownProfileUrl) {
+	try {
+		const cached = JSON.parse(localStorage.getItem(SUBJECT_LEVELS_STORAGE_KEY) || 'null');
+		if (cached?.map && Date.now() - cached.savedAt < SUBJECT_LEVELS_MAX_AGE_MS) return cached.map;
+	} catch {}
+	if (!ownProfileUrl) return null;
+
+	const response = await fetch(ownProfileUrl, { credentials: 'same-origin' });
+	if (!response.ok) return null;
+	const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
+	return saveSubjectLevels(extractProfileSubjects(findModuleByTitle(doc, 'Przedmioty')));
+}
+window.loadSubjectLevels = loadSubjectLevels;
+

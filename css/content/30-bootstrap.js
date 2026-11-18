@@ -42,6 +42,8 @@ if (!window.__iduContentBootstrapRegistered) {
 			schedule: getScheduleLessons(),
 			subjectAnnouncements: extractSubjectAnnouncements(document.querySelector("#unique-id11")),
 			semesterScope: extractSemesterScope(),
+			// "Twój profil" link, read before the header is replaced; used to look up subject levels.
+			ownProfileUrl: document.querySelector("#account a")?.getAttribute("href") || "",
 			studentProfile: isStudentProfilePage() ? extractStudentProfilePageData() : null
 		};
 		// Swap in the Preact "Profil ucznia" page once the header/footer are in place.

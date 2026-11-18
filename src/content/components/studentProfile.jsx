@@ -1,15 +1,13 @@
 import { h } from 'preact';
 import { createPortal, memo } from 'preact/compat';
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
-import { shortenLessonName } from '../lessonNames.js';
+import { normalizeGrade, shortageNames } from './widgets/grades.jsx';
+import { AttendanceChart, AttendanceRow } from './widgets/attendance.jsx';
+import { ScheduleGrid } from './widgets/schedule.jsx';
+import { levelLabel } from '../subjectLevels.js';
 
 const LIST_PREVIEW_COUNT = 5;
-const WEEKDAY_SHORT = {
-	monday: 'Pon', tuesday: 'Wt', wednesday: 'Śr', thursday: 'Czw', friday: 'Pt', saturday: 'Sob', sunday: 'Nd',
-};
-const LEVEL_LABELS = { P: 'Poziom podstawowy', R: 'Poziom rozszerzony' };
 const MONTHS = { sty: 0, lut: 1, mar: 2, kwi: 3, maj: 4, cze: 5, lip: 6, sie: 7, wrz: 8, paź: 9, paz: 9, lis: 10, gru: 11 };
-const ATTENDANCE_LABELS = { presence: 'Obecność', absence: 'Nieobecność', lateness: 'Spóźnienie', excused: 'Usprawiedliwione', other: 'Inne' };
 
 // ---------- small helpers ----------
 
@@ -375,80 +373,90 @@ function ExamsCard({ exams, index }) {
 	);
 }
 
-function GradesCard({ grades, href, index }) {
-	const { visible, button } = usePreview(grades);
-	const [open, setOpen] = useState(null);
-	const unseen = grades.filter((grade) => grade.unseen).length;
+// ---------- cards built from the home-page widgets ----------
+// Same markup, classes and ids as the dashboard widgets (grades.jsx, attendance.jsx,
+// schedule.jsx) so they look identical; only the fixed grid size is replaced by full width.
 
+function WidgetTitle({ title, href }) {
+	const arrow = (
+		<svg className="titleArrow" fill="currentColor" width="16px" height="16px" viewBox="0 0 42 42" aria-hidden="true">
+			<polygon fill-rule="evenodd" points="13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " />
+		</svg>
+	);
 	return (
-		<Card index={index} title="Ostatnie oceny" href={href} subtitle={unseen ? `${unseen} ${unseen === 1 ? 'nowa' : unseen < 5 ? 'nowe' : 'nowych'}` : ''}>
-			<ul className="idu-profile-list">
-				{visible.map((grade, i) => {
-					const isShort = grade.grade.length <= 6;
-					const isOpen = open === i;
-					const expandable = Boolean(grade.detail);
-					return (
-						<li key={i} className={`idu-profile-row grade${grade.unseen ? ' unseen' : ''}${isOpen ? ' open' : ''}`} style={{ '--i': i }}>
-							<div className={`idu-profile-grade-badge${isShort ? '' : ' text'}`} aria-hidden={!isShort}>
-								{isShort
-									? grade.grade
-									: <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 5h14v10H9l-4 4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /></svg>}
-							</div>
-							<div className="idu-profile-row-main">
-								<div className="idu-profile-row-top">
-									{grade.subjectUrl ? <a className="idu-profile-row-title" href={grade.subjectUrl}>{grade.subject}</a> : <span className="idu-profile-row-title">{grade.subject}</span>}
-									{grade.unseen && <span className="idu-profile-tag new">nowa</span>}
-								</div>
-								{grade.description && <p className="idu-profile-row-text">{grade.description}</p>}
-								{!isShort && !isOpen && <p className="idu-profile-row-quote">{grade.grade}</p>}
-								{isOpen && <p className="idu-profile-row-detail">{grade.detail}</p>}
-								<div className="idu-profile-row-meta">
-									<span>{grade.date}</span>
-									{expandable && (
-										<button type="button" className="idu-profile-link-button" onClick={() => setOpen(isOpen ? null : i)} aria-expanded={isOpen}>
-											{isOpen ? 'Zwiń' : 'Pokaż opis'}
-										</button>
-									)}
-								</div>
-							</div>
-						</li>
-					);
-				})}
-			</ul>
-			<CardFoot button={button} href={href} />
-		</Card>
+		<div className="widget-title-box" style={{ marginBottom: 'var(--padding-1)' }}>
+			<h1>{title}</h1>
+			{href ? <a className="idu-profile-widget-arrow" href={href} aria-label={`${title}: zobacz wszystkie`}>{arrow}</a> : arrow}
+		</div>
 	);
 }
 
-function AttendanceCard({ attendance, href, index }) {
-	const { visible, button } = usePreview(attendance);
-	const counts = attendance.reduce((acc, item) => ({ ...acc, [item.status]: (acc[item.status] || 0) + 1 }), {});
-
+function WidgetCard({ id, size, index, gap = 'var(--padding-1)', hasFooterLink = false, children }) {
 	return (
-		<Card index={index} title="Frekwencja" href={href} subtitle="Ostatnio wystawione">
-			<div className="idu-profile-chips summary">
-				{Object.entries(counts).map(([status, count], i) => (
-					<span key={status} className="idu-profile-chip summary" style={{ '--i': i }}>
-						<span className={`idu-profile-dot ${status}`}></span>{ATTENDANCE_LABELS[status] || status} {count}
-					</span>
+		<div className="idu-profile-widget" style={{ '--i': index }}>
+			<div id={id} className={`widget ${size}`}>
+				<div className="inner-widget" style={{ position: 'relative' }}>
+					<div className={`widget-content-container${hasFooterLink ? ' with-footer-link' : ''}`} style={{ gap }}>
+						{children}
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+const GRADES_WIDGET_LIMIT = 6;
+
+// Like the large "Oceny" widget (Grades46): value box, subject, description, "Wszystkie oceny".
+function GradesCard({ grades, href, index }) {
+	const [open, setOpen] = useState(null);
+	const items = grades.slice(0, GRADES_WIDGET_LIMIT);
+	return (
+		<WidgetCard id="gradesWidget" size="w4 h6" index={index} hasFooterLink={Boolean(href)}>
+			<WidgetTitle title="Oceny" href={href} />
+			{items.map((grade, i) => {
+				const isOpen = open === i;
+				const description = grade.description || grade.grade;
+				// An array instead of a fragment (no JSX fragment factory in this build):
+				// the full comment opens as its own block under the row, so rows keep a fixed height.
+				return [
+					<div key={`row-${i}`} className="widget-grade-box with-description" title={description}>
+						<div className="widget-grade-box-value">
+							<span>{normalizeGrade(grade.grade)}</span>
+						</div>
+						<div className="grade-text">
+							<a href={grade.subjectUrl} title={grade.subject}>{shortageNames(grade.subject || '')}</a>
+							{grade.detail
+								? (
+									<button type="button" className="grade-description idu-profile-grade-toggle" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : i)}>
+										{description}
+									</button>
+								)
+								: <span className="grade-description">{description}</span>}
+						</div>
+					</div>,
+					isOpen && <p key={`detail-${i}`} className="idu-profile-grade-detail">{grade.detail}</p>,
+				];
+			})}
+			{href && <a className="grades-all-link" href={href}>Wszystkie oceny</a>}
+		</WidgetCard>
+	);
+}
+
+// Like the "Obecności" widget (Attendance44): rows with coloured dots + the donut chart.
+function AttendanceCard({ attendance, href, showChart, index }) {
+	const half = 'calc(50% - var(--padding-1))';
+	return (
+		<WidgetCard id="attendanceWidget" size="w4 h4" index={index} gap="8px" hasFooterLink={Boolean(href)}>
+			<WidgetTitle title="Obecności" href={href} />
+			<div className="attendance-grid" style={{ width: showChart ? half : '100%' }}>
+				{attendance.slice(0, 10).map((item, i) => (
+					<AttendanceRow key={`${item.subjectUrl}-${i}`} item={item} rowWidth="100%" />
 				))}
 			</div>
-			<ul className="idu-profile-list compact">
-				{visible.map((item, i) => (
-					<li key={i} className={`idu-profile-row compact${item.unseen ? ' unseen' : ''}`} style={{ '--i': i }} title={item.issuedAt ? `wystawiono: ${item.issuedAt}` : undefined}>
-						<span className={`idu-profile-dot ${item.status}`} aria-hidden="true"></span>
-						<div className="idu-profile-row-main">
-							<div className="idu-profile-row-top">
-								{item.subjectUrl ? <a className="idu-profile-row-title" href={item.subjectUrl}>{item.subject}</a> : <span className="idu-profile-row-title">{item.subject}</span>}
-								<span className="idu-profile-row-date">{item.date}</span>
-							</div>
-							<p className="idu-profile-row-text">{item.name || ATTENDANCE_LABELS[item.status]}</p>
-						</div>
-					</li>
-				))}
-			</ul>
-			<CardFoot button={button} href={href} />
-		</Card>
+			{showChart && <AttendanceChart width={half} seeMoreUrl={href} />}
+			{href && <a href={href} className="grades-all-link">Zobacz więcej</a>}
+		</WidgetCard>
 	);
 }
 
@@ -495,7 +503,7 @@ function SubjectsCard({ groups, className, index }) {
 		<Card index={index} title="Przedmioty" subtitle={[className, `${total} ${total === 1 ? 'przedmiot' : 'przedmiotów'}`].filter(Boolean).join(' · ')}>
 			{groups.map((group, groupIndex) => (
 				<div key={groupIndex} className="idu-profile-subject-group">
-					{group.level && <h3 className="idu-profile-group-title">{LEVEL_LABELS[group.level] || group.level}</h3>}
+					{group.level && <h3 className="idu-profile-group-title">{levelLabel(group.level)}</h3>}
 					<div className="idu-profile-chips">
 						{group.subjects.map((subject, i) => {
 							const id = `${groupIndex}-${i}`;
@@ -535,77 +543,32 @@ function SubjectsCard({ groups, className, index }) {
 	);
 }
 
+// Like the weekly "Plan Lekcji" widget (Schedule46), fed from the profile's own timetable.
 function TimetableCard({ timetable, subjectNames, index }) {
-	const [selected, setSelected] = useState(null);
-	const todayKey = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][new Date().getDay()];
-	const days = timetable.days;
-	const columns = `30px repeat(${days.length}, minmax(0, 1fr))`;
-	const selectedLesson = selected && timetable.rows[selected.row]?.lessons[selected.day];
-	const selectedRow = selected && timetable.rows[selected.row];
 	// The timetable says "drugi język 2"; the subjects list knows it's "język hiszpański".
 	const nameOf = (lesson) => subjectNames.get(lesson.subjectUrl) || lesson.subject;
+	const scheduleData = {};
+	for (const day of timetable.days) scheduleData[day.key] = {};
+	for (const row of timetable.rows) {
+		for (const [dayKey, lessons] of Object.entries(row.lessons)) {
+			const lesson = lessons[0];
+			const day = timetable.days.find((d) => d.key === dayKey);
+			scheduleData[dayKey][`${row.start}-${row.end}`] = {
+				lessonNumber: row.number,
+				subject: nameOf(lesson),
+				subjectHref: lesson.subjectUrl,
+				day: day?.label || dayKey,
+			};
+		}
+	}
 
 	return (
-		<Card index={index} title="Plan lekcji" href={timetable.url}>
-			<div className="idu-profile-timetable" role="table" aria-label="Plan lekcji">
-				<div className="idu-profile-tt-row head" role="row" style={{ gridTemplateColumns: columns }}>
-					<span className="idu-profile-tt-num" role="columnheader" aria-label="Lekcja"></span>
-					{days.map((day) => (
-						<span key={day.key} role="columnheader" className={`idu-profile-tt-day${day.key === todayKey ? ' today' : ''}`}>{WEEKDAY_SHORT[day.key] || day.label.slice(0, 3)}</span>
-					))}
-				</div>
-				{timetable.rows.map((row, rowIndex) => (
-					<div key={row.number} className="idu-profile-tt-row" role="row" style={{ gridTemplateColumns: columns }}>
-						<span className="idu-profile-tt-num" role="rowheader" title={`${row.start}–${row.end}`}>
-							<span className="num">{row.number}</span>
-							<span className="time">{row.start}</span>
-						</span>
-						{days.map((day) => {
-							const lessons = row.lessons[day.key];
-							if (!lessons) return <span key={day.key} role="cell" className="idu-profile-tt-cell empty"></span>;
-							const isSelected = selected?.row === rowIndex && selected?.day === day.key;
-							const label = lessons.map(nameOf).join(' / ');
-							return (
-								<button
-									key={day.key}
-									type="button"
-									role="cell"
-									aria-label={`${label}, ${row.start}–${row.end}`}
-									aria-pressed={isSelected}
-									className={`idu-profile-tt-cell${day.key === todayKey ? ' today' : ''}${isSelected ? ' active' : ''}`}
-									style={{ '--i': rowIndex }}
-									onClick={() => setSelected(isSelected ? null : { row: rowIndex, day: day.key })}
-								>
-									{shortenLessonName(nameOf(lessons[0]))}{lessons.length > 1 ? '+' : ''}
-								</button>
-							);
-						})}
-					</div>
-				))}
-			</div>
-			{selectedLesson && (
-				<div className="idu-profile-detail">
-					{selectedLesson.map((lesson, i) => (
-						<div key={i} className="idu-profile-detail-lesson">
-							<div className="idu-profile-detail-title">
-								{lesson.subjectUrl ? <a href={lesson.subjectUrl}>{nameOf(lesson)}</a> : nameOf(lesson)}
-								{nameOf(lesson) !== lesson.subject && <span className="idu-profile-detail-raw"> · {lesson.subject}</span>}
-							</div>
-							<div className="idu-profile-detail-text">
-								{[`${days.find((d) => d.key === selected.day)?.label}, lekcja ${selectedRow.number}`, `${selectedRow.start}–${selectedRow.end}`].join(' · ')}
-							</div>
-							{(lesson.room || lesson.teacher) && (
-								<div className="idu-profile-detail-text">{[lesson.room && `Sala: ${lesson.room}`, lesson.teacher].filter(Boolean).join(' · ')}</div>
-							)}
-						</div>
-					))}
-				</div>
-			)}
-		</Card>
+		<WidgetCard id="scheduleWidget" size="w4 h6" index={index}>
+			<WidgetTitle title="Plan Lekcji" href={timetable.url} />
+			<ScheduleGrid scheduleData={scheduleData} mode="all" />
+		</WidgetCard>
 	);
 }
-
-// ---------- page ----------
 
 export function StudentProfile({ data }) {
 	const { profile } = data;
@@ -615,7 +578,8 @@ export function StudentProfile({ data }) {
 	add('profile', (index) => <ProfileCard profile={profile} index={index} />);
 	if (data.exams?.length) add('exams', (index) => <ExamsCard exams={data.exams} index={index} />);
 	if (data.grades?.length) add('grades', (index) => <GradesCard grades={data.grades} href={data.gradesUrl} index={index} />);
-	if (data.attendance?.length) add('attendance', (index) => <AttendanceCard attendance={data.attendance} href={data.attendanceUrl} index={index} />);
+	// The donut reads this student's attendance page; only on your own profile (it shares the home widget's cache).
+	if (data.attendance?.length) add('attendance', (index) => <AttendanceCard attendance={data.attendance} href={data.attendanceUrl} showChart={Boolean(profile.editUrl && data.attendanceUrl)} index={index} />);
 	if (data.subjectGroups?.length) add('subjects', (index) => <SubjectsCard groups={data.subjectGroups} className={profile.klass} index={index} />);
 	const subjectNames = new Map((data.subjectGroups || []).flatMap((group) => group.subjects.map((subject) => [subject.url, subject.name])));
 	if (data.timetable?.rows?.length) add('timetable', (index) => <TimetableCard timetable={data.timetable} subjectNames={subjectNames} index={index} />);

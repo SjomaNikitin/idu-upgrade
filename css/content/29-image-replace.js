@@ -51,8 +51,56 @@ function upgradeProfileImage(img, name) {
 window.getProfileImageReplacement = getProfileImageReplacement;
 window.upgradeProfileImage = upgradeProfileImage;
 
+// Parent/guardian first names shown differently for a student.
+// Keyed by the student's name, then { "shown first name": "replacement" }.
+// Only that first-name word changes; the surname stays as it is.
+const PARENT_NAME_REPLACEMENTS = {
+	"Jagoda Herbut-Tunik": { "Mira": "Tomasz" },
+};
+
+function escapeRegExp(text) {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// "Mira Herbut" -> "Tomasz Herbut" when the student is in the table; otherwise unchanged.
+function replaceParentName(studentName, parentName) {
+	if (!studentName || !parentName) return parentName;
+	for (const [student, names] of Object.entries(PARENT_NAME_REPLACEMENTS)) {
+		if (!studentName.includes(student)) continue;
+		let result = parentName;
+		for (const [from, to] of Object.entries(names)) {
+			// Whole word only (so "Miranda" or "Kazimira" stay untouched).
+			result = result.replace(new RegExp(`(^|[^\\p{L}])${escapeRegExp(from)}(?![\\p{L}])`, "gu"), `$1${to}`);
+		}
+		return result;
+	}
+	return parentName;
+}
+
+// Original IDU student card: rewrites the text under "Rodzice/opiekunowie" in place.
+function replaceParentNamesInCard(card, studentName) {
+	if (!card || !studentName) return;
+	for (const label of card.querySelectorAll("p")) {
+		if (!/rodzice|opiekun/i.test(label.textContent)) continue;
+		for (let node = label.nextSibling; node && !(node.nodeType === 1 && node.tagName === "P"); node = node.nextSibling) {
+			const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+			const texts = node.nodeType === 3 ? [node] : [];
+			while (walker.nextNode()) texts.push(walker.currentNode);
+			for (const text of texts) {
+				const replaced = replaceParentName(studentName, text.nodeValue);
+				if (replaced !== text.nodeValue) text.nodeValue = replaced;
+			}
+		}
+	}
+}
+window.replaceParentName = replaceParentName;
+
 function replaceImages () {
 	if (!window.location.pathname.includes("/student")) return;
+
+	// Parent names on the original card (the Preact page gets them via extractStudentProfile).
+	const card = document.querySelector("#student-card");
+	replaceParentNamesInCard(card, card?.querySelector("h3")?.innerText);
 
 	// New Preact profile page (the component upgrades it itself; this is a fallback).
 	const profileImg = document.querySelector("img[data-idu-profile-photo]");
