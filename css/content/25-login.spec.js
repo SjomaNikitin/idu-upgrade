@@ -16,11 +16,14 @@ function createStorage(initialValues = {}) {
 
 function loadLoginPage({ local = {}, session = {}, hasLoginForm = true } = {}) {
 	let domContentLoaded;
-	let submitHandler;
+	const formHandlers = new Map();
 	const loginForm = {
 		addEventListener: (event, handler) => {
-			if (event === "submit") submitHandler = handler;
+			const handlers = formHandlers.get(event) || [];
+			handlers.push(handler);
+			formHandlers.set(event, handlers);
 		},
+		querySelectorAll: () => [],
 	};
 	const loginInput = hasLoginForm ? { value: "", form: loginForm } : null;
 	const passwordInput = hasLoginForm ? { value: "", form: loginForm } : null;
@@ -57,8 +60,19 @@ function loadLoginPage({ local = {}, session = {}, hasLoginForm = true } = {}) {
 		renderIduMockDashboard,
 		submit: () => {
 			const event = { preventDefault: vi.fn(), stopImmediatePropagation: vi.fn() };
-			submitHandler?.(event);
+			for (const handler of formHandlers.get("submit") || []) handler(event);
 			return event;
+		},
+		constructFormData: (entries) => {
+			const values = new Map(entries);
+			const formData = {
+				delete: vi.fn((key) => values.delete(key)),
+				get: (key) => values.get(key),
+			};
+			for (const handler of formHandlers.get("formdata") || []) {
+				handler({ formData });
+			}
+			return { formData, values };
 		},
 	};
 }
@@ -103,6 +117,18 @@ describe("login page", () => {
 		expect(event.preventDefault).not.toHaveBeenCalled();
 		expect(page.localStorage.getItem("login")).toBeNull();
 		expect(page.localStorage.getItem("password")).toBeNull();
+	});
+
+	it("removes the iOS app-layer marker from login submissions", () => {
+		const page = loadLoginPage();
+		const { formData, values } = page.constructFormData([
+			["user[login]", "student"],
+			["nakladka", "klasy,globalne,mostek-ios,elementy"],
+		]);
+
+		expect(formData.delete).toHaveBeenCalledWith("nakladka");
+		expect(values.get("user[login]")).toBe("student");
+		expect(values.has("nakladka")).toBe(false);
 	});
 
 	it("still opens the demo dashboard for the App Store review login", () => {
