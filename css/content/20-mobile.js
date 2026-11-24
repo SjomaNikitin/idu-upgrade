@@ -53,7 +53,8 @@ function linkifyUrls(root = document.body) {
 			a.textContent = match[0];
 			a.target = "_blank";
 			a.rel = "noopener noreferrer";
-			a.style.cssText = "color:blue !important;text-decoration:underline;pointer-events:all;";
+			// Colour comes from the theme (.idu-auto-link in styles.css).
+			a.className = "idu-auto-link";
 			frag.appendChild(a);
 			last = match.index + match[0].length;
 		}

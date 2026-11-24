@@ -15,7 +15,7 @@ function hideXmas() {
 window.loadWebsiteTheme = function (chooseTheme) {
 	if (chooseTheme) {
 
-		document.documentElement.setAttribute("data-theme", chooseTheme);
+		document.documentElement.setAttribute("data-theme", window.resolveIduTheme(chooseTheme));
 		localStorage.setItem("theme", chooseTheme);
 		// The native app shares this preference across login and school domains.
 		window.webkit?.messageHandlers?.iduThemeSync?.postMessage(chooseTheme);
@@ -37,7 +37,7 @@ window.loadWebsiteTheme = function (chooseTheme) {
 		if (theme !== "Default" && document.querySelector("canvas.bg-canvas")) {
 			hideXmas()
 		}
-		document.documentElement.setAttribute("data-theme", theme);
+		document.documentElement.setAttribute("data-theme", window.resolveIduTheme(theme));
 	}
 }
 
@@ -181,3 +181,190 @@ function addFooterSnow() {
 	}
 
 }
+
+// ===== Christmas falling snow =====
+// Small, slow, semi-transparent dots on a fixed canvas above the page. Only
+// runs with the Christmas theme, never with "reduce motion", pauses while the
+// tab is hidden, and can be turned off in Settings ("christmasSnowfall"=off).
+window.isIduSnowfallEnabled = function () {
+	try {
+		return localStorage.getItem("christmasSnowfall") !== "off";
+	} catch {
+		return true;
+	}
+};
+
+window.setIduSnowfallEnabled = function (enabled) {
+	try {
+		localStorage.setItem("christmasSnowfall", enabled ? "on" : "off");
+	} catch {}
+	window.updateIduSnowfall();
+};
+
+(function () {
+	let canvas = null;
+	let ctx = null;
+	let flakes = [];
+	let frame = null;
+	let lastTime = 0;
+	let width = 0;
+	let height = 0;
+	const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+
+	function makeFlake(randomY) {
+		return {
+			x: Math.random() * width,
+			y: randomY ? Math.random() * height : -4,
+			r: 0.6 + Math.random() * 1.2,          // 0.6–1.8 px radius
+			alpha: 0.2 + Math.random() * 0.55,      // random opacity
+			vy: 12 + Math.random() * 22,            // px per second, slow
+			drift: 6 + Math.random() * 10,          // sideways sway in px
+			phase: Math.random() * Math.PI * 2,
+			sway: 0.3 + Math.random() * 0.5,
+		};
+	}
+
+	function resize() {
+		if (!canvas) return;
+		const dpr = Math.min(window.devicePixelRatio || 1, 2);
+		width = window.innerWidth;
+		height = window.innerHeight;
+		canvas.width = Math.round(width * dpr);
+		canvas.height = Math.round(height * dpr);
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+		// Few flakes: about one per 9000 px² (≈35 on a phone), capped.
+		const target = Math.min(70, Math.round((width * height) / 9000));
+		while (flakes.length < target) flakes.push(makeFlake(true));
+		flakes.length = target;
+	}
+
+	function draw(time) {
+		frame = requestAnimationFrame(draw);
+		const dt = Math.min((time - (lastTime || time)) / 1000, 0.05);
+		lastTime = time;
+		ctx.clearRect(0, 0, width, height);
+		ctx.fillStyle = "#ffffff";
+		for (const f of flakes) {
+			f.y += f.vy * dt;
+			f.phase += f.sway * dt;
+			if (f.y - f.r > height) Object.assign(f, makeFlake(false));
+			const x = f.x + Math.sin(f.phase) * f.drift;
+			ctx.globalAlpha = f.alpha;
+			ctx.beginPath();
+			ctx.arc(x, f.y, f.r, 0, Math.PI * 2);
+			ctx.fill();
+		}
+		ctx.globalAlpha = 1;
+	}
+
+	function start() {
+		if (!canvas) {
+			canvas = document.createElement("canvas");
+			canvas.className = "idu-snowfall";
+			canvas.setAttribute("aria-hidden", "true");
+			ctx = canvas.getContext("2d");
+			document.body.appendChild(canvas);
+			window.addEventListener("resize", resize);
+			resize();
+		}
+		if (frame === null && !document.hidden) {
+			lastTime = 0;
+			frame = requestAnimationFrame(draw);
+		}
+	}
+
+	function stop() {
+		if (frame !== null) cancelAnimationFrame(frame);
+		frame = null;
+		if (canvas) {
+			window.removeEventListener("resize", resize);
+			canvas.remove();
+			canvas = null;
+			ctx = null;
+			flakes = [];
+		}
+	}
+
+	window.updateIduSnowfall = function () {
+		if (!document.body) return;
+		const shouldRun = !window.__iduOriginalView &&
+			document.documentElement.getAttribute("data-theme") === "Christmas" &&
+			window.isIduSnowfallEnabled() &&
+			!reducedMotion?.matches;
+		if (shouldRun) start();
+		else stop();
+	};
+
+	document.addEventListener("visibilitychange", () => {
+		if (!canvas) return;
+		if (document.hidden) {
+			if (frame !== null) cancelAnimationFrame(frame);
+			frame = null;
+		} else {
+			start();
+		}
+	});
+	reducedMotion?.addEventListener?.("change", () => window.updateIduSnowfall());
+	new MutationObserver(() => window.updateIduSnowfall())
+		.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", () => window.updateIduSnowfall());
+	} else {
+		window.updateIduSnowfall();
+	}
+})();
+
+// ===== "Christmas theme is here" notice =====
+// Shown once per device, the first time the app opens after this update.
+// The key is written as soon as it shows, so a reload won't bring it back.
+(function () {
+	const seenKey = "christmasThemeNoticeSeen";
+
+	function show() {
+		try {
+			if (localStorage.getItem(seenKey)) return;
+			// Default-theme users get the Christmas theme automatically, so
+			// only people on Ocean / Dzaga / Besties need telling.
+			const savedTheme = localStorage.getItem("theme");
+			if (!savedTheme || savedTheme === "Default") return;
+		} catch {
+			return;
+		}
+		if (window.__iduOriginalView || (window.location.pathname === "/users/sign_in" && !window.__IDU_MOCK_DATA)) return;
+		const header = document.getElementById("idu-header-root") || document.querySelector(".idu-custom-header");
+		if (!header) return;
+		try {
+			localStorage.setItem(seenKey, new Date().toISOString());
+		} catch {}
+
+		const notice = document.createElement("div");
+		notice.className = "idu-xmas-notice";
+		notice.setAttribute("role", "status");
+		notice.innerHTML = `
+			<svg class="idu-xmas-notice-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+				<path d="M12 2v20M4.9 6.5l14.2 11M4.9 17.5l14.2-11M9 3.5l3 2.5 3-2.5M9 20.5l3-2.5 3 2.5M2.8 9.6l3.9.9-1.3 3.7M21.2 14.4l-3.9-.9 1.3-3.7M2.8 14.4l3.9-.9-1.3-3.7M21.2 9.6l-3.9.9 1.3 3.7"/>
+			</svg>
+			<span class="idu-xmas-notice-text">Motyw świąteczny jest już dostępny!</span>
+			<button type="button" class="idu-xmas-notice-close" aria-label="Zamknij">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+			</button>`;
+		const top = Math.max(header.getBoundingClientRect().bottom, 0);
+		notice.style.top = `${top + 8}px`;
+		document.body.appendChild(notice);
+
+		let timer = null;
+		const close = () => {
+			clearTimeout(timer);
+			notice.classList.remove("open");
+			notice.classList.add("closing");
+			setTimeout(() => notice.remove(), 300);
+		};
+		notice.querySelector(".idu-xmas-notice-close").addEventListener("click", close);
+		requestAnimationFrame(() => requestAnimationFrame(() => notice.classList.add("open")));
+		timer = setTimeout(close, 6000);
+	}
+
+	const start = () => setTimeout(show, 900); // after the header has been rendered
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+	else start();
+})();

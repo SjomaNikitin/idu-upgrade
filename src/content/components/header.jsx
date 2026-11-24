@@ -119,7 +119,7 @@ function SearchPopup({ open, onClose, searchElement }) {
 export function Header({accountHref, messagesHref, semesterScope, searchElement, isMockData = false}) {
 	const headerRef = useRef(null);
 	let color = getComputedStyle(root).getPropertyValue('--idu-logo').trim();
-	let currentTheme = localStorage.getItem("theme");
+	let currentTheme = window.resolveIduTheme?.(localStorage.getItem("theme")) ?? localStorage.getItem("theme");
 	let svgSize = 28;
 	let menuStrokeWidth = 4;
 	let panelIconStrokeWidth = 2.5;
@@ -132,6 +132,8 @@ export function Header({accountHref, messagesHref, semesterScope, searchElement,
 		color = "#851A36"
 	} else if (currentTheme === "Dzaga") {
 		color = "#5B3119"
+	} else if (currentTheme === "Christmas") {
+		color = "#FFE4A3"
 	} else if (currentTheme === "Default") {
 		color = "#0B5F5D"
 	}
@@ -153,6 +155,8 @@ export function Header({accountHref, messagesHref, semesterScope, searchElement,
 		const updateHeader = () => {
 			const currentScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
 			const scrollDelta = currentScrollY - lastScrollY;
+			// Lets themes (Christmas) drop the blurred backdrop at the very top.
+			stickyHeader.classList.toggle("is-scrolled", currentScrollY > topRevealPoint);
 
 			if (editMode) {
 				lastScrollY = currentScrollY;
@@ -342,6 +346,7 @@ export function Settings ({ open, setOpen, semesterScope }) {
 					<h2>Motyw</h2>
 					<SettingsDots />
 				</section>
+				<SnowfallSetting />
 				<ScheduleYearForm />
 				{semesterScope ? <SemesterScopeForm semesterScope={semesterScope}/> : null}
 			</div>
@@ -349,6 +354,44 @@ export function Settings ({ open, setOpen, semesterScope }) {
 				<svg width={svgSize} height={svgSize} viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"/></svg>
 			</a>
 		</div>
+	);
+}
+
+// The theme actually on screen (e.g. "Christmas" in December), kept in sync
+// with theme changes made from the dots.
+function useShownTheme() {
+	const read = () => document.documentElement.getAttribute("data-theme");
+	const [theme, setTheme] = useState(read);
+	useEffect(() => {
+		const observer = new MutationObserver(() => setTheme(read()));
+		observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+		return () => observer.disconnect();
+	}, []);
+	return theme;
+}
+
+export function SnowfallSetting() {
+	const theme = useShownTheme();
+	const [enabled, setEnabled] = useState(() => window.isIduSnowfallEnabled?.() ?? true);
+	if (theme !== "Christmas") return null;
+
+	return (
+		<section className="settings-section">
+			<label className="settings-switch">
+				<span>Padający śnieg</span>
+				<input
+					type="checkbox"
+					role="switch"
+					checked={enabled}
+					onChange={(event) => {
+						const next = event.currentTarget.checked;
+						setEnabled(next);
+						window.setIduSnowfallEnabled?.(next);
+					}}
+				/>
+				<span className="settings-switch-track" aria-hidden="true"></span>
+			</label>
+		</section>
 	);
 }
 
@@ -423,7 +466,8 @@ export function SemesterScopeForm({ semesterScope }) {
 
 export function SettingsDots() {
 	const themes = ["Default", "Ocean", "Dzaga", "Besties"];
-	const dots = ["#99EADB", "#242A32", "#DBA67A", "#F6CCCD"];
+	// In December "Default" shows the Christmas theme, so its dot turns red.
+	const dots = [window.isChristmasSeason?.() ? "#6B0403" : "#99EADB", "#242A32", "#DBA67A", "#F6CCCD"];
 
 	const currentTheme = localStorage.getItem("theme") || "Default";
 	const [selectedDot, setSelectedDot] = useState(

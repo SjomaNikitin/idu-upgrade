@@ -1,3 +1,21 @@
+// ===== Christmas theme =====
+// In December the "Default" theme is replaced by the Christmas theme, every
+// year, based on the device's local date. The user's saved choice stays
+// "Default", so on 1 January everything goes back to normal on its own.
+//
+// This file can run twice on one page, so the flag lives inside the function.
+window.isChristmasSeason = function () {
+	// DEV ONLY: true shows the Christmas theme right now, whatever the date.
+	// >>> Set CHRISTMAS_FORCE_ON to false before `npm run publish`. <<<
+	const CHRISTMAS_FORCE_ON = true;
+	return CHRISTMAS_FORCE_ON || new Date().getMonth() === 11; // 11 = December
+};
+// Maps the saved theme to the one actually shown on the page.
+window.resolveIduTheme = function (theme) {
+	if ((!theme || theme === "Default") && window.isChristmasSeason()) return "Christmas";
+	return theme;
+};
+
 // This used to be injected into <head> by the proxy. Keep it at the start of
 // the browser bundle so direct WKWebView navigation establishes loader state
 // before the rest of the page and application initialize.
@@ -23,7 +41,7 @@ if (window.__iduOriginalView) {
 		document.documentElement?.classList.add("idu-loading");
 	}
 	try {
-		const storedTheme = localStorage.getItem("theme");
+		const storedTheme = window.resolveIduTheme(localStorage.getItem("theme"));
 		if (storedTheme) document.documentElement.setAttribute("data-theme", storedTheme);
 		const storedIosSafeTop = localStorage.getItem("iduIosSafeTop");
 		const storedSafeTop = Number(storedIosSafeTop);

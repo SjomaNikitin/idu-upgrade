@@ -581,7 +581,7 @@
   function Header({ accountHref, messagesHref, semesterScope, searchElement, isMockData = false }) {
     const headerRef = A2(null);
     let color = getComputedStyle(root).getPropertyValue("--idu-logo").trim();
-    let currentTheme = localStorage.getItem("theme");
+    let currentTheme = window.resolveIduTheme?.(localStorage.getItem("theme")) ?? localStorage.getItem("theme");
     let svgSize = 28;
     let menuStrokeWidth = 4;
     let panelIconStrokeWidth = 2.5;
@@ -594,6 +594,8 @@
       color = "#851A36";
     } else if (currentTheme === "Dzaga") {
       color = "#5B3119";
+    } else if (currentTheme === "Christmas") {
+      color = "#FFE4A3";
     } else if (currentTheme === "Default") {
       color = "#0B5F5D";
     }
@@ -611,6 +613,7 @@
       const updateHeader = () => {
         const currentScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
         const scrollDelta = currentScrollY - lastScrollY;
+        stickyHeader.classList.toggle("is-scrolled", currentScrollY > topRevealPoint);
         if (editMode) {
           lastScrollY = currentScrollY;
         } else if (currentScrollY <= topRevealPoint || menuOpen || settingsOpen || searchOpen) {
@@ -716,7 +719,35 @@
   }
   function Settings({ open, setOpen, semesterScope }) {
     let svgSize = 36;
-    return /* @__PURE__ */ k("div", { className: `settings-container ${open ? "open" : ""}` }, /* @__PURE__ */ k("div", { className: "settings-content" }, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Motyw"), /* @__PURE__ */ k(SettingsDots, null)), /* @__PURE__ */ k(ScheduleYearForm, null), semesterScope ? /* @__PURE__ */ k(SemesterScopeForm, { semesterScope }) : null), /* @__PURE__ */ k("a", { className: "header-icon-button-ddsettings", onClick: () => setOpen(false) }, /* @__PURE__ */ k("svg", { width: svgSize, height: svgSize, viewBox: "0 0 1024 1024", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { fill: "currentColor", d: "M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z" }))));
+    return /* @__PURE__ */ k("div", { className: `settings-container ${open ? "open" : ""}` }, /* @__PURE__ */ k("div", { className: "settings-content" }, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Motyw"), /* @__PURE__ */ k(SettingsDots, null)), /* @__PURE__ */ k(SnowfallSetting, null), /* @__PURE__ */ k(ScheduleYearForm, null), semesterScope ? /* @__PURE__ */ k(SemesterScopeForm, { semesterScope }) : null), /* @__PURE__ */ k("a", { className: "header-icon-button-ddsettings", onClick: () => setOpen(false) }, /* @__PURE__ */ k("svg", { width: svgSize, height: svgSize, viewBox: "0 0 1024 1024", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { fill: "currentColor", d: "M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z" }))));
+  }
+  function useShownTheme() {
+    const read = () => document.documentElement.getAttribute("data-theme");
+    const [theme, setTheme] = d2(read);
+    y2(() => {
+      const observer = new MutationObserver(() => setTheme(read()));
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+      return () => observer.disconnect();
+    }, []);
+    return theme;
+  }
+  function SnowfallSetting() {
+    const theme = useShownTheme();
+    const [enabled, setEnabled] = d2(() => window.isIduSnowfallEnabled?.() ?? true);
+    if (theme !== "Christmas") return null;
+    return /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("label", { className: "settings-switch" }, /* @__PURE__ */ k("span", null, "Padaj\u0105cy \u015Bnieg"), /* @__PURE__ */ k(
+      "input",
+      {
+        type: "checkbox",
+        role: "switch",
+        checked: enabled,
+        onChange: (event) => {
+          const next = event.currentTarget.checked;
+          setEnabled(next);
+          window.setIduSnowfallEnabled?.(next);
+        }
+      }
+    ), /* @__PURE__ */ k("span", { className: "settings-switch-track", "aria-hidden": "true" })));
   }
   function ScheduleYearForm() {
     const [selectedYear, setSelectedYear] = d2(getSelectedScheduleYear);
@@ -767,7 +798,7 @@
   }
   function SettingsDots() {
     const themes = ["Default", "Ocean", "Dzaga", "Besties"];
-    const dots = ["#99EADB", "#242A32", "#DBA67A", "#F6CCCD"];
+    const dots = [window.isChristmasSeason?.() ? "#6B0403" : "#99EADB", "#242A32", "#DBA67A", "#F6CCCD"];
     const currentTheme = localStorage.getItem("theme") || "Default";
     const [selectedDot, setSelectedDot] = d2(
       Math.max(0, themes.indexOf(currentTheme))
@@ -3683,6 +3714,116 @@
     return /* @__PURE__ */ k("div", { id: "idu-profile", className: "idu-profile" }, /* @__PURE__ */ k("h1", { className: "idu-profile-title" }, "Profil ucznia"), cards.map((card, index) => /* @__PURE__ */ k("div", { key: card.key, className: "idu-profile-card-slot" }, card.render(index))));
   }
 
+  // src/content/components/attendancePage.jsx
+  var SUBJECT_PREVIEW = 6;
+  var WEEK_PREVIEW = 2;
+  var MARK_LABELS = {
+    presence: "Obecno\u015B\u0107",
+    absence: "Nieobecno\u015B\u0107",
+    lateness: "Sp\xF3\u017Anienie",
+    excused: "Usprawiedliwiona",
+    other: "Inne"
+  };
+  var DAY_SHORT = {
+    niedziela: "Nd",
+    poniedzia\u0142ek: "Pn",
+    wtorek: "Wt",
+    \u015Broda: "\u015Ar",
+    czwartek: "Cz",
+    pi\u0105tek: "Pt",
+    sobota: "Sb"
+  };
+  var MONTHS_SHORT = ["sty", "lut", "mar", "kwi", "maj", "cze", "lip", "sie", "wrz", "pa\u017A", "lis", "gru"];
+  function formatPercent(value) {
+    if (value === null || value === void 0 || Number.isNaN(value)) return "\u2013";
+    return `${value.toLocaleString("pl-PL", { maximumFractionDigits: 1 })}%`;
+  }
+  function parseIsoDate(text) {
+    const match = (text || "").match(/(\d{4})-(\d{2})-(\d{2})/);
+    return match ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])) : null;
+  }
+  function weekRangeLabel(days, fallback) {
+    const dates = days.map((day) => parseIsoDate(day.date)).filter(Boolean);
+    if (!dates.length) return fallback;
+    const first = dates[0];
+    const last = dates[dates.length - 1];
+    const month = (date) => MONTHS_SHORT[date.getMonth()];
+    return first.getMonth() === last.getMonth() ? `${first.getDate()}\u2013${last.getDate()} ${month(last)}` : `${first.getDate()} ${month(first)} \u2013 ${last.getDate()} ${month(last)}`;
+  }
+  function pluralPl(count, one, few, many) {
+    if (count === 1) return one;
+    const lastTwo = count % 100;
+    const last = count % 10;
+    return last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14) ? few : many;
+  }
+  function AttendanceBar({ presence, absence }) {
+    const total = presence + absence;
+    const presentShare = total ? presence / total * 100 : 0;
+    return /* @__PURE__ */ k("div", { className: "idu-attendance-bar", role: "img", "aria-label": `Obecno\u015B\u0107 ${formatPercent(presentShare)}` }, /* @__PURE__ */ k("span", { className: "idu-attendance-bar-fill", style: { width: `${presentShare}%` } }));
+  }
+  function SummaryCard({ total, index }) {
+    const { presence, absence, lateness } = total;
+    return /* @__PURE__ */ k(Card, { index, title: "Frekwencja", subtitle: presence.total ? `${presence.total} ${pluralPl(presence.total, "lekcja", "lekcje", "lekcji")} w semestrze` : null }, /* @__PURE__ */ k("div", { className: "idu-attendance-hero" }, /* @__PURE__ */ k("span", { className: "idu-attendance-hero-value" }, formatPercent(presence.percent)), /* @__PURE__ */ k("span", { className: "idu-attendance-hero-label" }, "obecno\u015Bci")), /* @__PURE__ */ k(AttendanceBar, { presence: presence.count, absence: absence.count }), /* @__PURE__ */ k("div", { className: "idu-attendance-stats" }, /* @__PURE__ */ k("div", { className: "idu-attendance-stat" }, /* @__PURE__ */ k("span", { className: "attendance-dot presence", "aria-hidden": "true" }), /* @__PURE__ */ k("span", { className: "idu-attendance-stat-value" }, presence.count), /* @__PURE__ */ k("span", { className: "idu-attendance-stat-label" }, "Obecno\u015Bci")), /* @__PURE__ */ k("div", { className: "idu-attendance-stat" }, /* @__PURE__ */ k("span", { className: "attendance-dot absence", "aria-hidden": "true" }), /* @__PURE__ */ k("span", { className: "idu-attendance-stat-value" }, absence.count), /* @__PURE__ */ k("span", { className: "idu-attendance-stat-label" }, "Nieobecno\u015Bci")), /* @__PURE__ */ k("div", { className: "idu-attendance-stat" }, /* @__PURE__ */ k("span", { className: "attendance-dot lateness", "aria-hidden": "true" }), /* @__PURE__ */ k("span", { className: "idu-attendance-stat-value" }, lateness), /* @__PURE__ */ k("span", { className: "idu-attendance-stat-label" }, "Sp\xF3\u017Anienia"))));
+  }
+  function SubjectsCard2({ subjects, index }) {
+    const [expanded, setExpanded] = d2(false);
+    const canExpand = subjects.length > SUBJECT_PREVIEW;
+    const visible = expanded || !canExpand ? subjects : subjects.slice(0, SUBJECT_PREVIEW);
+    return /* @__PURE__ */ k(Card, { index, title: "Przedmioty", subtitle: "Frekwencja na ka\u017Cdym przedmiocie" }, /* @__PURE__ */ k("ul", { className: "idu-attendance-subjects" }, visible.map((subject) => {
+      const name = subject.url ? /* @__PURE__ */ k("a", { className: "idu-attendance-subject-name", href: subject.url }, subject.subject) : /* @__PURE__ */ k("span", { className: "idu-attendance-subject-name" }, subject.subject);
+      const extras = [];
+      if (subject.absence.count) extras.push(`${subject.absence.count} ${pluralPl(subject.absence.count, "nieobecno\u015B\u0107", "nieobecno\u015Bci", "nieobecno\u015Bci")}`);
+      if (subject.lateness) extras.push(`${subject.lateness} ${pluralPl(subject.lateness, "sp\xF3\u017Anienie", "sp\xF3\u017Anienia", "sp\xF3\u017Anie\u0144")}`);
+      return /* @__PURE__ */ k("li", { key: subject.url || subject.subject, className: "idu-attendance-subject" }, /* @__PURE__ */ k("div", { className: "idu-attendance-subject-head" }, name, /* @__PURE__ */ k("span", { className: "idu-attendance-subject-percent" }, formatPercent(subject.presence.percent))), /* @__PURE__ */ k(AttendanceBar, { presence: subject.presence.count, absence: subject.absence.count }), /* @__PURE__ */ k("p", { className: "idu-attendance-subject-meta" }, subject.presence.count, "/", subject.presence.total ?? subject.presence.count, " ", pluralPl(subject.presence.total ?? 0, "lekcja", "lekcje", "lekcji"), extras.length ? ` \xB7 ${extras.join(" \xB7 ")}` : ""));
+    })), canExpand && /* @__PURE__ */ k("div", { className: "idu-profile-card-foot" }, /* @__PURE__ */ k(MoreButton, { expanded, total: subjects.length, onClick: () => setExpanded(!expanded) })));
+  }
+  function WeekCard({ week, index }) {
+    const [selected, setSelected] = d2(null);
+    const dayIndexes = week.days.map((_3, i3) => i3).filter((i3) => week.lessons.some((row) => row.cells[i3]));
+    const rows = week.lessons.filter((row) => dayIndexes.some((i3) => row.cells[i3]));
+    const counts = {};
+    for (const row of rows) for (const i3 of dayIndexes) {
+      const mark = row.cells[i3]?.mark;
+      if (mark) counts[mark] = (counts[mark] || 0) + 1;
+    }
+    const summary = ["presence", "absence", "lateness", "excused", "other"].filter((key) => counts[key]).map((key) => `${MARK_LABELS[key]}: ${counts[key]}`).join(" \xB7 ");
+    const selectedCell = selected && rows[selected.row]?.cells[selected.day];
+    const selectedDay = selected && week.days[selected.day];
+    return /* @__PURE__ */ k(Card, { index, title: `Tydzie\u0144 ${weekRangeLabel(week.days, week.label)}`, subtitle: summary || "Brak wpis\xF3w", className: "idu-attendance-week" }, /* @__PURE__ */ k("div", { className: "idu-attendance-week-grid", style: { "--days": dayIndexes.length } }, /* @__PURE__ */ k("span", { className: "idu-attendance-week-corner", "aria-hidden": "true" }), dayIndexes.map((i3) => {
+      const day = week.days[i3];
+      const date = parseIsoDate(day.date);
+      return /* @__PURE__ */ k("span", { key: `d${i3}`, className: "idu-attendance-week-day" }, /* @__PURE__ */ k("b", null, DAY_SHORT[day.name.toLocaleLowerCase("pl-PL")] || day.name.slice(0, 2)), date ? date.getDate() : "");
+    }), rows.map((row, r3) => [
+      /* @__PURE__ */ k("span", { key: `h${r3}`, className: "idu-attendance-week-hour" }, /* @__PURE__ */ k("b", null, row.number), row.start),
+      ...dayIndexes.map((i3) => {
+        const cell = row.cells[i3];
+        if (!cell) return /* @__PURE__ */ k("span", { key: `c${r3}-${i3}`, className: "idu-attendance-week-cell empty", "aria-hidden": "true" });
+        const isSelected = selected?.row === r3 && selected?.day === i3;
+        const label = cell.mark ? cell.markLabel || MARK_LABELS[cell.mark] : "Brak wpisu";
+        return /* @__PURE__ */ k(
+          "button",
+          {
+            key: `c${r3}-${i3}`,
+            type: "button",
+            className: `idu-attendance-week-cell ${cell.mark || "none"}${isSelected ? " selected" : ""}`,
+            "aria-label": `${cell.subject}, ${label}`,
+            "aria-pressed": isSelected,
+            onClick: () => setSelected(isSelected ? null : { row: r3, day: i3 })
+          },
+          /* @__PURE__ */ k("span", { className: `attendance-dot ${cell.mark || "none"}`, "aria-hidden": "true" }),
+          /* @__PURE__ */ k("span", { className: "idu-attendance-week-subject" }, shortenLessonName(cell.subject))
+        );
+      })
+    ])), selectedCell && /* @__PURE__ */ k("p", { className: "idu-attendance-week-detail" }, /* @__PURE__ */ k("span", { className: `attendance-dot ${selectedCell.mark || "none"}`, "aria-hidden": "true" }), /* @__PURE__ */ k("span", null, /* @__PURE__ */ k("b", null, selectedCell.subject), ` \xB7 ${selectedDay?.name || ""} ${rows[selected.row].start}`, selectedCell.teacher ? ` \xB7 ${selectedCell.teacher}` : "", ` \xB7 ${selectedCell.mark ? selectedCell.markLabel || MARK_LABELS[selectedCell.mark] : "Brak wpisu"}`)));
+  }
+  function AttendancePage({ data }) {
+    const [showAllWeeks, setShowAllWeeks] = d2(false);
+    const weeks = data.weeks.filter((week) => week.lessons.some((row) => row.cells.some((cell) => cell?.mark)));
+    const visibleWeeks = showAllWeeks ? weeks : weeks.slice(0, WEEK_PREVIEW);
+    let index = 0;
+    return /* @__PURE__ */ k("div", { id: "idu-attendance", className: "idu-profile idu-attendance" }, /* @__PURE__ */ k("h1", { className: "idu-profile-title" }, "Obecno\u015Bci"), /* @__PURE__ */ k("div", { className: "idu-profile-card-slot" }, /* @__PURE__ */ k(SummaryCard, { total: data.total, index: index++ })), data.subjects.length > 0 && /* @__PURE__ */ k("div", { className: "idu-profile-card-slot" }, /* @__PURE__ */ k(SubjectsCard2, { subjects: data.subjects, index: index++ })), visibleWeeks.map((week) => /* @__PURE__ */ k("div", { key: week.label, className: "idu-profile-card-slot" }, /* @__PURE__ */ k(WeekCard, { week, index: index++ }))), weeks.length > WEEK_PREVIEW && /* @__PURE__ */ k("button", { type: "button", className: "idu-attendance-more-weeks", onClick: () => setShowAllWeeks(!showAllWeeks), "aria-expanded": showAllWeeks }, showAllWeeks ? "Poka\u017C mniej \u2191" : `Poka\u017C starsze tygodnie (${weeks.length - WEEK_PREVIEW}) \u2193`));
+  }
+
   // src/content/mobileMessages.js
   function compactSearch(form) {
     const fields = [...form.querySelectorAll(".field")].map((field) => ({
@@ -4242,6 +4383,14 @@
     content.innerHTML = "";
     content.classList.add("idu-profile-content");
     R(/* @__PURE__ */ k(StudentProfile, { data: profileData }), content);
+    return true;
+  };
+  window.replaceAttendancePage = function replaceAttendancePage(pageData) {
+    const content = document.getElementById("content");
+    if (!content || !pageData?.total) return false;
+    content.innerHTML = "";
+    content.classList.add("idu-profile-content");
+    R(/* @__PURE__ */ k(AttendancePage, { data: pageData }), content);
     return true;
   };
   window.replaceFooter = function replaceFooter() {

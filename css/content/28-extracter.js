@@ -664,3 +664,98 @@ async function loadSubjectLevels(ownProfileUrl) {
 }
 window.loadSubjectLevels = loadSubjectLevels;
 
+
+// ===== Attendance page (/students/<id>/presences, "Frekwencja ucznia") =====
+function isAttendancePage(pathname = window.location.pathname) {
+	return /^\/students\/\d+\/presences\/?$/.test(pathname);
+}
+
+// "334 / 372 (89,78%)" -> { count: 334, total: 372, percent: 89.78 }
+function parseAttendanceRatio(text) {
+	const value = cleanText(text || '');
+	const match = value.match(/(\d+)\s*\/\s*(\d+)(?:\s*\(([\d,.]+)\s*%\))?/);
+	if (!match) {
+		const single = value.match(/\d+/);
+		return { count: single ? Number(single[0]) : 0, total: null, percent: null };
+	}
+	return {
+		count: Number(match[1]),
+		total: Number(match[2]),
+		percent: match[3] ? Number(match[3].replace(',', '.')) : null,
+	};
+}
+
+function attendanceMarkKind(img) {
+	const src = img?.getAttribute('src') || '';
+	if (src.includes('presence')) return 'presence';
+	if (src.includes('absence')) return 'absence';
+	if (src.includes('lateness')) return 'lateness';
+	if (src.includes('excus') || src.includes('justif')) return 'excused';
+	return 'other';
+}
+
+function extractAttendancePageData(doc = document) {
+	const summaryModule = findModuleByTitle(doc, 'Frekwencja ucznia');
+	const summaryTable = summaryModule?.querySelector('table');
+	if (!summaryTable) return null;
+
+	const rowData = (tr) => {
+		const cells = tr.querySelectorAll('td');
+		const link = cells[0]?.querySelector('a');
+		return {
+			subject: cleanText(cells[0]?.textContent || ''),
+			url: link?.getAttribute('href') || '',
+			presence: parseAttendanceRatio(cells[1]?.textContent),
+			absence: parseAttendanceRatio(cells[2]?.textContent),
+			lateness: parseAttendanceRatio(cells[3]?.textContent).count,
+		};
+	};
+	const bodyRows = [...summaryTable.querySelectorAll('tbody tr')];
+	const totalRow = bodyRows.find((tr) => !tr.classList.contains('js-presences-details'));
+	const subjects = bodyRows.filter((tr) => tr.classList.contains('js-presences-details')).map(rowData);
+
+	const weeks = [];
+	for (const table of doc.querySelectorAll('table.presences_table')) {
+		// The week label is the <b><u>tydzień: …</u></b> right before each table.
+		let label = '';
+		for (let el = table.previousElementSibling; el; el = el.previousElementSibling) {
+			if (el.tagName === 'TABLE') break;
+			const text = cleanText(el.textContent);
+			if (/tydzie/i.test(text)) { label = text.replace(/^tydzień:\s*/i, ''); break; }
+		}
+		const rows = [...table.querySelectorAll('tr')];
+		const days = [...(rows[0]?.querySelectorAll('th') || [])].slice(1).map((th) => ({
+			name: cleanText(th.querySelector('b')?.textContent || ''),
+			date: cleanText(th.textContent).replace(cleanText(th.querySelector('b')?.textContent || ''), '').trim(),
+		}));
+		const lessons = rows.slice(1).map((tr) => {
+			const cells = [...tr.children];
+			const timeText = cleanText(cells[0]?.textContent || '');
+			const timeMatch = timeText.match(/\((\d+)\)\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+			return {
+				number: timeMatch ? timeMatch[1] : '',
+				start: timeMatch ? timeMatch[2] : timeText,
+				end: timeMatch ? timeMatch[3] : '',
+				cells: cells.slice(1).map((td) => {
+					if (!td.classList.contains('lesson')) return null;
+					const [subject = '', teacher = ''] = (td.getAttribute('title') || '').split(/\r?\n/).map((part) => part.trim());
+					const img = td.querySelector('img');
+					return {
+						subject,
+						teacher,
+						mark: img ? attendanceMarkKind(img) : null,
+						markLabel: img?.getAttribute('title') || img?.getAttribute('alt') || '',
+					};
+				}),
+			};
+		});
+		weeks.push({ label, days, lessons });
+	}
+
+	return {
+		studentUrl: doc.querySelector('#breadcrumbs a[href^="/students/"]')?.getAttribute('href') || '',
+		total: totalRow ? rowData(totalRow) : null,
+		subjects,
+		weeks,
+	};
+}

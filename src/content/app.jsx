@@ -3,6 +3,7 @@ import { h, render } from "preact";
 import { Header } from "./components/header.jsx";
 import { MainContent } from "./components/mainContent.jsx";
 import { StudentProfile } from "./components/studentProfile.jsx";
+import { AttendancePage } from "./components/attendancePage.jsx";
 import { setupMobileMessages } from "./mobileMessages.js";
 window.setupMobileMessages = setupMobileMessages;
 import { Footer } from "./components/footer.jsx";
@@ -94,6 +95,17 @@ window.replaceStudentProfile = function replaceStudentProfile(profileData) {
 	content.innerHTML = "";
 	content.classList.add("idu-profile-content");
 	render(<StudentProfile data={profileData}/>, content);
+	return true;
+};
+
+// /students/<id>/presences ("Frekwencja ucznia"): data from extractAttendancePageData().
+window.replaceAttendancePage = function replaceAttendancePage(pageData) {
+	const content = document.getElementById("content");
+	if (!content || !pageData?.total) return false;
+
+	content.innerHTML = "";
+	content.classList.add("idu-profile-content");
+	render(<AttendancePage data={pageData}/>, content);
 	return true;
 };
 

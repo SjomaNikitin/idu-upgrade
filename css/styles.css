@@ -91,6 +91,11 @@ html[data-theme="Besties"] {
 	--idu-loader-spinner-color: #851a36;
 }
 
+html[data-theme="Christmas"] {
+	--idu-loader-color: #1f2a24;
+	--idu-loader-spinner-color: #ffe4a3;
+}
+
 html.idu-loading::before {
 	content: "";
 	position: fixed;
@@ -266,6 +271,46 @@ html.idu-loader-fading::after {
 	--title-icon-bg: #ea6a8234;
 	--subjects-bg: #ea6a8234;
 	--grades-box-bg: #ea6a8220;
+}
+
+/* Christmas: replaces "Default" every December (see css/content/00-globals.js). */
+:root[data-theme="Christmas"] {
+	--idu-logo: #FFE4A3;
+	--mg: #6B0403;
+	--gradient-text-color: #FFE4A3;
+	--mc: #FFE4A3;
+	--topmg: #3A0201;
+	--module-color: #6B0403;
+	--background-color: #1F2A24;
+	--module-shadow-color: rgba(0, 0, 0, 0.35);
+	--module-border-color: #9E1E19;
+	--main-text-color: #FFE4A3;
+	--input-field-color: #7A0C0A;
+	--darker-messages-color: #6B0403;
+	--form-background-color: #6B0403;
+	--akcent-color: #FFE4A3;
+	--icon-background-color: #941915;
+	--schedule-table-header-color: #7A0C0A;
+	--schedule-table-time-color: #7A0C0A;
+	--schedule-lesson-color: #7A0C0A;
+	--schedule-time-color: #FFE4A3;
+	--actionbtn-text-color: #FFE4A3;
+	--location-text-color: #FFE4A3;
+	--shorted-gradient-color: #6B0403;
+	--breadcrumbs-text: #ECC88F;
+	--underline: 2px solid rgb(255 228 163 / 0.45);
+	--h3-margin: 0;
+	--footer-text-color: var(--main-text-color);
+	--attendance-wheel-color: #FFE4A3;
+	--upsent-wheel-color: #941915;
+	--latency-wheel-color: #C46A4A;
+	--attendance-text-color: #FFE4A3;
+	--absence-text-color: #FFE4A3;
+	--lateness-text-color: #FFE4A3;
+	--news-date-bg: #7A0C0A;
+	--title-icon-bg: #941915;
+	--subjects-bg: #7A0C0A;
+	--grades-box-bg: #7A0C0A;
 }
 
 /* Use media tag not to break desktop version */
@@ -4111,4 +4156,544 @@ html.idu-loader-fading::after {
 @keyframes idu-profile-fade {
 	from { opacity: 0; }
 	to { opacity: 1; }
+}
+
+
+/* ------------------------------------------------------------------
+   Christmas theme decorations: tartan background + snow caps.
+   Snow image per width: wide widgets (w4) = snow-wide, half widgets
+   (w2) = snow-medium, round header buttons = snow-small.
+   ------------------------------------------------------------------ */
+html[data-theme="Christmas"] {
+	background-color: #1F2A24 !important;
+}
+
+html[data-theme="Christmas"] body,
+html[data-theme="Christmas"] #content,
+html[data-theme="Christmas"] #content.idu-profile-content,
+html[data-theme="Christmas"] #footer,
+html[data-theme="Christmas"] .idu-app-footer {
+	background: transparent !important;
+}
+
+/* Fixed layer so the tartan stays put while scrolling (iOS ignores
+   background-attachment: fixed). */
+/* At the top of the page the header sits straight on the tartan; the
+   blurred backdrop only fades in once content scrolls underneath. */
+html[data-theme="Christmas"] #idu-header-root::before {
+	transition: opacity 200ms ease;
+}
+
+html[data-theme="Christmas"] #idu-header-root:not(.is-scrolled)::before {
+	opacity: 0;
+}
+
+html[data-theme="Christmas"] body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: #1F2A24 url("assets/christmas-tartan.webp") center top / cover no-repeat;
+}
+
+html[data-theme="Christmas"] .widget::before {
+	content: "";
+	position: absolute;
+	z-index: 3;
+	top: 0;
+	left: -2%;
+	width: 104%;
+	aspect-ratio: 900 / 97;
+	pointer-events: none;
+	background: url("assets/snow-wide.webp") center / 100% 100% no-repeat;
+	transform: translateY(-38%);
+	transition: opacity 160ms ease;
+}
+
+html[data-theme="Christmas"] .widget.w2::before {
+	aspect-ratio: 540 / 103;
+	background-image: url("assets/snow-medium.webp");
+}
+
+/* Mirror every other cap so neighbouring widgets don't look identical. */
+html[data-theme="Christmas"] .widget:nth-child(even)::before {
+	transform: translateY(-38%) scaleX(-1);
+}
+
+/* Snow belongs to the card, so hide it on the empty slot while dragging. */
+html[data-theme="Christmas"] .widget[data-drag-placeholder]::before {
+	opacity: 0;
+}
+
+html[data-theme="Christmas"] .header-menu-button,
+html[data-theme="Christmas"] .header-icon-button,
+html[data-theme="Christmas"] .header-home-icon-button {
+	position: relative;
+	overflow: visible;
+}
+
+html[data-theme="Christmas"] .header-menu-button::after,
+html[data-theme="Christmas"] .header-icon-button::after,
+html[data-theme="Christmas"] .header-home-icon-button::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 6%;
+	width: 80%;
+	aspect-ratio: 160 / 98;
+	pointer-events: none;
+	background: url("assets/snow-small.webp") center / 100% 100% no-repeat;
+	transform: translateY(-48%);
+}
+
+html[data-theme="Christmas"] .header-icon-button:nth-of-type(even)::after,
+html[data-theme="Christmas"] .header-home-icon-button::after {
+	left: auto;
+	right: 6%;
+	transform: translateY(-48%) scaleX(-1);
+}
+
+/* Falling snow (css/content/10-theme.js). Above the page, never blocks taps. */
+.idu-snowfall {
+	position: fixed;
+	inset: 0;
+	width: 100vw;
+	height: 100dvh;
+	z-index: 2000;
+	pointer-events: none;
+}
+
+/* Settings switch for the falling snow (Christmas theme only). */
+.settings-switch {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--padding-2);
+	color: var(--main-text-color);
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.settings-switch input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.settings-switch-track {
+	position: relative;
+	flex: none;
+	width: 46px;
+	height: 28px;
+	border: 1px solid var(--module-border-color);
+	border-radius: 999px;
+	background: var(--input-field-color);
+	transition: background-color 160ms ease;
+}
+
+.settings-switch-track::after {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--main-text-color);
+	opacity: 0.55;
+	transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.settings-switch input:checked + .settings-switch-track {
+	background: var(--icon-background-color);
+}
+
+.settings-switch input:checked + .settings-switch-track::after {
+	transform: translateX(18px);
+	opacity: 1;
+}
+
+.settings-switch input:focus-visible + .settings-switch-track {
+	outline: 2px solid var(--mc);
+	outline-offset: 2px;
+}
+
+/* The Default dot is red in December, so outline the dots to keep it
+   visible on the red settings panel. */
+html[data-theme="Christmas"] .settings-dot {
+	box-shadow: 0 0 0 1.5px rgb(255 228 163 / 0.55);
+}
+
+
+/* Pasted teacher text (Word / CKEditor) often carries an inline black
+   colour, which is unreadable on dark themes. Swap black and near-black
+   for the theme's text colour; other colours (red highlights etc.) stay. */
+#content [style*="color: #000000" i],
+#content [style*="color:#000000" i],
+#content [style*="color: #000" i],
+#content [style*="color:#000" i],
+#content [style*="color: black" i],
+#content [style*="color:black" i],
+#content [style*="color: rgb(0, 0, 0)" i],
+#content [style*="color:rgb(0, 0, 0)" i],
+#content [style*="color: rgb(0,0,0)" i],
+#content [style*="color:rgb(0,0,0)" i],
+#content [style*="color: windowtext" i],
+#content [style*="color:windowtext" i],
+#content [style*="color: #222222" i],
+#content [style*="color:#222222" i],
+#content [style*="color: #333333" i],
+#content [style*="color:#333333" i],
+#content font[color="#000000" i],
+#content font[color="#000" i],
+#content font[color="black" i] {
+	color: var(--main-text-color) !important;
+}
+
+/* School-page headings default to black on IDU; use the theme's text colour
+   (also beats inline black). Our own profile headings keep their colours. */
+#content h2:not(.idu-profile-name):not(.idu-profile-card-title),
+#content h2:not(.idu-profile-name):not(.idu-profile-card-title) * {
+	color: var(--main-text-color) !important;
+}
+
+/* Links: auto-linked URLs (linkifyUrls in 20-mobile.js) and links pasted with
+   an inline colour (usually blue) use the theme's accent colour. */
+#content a.idu-auto-link,
+#content a[href][style*="color" i],
+#content a[href] font[color],
+#content a[href] [style*="color" i] {
+	color: var(--mc) !important;
+}
+
+#content a.idu-auto-link {
+	text-decoration: underline;
+	pointer-events: all;
+	overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------------
+   Attendance page (/students/<id>/presences) - attendancePage.jsx
+   Built on the profile page cards (.idu-profile*), theme tokens only.
+   ------------------------------------------------------------------ */
+.idu-attendance-hero {
+	display: flex;
+	align-items: baseline;
+	gap: var(--padding-1);
+	margin-bottom: 10px;
+}
+
+.idu-attendance-hero-value {
+	font-size: 2.2rem;
+	font-weight: 800;
+	line-height: 1;
+	color: var(--main-text-color);
+	font-variant-numeric: tabular-nums;
+}
+
+.idu-attendance-hero-label {
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--profile-muted);
+}
+
+.idu-attendance-bar {
+	position: relative;
+	height: 8px;
+	border-radius: 999px;
+	background: var(--upsent-wheel-color);
+	overflow: hidden;
+}
+
+.idu-attendance-bar-fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	border-radius: inherit;
+	background: var(--attendance-wheel-color);
+}
+
+.idu-attendance-stats {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--padding-1);
+	margin-top: var(--padding-2);
+}
+
+.idu-attendance-stat {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	column-gap: 6px;
+	padding: 10px;
+	border-radius: 12px;
+	background: var(--grades-box-bg);
+	border: 1px solid var(--module-border-color);
+}
+
+.idu-attendance-stat-value {
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: var(--main-text-color);
+	font-variant-numeric: tabular-nums;
+}
+
+.idu-attendance-stat-label {
+	grid-column: 1 / -1;
+	margin-top: 2px;
+	font-size: 0.72rem;
+	font-weight: 600;
+	color: var(--profile-muted);
+}
+
+.idu-profile ul.idu-attendance-subjects {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.idu-attendance-subject {
+	display: grid;
+	gap: 6px;
+}
+
+.idu-attendance-subject-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--padding-1);
+}
+
+.idu-profile .idu-attendance-subject-name {
+	min-width: 0;
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: var(--main-text-color) !important;
+	text-decoration: none;
+	overflow-wrap: anywhere;
+}
+
+.idu-attendance-subject-percent {
+	flex: none;
+	font-size: 0.95rem;
+	font-weight: 800;
+	color: var(--main-text-color);
+	font-variant-numeric: tabular-nums;
+}
+
+.idu-attendance-subject .idu-attendance-bar {
+	height: 6px;
+}
+
+.idu-profile p.idu-attendance-subject-meta {
+	margin: 0;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--profile-muted);
+}
+
+/* Week grid: hour column + one column per school day. */
+.idu-attendance-week-grid {
+	display: grid;
+	grid-template-columns: 44px repeat(var(--days), minmax(0, 1fr));
+	gap: 6px;
+	align-items: stretch;
+}
+
+.idu-attendance-week-day,
+.idu-attendance-week-hour {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.7rem;
+	font-weight: 600;
+	line-height: 1.2;
+	color: var(--profile-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.idu-attendance-week-day b,
+.idu-attendance-week-hour b {
+	font-size: 0.8rem;
+	font-weight: 800;
+	color: var(--main-text-color);
+}
+
+.idu-attendance-week-day {
+	padding-bottom: 2px;
+}
+
+.idu-attendance-week-hour {
+	align-items: flex-start;
+}
+
+.idu-profile button.idu-attendance-week-cell,
+.idu-attendance-week-cell {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	min-width: 0;
+	min-height: 44px;
+	margin: 0;
+	padding: 6px 2px;
+	border: 1px solid var(--module-border-color);
+	border-radius: 10px;
+	background: var(--schedule-lesson-color);
+	box-shadow: none;
+	font: inherit;
+	color: var(--main-text-color);
+	cursor: pointer;
+	transition: transform 140ms var(--profile-ease), background-color 140ms ease;
+}
+
+.idu-attendance-week-cell.empty {
+	border-style: dashed;
+	border-color: color-mix(in srgb, var(--module-border-color) 45%, transparent);
+	background: transparent;
+	cursor: default;
+}
+
+.idu-profile button.idu-attendance-week-cell.selected {
+	outline: 2px solid var(--main-text-color);
+	outline-offset: 1px;
+}
+
+.idu-profile button.idu-attendance-week-cell:active {
+	transform: scale(0.95);
+}
+
+.idu-attendance-week-subject {
+	max-width: 100%;
+	overflow: hidden;
+	font-size: 0.7rem;
+	font-weight: 700;
+	line-height: 1;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.attendance-dot.none {
+	box-sizing: border-box;
+	background: transparent;
+	border: 1.5px solid color-mix(in srgb, var(--main-text-color) 45%, transparent);
+}
+
+.attendance-dot.other {
+	background: color-mix(in srgb, var(--main-text-color) 55%, transparent);
+}
+
+.idu-profile p.idu-attendance-week-detail {
+	display: flex;
+	align-items: baseline;
+	gap: var(--padding-1);
+	margin: 12px 0 0;
+	padding: 10px 12px;
+	border-radius: 12px;
+	background: var(--grades-box-bg);
+	font-size: 0.8rem;
+	line-height: 1.35;
+	color: var(--main-text-color);
+}
+
+.idu-profile p.idu-attendance-week-detail .attendance-dot {
+	flex: none;
+	transform: translateY(1px);
+}
+
+.idu-profile button.idu-attendance-more-weeks {
+	align-self: center;
+	margin: 0;
+	padding: 10px 18px;
+	border: 1px solid var(--module-border-color);
+	border-radius: 999px;
+	background: var(--module-color);
+	box-shadow: none;
+	font: inherit;
+	font-size: 0.85rem;
+	font-weight: 700;
+	color: var(--main-text-color) !important;
+	cursor: pointer;
+}
+
+/* "Motyw świąteczny jest już dostępny!" notice (10-theme.js). Always in the
+   Christmas colours, whatever theme the user has. */
+.idu-xmas-notice {
+	position: fixed;
+	left: 50%;
+	z-index: 2100;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: max-content;
+	max-width: calc(100vw - 32px);
+	padding: 18px 10px 10px 14px;
+	box-sizing: border-box;
+	border: 1px solid #9E1E19;
+	border-radius: 16px;
+	background: #6B0403;
+	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+	color: #FFE4A3;
+	font-family: "Montserrat", sans-serif;
+	font-size: 0.9rem;
+	font-weight: 700;
+	line-height: 1.3;
+	opacity: 0;
+	transform: translate(-50%, -12px) scale(0.97);
+	transition: opacity 260ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.idu-xmas-notice::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -2%;
+	width: 104%;
+	aspect-ratio: 900 / 97;
+	pointer-events: none;
+	/* Card is about as wide as a full-width widget, so it gets the wide cap. */
+	background: url("assets/snow-wide.webp") center / 100% 100% no-repeat;
+	transform: translateY(-38%) scaleX(-1);
+}
+
+.idu-xmas-notice.open {
+	opacity: 1;
+	transform: translate(-50%, 0) scale(1);
+}
+
+.idu-xmas-notice.closing {
+	opacity: 0;
+	transform: translate(-50%, -8px) scale(0.98);
+}
+
+.idu-xmas-notice-icon {
+	flex: none;
+}
+
+.idu-xmas-notice button.idu-xmas-notice-close,
+.idu-xmas-notice-close {
+	display: grid;
+	place-items: center;
+	flex: none;
+	width: 28px;
+	height: 28px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: #7A0C0A;
+	box-shadow: none;
+	color: #FFE4A3;
+	cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.idu-xmas-notice {
+		transition: opacity 1ms;
+	}
 }

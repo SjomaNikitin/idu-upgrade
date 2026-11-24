@@ -44,10 +44,17 @@ if (!window.__iduContentBootstrapRegistered) {
 			semesterScope: extractSemesterScope(),
 			// "Twój profil" link, read before the header is replaced; used to look up subject levels.
 			ownProfileUrl: document.querySelector("#account a")?.getAttribute("href") || "",
-			studentProfile: isStudentProfilePage() ? extractStudentProfilePageData() : null
+			studentProfile: isStudentProfilePage() ? extractStudentProfilePageData() : null,
+			attendancePage: isAttendancePage() ? extractAttendancePageData() : null
 		};
 		// Swap in the Preact "Profil ucznia" page once the header/footer are in place.
 		const replaceProfileIfNeeded = () => {
+			// Same slot for the Preact "Frekwencja" page (/students/<id>/presences).
+			if (pageData.attendancePage && typeof replaceAttendancePage === "function") {
+				const loaded = replaceAttendancePage(pageData.attendancePage);
+				console.log("Custom attendance page loaded:", loaded);
+				return loaded;
+			}
 			if (!pageData.studentProfile || typeof replaceStudentProfile !== "function") return false;
 			const loaded = replaceStudentProfile(pageData.studentProfile);
 			console.log("Custom student profile loaded:", loaded);

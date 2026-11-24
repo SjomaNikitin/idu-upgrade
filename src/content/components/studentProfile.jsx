@@ -65,7 +65,7 @@ function Chevron({ open = false }) {
 	);
 }
 
-function Card({ index, title, href, subtitle, children, className = '' }) {
+export function Card({ index, title, href, subtitle, children, className = '' }) {
 	const heading = <h2 className="idu-profile-card-title">{title}</h2>;
 	return (
 		<article className={`idu-profile-card ${className}`} style={{ '--i': index }}>
@@ -80,7 +80,7 @@ function Card({ index, title, href, subtitle, children, className = '' }) {
 	);
 }
 
-function MoreButton({ expanded, total, onClick }) {
+export function MoreButton({ expanded, total, onClick }) {
 	return (
 		<button type="button" className="idu-profile-more" onClick={onClick} aria-expanded={expanded}>
 			{expanded ? 'Pokaż mniej ↑' : `Pokaż wszystkie (${total}) ↓`}

@@ -41,7 +41,9 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 			document.documentElement?.classList.add("idu-loading");
 		}
 		try {
-			const theme = localStorage.getItem("theme");
+			let theme = localStorage.getItem("theme");
+			// December: "Default" shows the Christmas theme (see 00-globals.js).
+			if ((!theme || theme === "Default") && new Date().getMonth() === 11) theme = "Christmas";
 			if (theme) document.documentElement.setAttribute("data-theme", theme);
 			const storedIosSafeTop = localStorage.getItem("iduIosSafeTop");
 			const iosSafeTop = Number(storedIosSafeTop);
@@ -70,6 +72,11 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 	html[data-theme="Besties"] {
 		--idu-loader-color: #fdf6f0;
 		--idu-loader-spinner-color: #851a36;
+	}
+
+	html[data-theme="Christmas"] {
+		--idu-loader-color: #1f2a24;
+		--idu-loader-spinner-color: #ffe4a3;
 	}
 
 	html.idu-loading::before {
