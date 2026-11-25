@@ -99,9 +99,9 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 		left: 50%;
 		top: 50%;
 		z-index: 2147483647;
-		width: 83px;
+		width: var(--idu-loader-width, 47px);
 		height: 72px;
-		/* --idu-loader-image is defined in css/styles.css (inlined data URI). */
+		/* --idu-loader-image and --idu-loader-width are defined in css/styles.css (inlined data URI). */
 		background: var(--idu-loader-image, none) center / contain no-repeat;
 		opacity: 0;
 		transform: translate(-50%, -50%);

@@ -383,7 +383,40 @@ window.setIduSnowfallEnabled = function (enabled) {
 		timer = setTimeout(close, 6000);
 	}
 
-	const start = () => setTimeout(show, 900); // after the header has been rendered
+	// The first-run tutorial (src/content/components/tutorial.jsx) runs on the
+	// dashboard; show the notice only after it closes so the two don't overlap.
+	function tutorialPending() {
+		if (document.documentElement.classList.contains("idu-tour-open")) return true;
+		const onDashboard = window.location.pathname === "/" || Boolean(window.__IDU_MOCK_DATA);
+		if (!onDashboard) return false;
+		try {
+			return !localStorage.getItem("iduTutorialSeen") || Boolean(localStorage.getItem("iduTutorialReplay"));
+		} catch {
+			return false;
+		}
+	}
+
+	function showAfterTutorial() {
+		if (!tutorialPending()) {
+			show();
+			return;
+		}
+		let done = false;
+		const go = () => {
+			if (done) return;
+			done = true;
+			window.removeEventListener("idu-tutorial-closed", onClosed);
+			setTimeout(show, 500);
+		};
+		const onClosed = () => go();
+		window.addEventListener("idu-tutorial-closed", onClosed);
+		// If the tutorial never starts (e.g. no widgets), don't wait forever.
+		setTimeout(() => {
+			if (!document.documentElement.classList.contains("idu-tour-open")) go();
+		}, 20000);
+	}
+
+	const start = () => setTimeout(showAfterTutorial, 900); // after the header has been rendered
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
 	else start();
 })();

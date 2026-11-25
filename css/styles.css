@@ -72,28 +72,35 @@
 html {
 	--idu-loader-color: #e5f8f2;
 	--idu-loader-spinner-color: #0b5f5d;
-	/* Test asset: running cartoon shown while the page loads. */
-	--idu-loader-image: url("assets/loader.webp");
+	/* Running character shown while the page loads, one colour per theme. */
+	--idu-loader-image: url("assets/loader-default.webp");
+	--idu-loader-width: 47px;
 }
 
 html[data-theme="Ocean"] {
 	--idu-loader-color: #1a1f25;
 	--idu-loader-spinner-color: #7eeacc;
+	--idu-loader-image: url("assets/loader-ocean.webp");
 }
 
 html[data-theme="Dzaga"] {
 	--idu-loader-color: #fcedd6;
 	--idu-loader-spinner-color: #5b3119;
+	--idu-loader-image: url("assets/loader-dzaga.webp");
 }
 
 html[data-theme="Besties"] {
 	--idu-loader-color: #fdf6f0;
 	--idu-loader-spinner-color: #851a36;
+	--idu-loader-image: url("assets/loader-besties.webp");
 }
 
 html[data-theme="Christmas"] {
 	--idu-loader-color: #1f2a24;
 	--idu-loader-spinner-color: #ffe4a3;
+	/* The Santa hat makes this one wider. */
+	--idu-loader-image: url("assets/loader-christmas.webp");
+	--idu-loader-width: 60px;
 }
 
 html.idu-loading::before {
@@ -113,7 +120,7 @@ html.idu-loading::after {
 	top: 50%;
 	z-index: 2147483647;
 	/* 1.5x the old 48px circle height; width follows the image ratio. */
-	width: 83px;
+	width: var(--idu-loader-width, 47px);
 	height: 72px;
 	background: var(--idu-loader-image) center / contain no-repeat;
 	opacity: 0;
@@ -2085,9 +2092,11 @@ html.idu-loader-fading::after {
 		top: 0;
 		left: 50%;
 		transform: translateX(-50%);
-		/* Invisible touch target; only the small bar below is drawn. */
-		width: 44px;
-		height: 28px;
+		/* Invisible touch target, much bigger than the small bar drawn below
+		   so it is easy to hit with a finger. */
+		width: min(60%, 160px);
+		min-width: 96px;
+		height: 44px;
 		z-index: 4;
 		touch-action: none;
 		cursor: grab;
@@ -2704,8 +2713,9 @@ html.idu-loader-fading::after {
 		position: absolute;
 		bottom: 0;
 		right: 0;
-		width: 48px;
-		height: 48px;
+		/* Bigger than the drawn corner so it is easy to grab. */
+		width: 64px;
+		height: 64px;
 		z-index: 3;
 		touch-action: none;
 		user-select: none;
@@ -4722,8 +4732,24 @@ html.idu-tour-open .idu-xmas-notice {
 	position: fixed;
 	inset: 0;
 	z-index: 100000;
+	pointer-events: none;
+}
+
+/* Swallow taps on the dimmed page; interactive steps leave the widget open. */
+.idu-tour-blocker {
+	position: fixed;
 	pointer-events: auto;
 	touch-action: none;
+}
+
+/* While the user drags or resizes for real, get out of the way. */
+.idu-tour.is-interacting .idu-tour-spot {
+	box-shadow: 0 0 0 200vmax rgba(0, 0, 0, 0.12);
+}
+.idu-tour.is-interacting .idu-tour-spot::after,
+.idu-tour.is-interacting .idu-tour-card {
+	opacity: 0;
+	pointer-events: none;
 }
 
 .idu-tour-spot {
@@ -4734,7 +4760,8 @@ html.idu-tour-open .idu-xmas-notice {
 		top 0.35s ease,
 		left 0.35s ease,
 		width 0.35s ease,
-		height 0.35s ease;
+		height 0.35s ease,
+		box-shadow 0.25s ease;
 	pointer-events: none;
 }
 
@@ -4772,7 +4799,8 @@ html.idu-tour-open .idu-xmas-notice {
 	background: var(--module-color);
 	color: var(--main-text-color);
 	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-	transition: top 0.3s ease, left 0.3s ease;
+	pointer-events: auto;
+	transition: top 0.3s ease, left 0.3s ease, opacity 0.2s ease;
 }
 
 .idu-tour-step {
@@ -4817,7 +4845,7 @@ html.idu-tour-open .idu-xmas-notice {
 	color: var(--module-color);
 }
 
-.idu-tour-drag > * {
+.idu-tour-demo > * {
 	position: fixed;
 	pointer-events: none;
 }
@@ -4867,6 +4895,29 @@ html.idu-tour-open .idu-xmas-notice {
 	85%, 100% { opacity: 0; transform: translate(var(--idu-tour-dx), var(--idu-tour-dy)) scale(0.96); }
 }
 
+.idu-tour-ghost-resize {
+	width: var(--idu-tour-w);
+	height: var(--idu-tour-h);
+	animation-name: idu-tour-ghost-resize;
+}
+
+.idu-tour-corner-glow {
+	width: 40px;
+	height: 40px;
+	margin: -20px 0 0 -20px;
+	border-radius: 50%;
+	border: 2px solid #ffffff;
+	box-shadow: 0 0 14px 4px rgba(255, 255, 255, 0.7);
+	animation: idu-tour-handle 2.4s ease-in-out infinite;
+}
+
+@keyframes idu-tour-ghost-resize {
+	0%, 22% { opacity: 0; width: var(--idu-tour-w); height: var(--idu-tour-h); }
+	30% { opacity: 1; width: var(--idu-tour-w); height: var(--idu-tour-h); }
+	68% { opacity: 1; width: calc(var(--idu-tour-w) + var(--idu-tour-gw)); height: calc(var(--idu-tour-h) + var(--idu-tour-gh)); }
+	85%, 100% { opacity: 0; width: calc(var(--idu-tour-w) + var(--idu-tour-gw)); height: calc(var(--idu-tour-h) + var(--idu-tour-gh)); }
+}
+
 @keyframes idu-tour-handle {
 	0%, 100% { opacity: 0.5; }
 	15%, 25% { opacity: 1; }
@@ -4877,7 +4928,27 @@ html.idu-tour-open .idu-xmas-notice {
 	.idu-tour-spot,
 	.idu-tour-card { transition: none; }
 	.idu-tour-spot.has-target::after,
-	.idu-tour-handle-glow { animation: none; }
+	.idu-tour-handle-glow,
+	.idu-tour-corner-glow { animation: none; }
 	.idu-tour-ghost { display: none; }
 	.idu-tour-finger { animation: none; opacity: 1; }
+}
+
+/* Christmas: the snow cap covers the top of each widget, so lift the drag
+   handle onto the snow and draw it solid so it stays visible and grabbable. */
+html[data-theme="Christmas"] body.edit-mode .widget-drag-handle:not([hidden]) {
+	top: -14px;
+	z-index: 5;
+}
+html[data-theme="Christmas"] .widget-drag-handle::before {
+	top: 9px;
+	width: 30px;
+	height: 6px;
+	background: #7A0C0A;
+	opacity: 1;
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+html[data-theme="Christmas"] body.edit-mode .widget-drag-handle:active::before {
+	width: 38px;
+	opacity: 1;
 }

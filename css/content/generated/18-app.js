@@ -457,10 +457,39 @@
     const widgets = [...document.querySelectorAll(".widgets-grid .widget")];
     return widgets.find((widget) => isVisible(widget)) || null;
   }
+  function tourWidget(session) {
+    if (session.widgetId) {
+      const widget = document.querySelector(`.widgets-grid .widget[data-widget-id="${session.widgetId}"]`);
+      if (isVisible(widget)) return widget;
+    }
+    return firstWidget();
+  }
+  function enterEditMode(session) {
+    setMenuOpen(false);
+    if (!window.editMode && typeof window.switchEditMode === "function") {
+      window.switchEditMode();
+      session.enteredEditMode = true;
+    }
+    if (!session.widgetId) {
+      session.widgetId = firstWidget()?.getAttribute("data-widget-id") || null;
+    }
+    const widget = tourWidget(session);
+    if (widget) {
+      const rect = widget.getBoundingClientRect();
+      if (rect.top < 80 || rect.bottom > window.innerHeight - 200) {
+        widget.scrollIntoView({ block: "center", behavior: "smooth" });
+      }
+    }
+  }
+  function leaveEditMode(session) {
+    setMenuOpen(false);
+    if (session.enteredEditMode && window.editMode) window.switchEditMode?.();
+    session.enteredEditMode = false;
+  }
   var STEPS = [
     {
       id: "settings",
-      text: "Tu otworzysz Ustawienia: motyw, rocznik i semestr.",
+      text: "Tu otworzysz Ustawienia, gdzie zmienisz rzeczy takie jak motyw, rocznik czy semestr.",
       prepare: () => setMenuOpen(true),
       target: () => document.querySelector("#idu-header-root .header-panel-settings")
     },
@@ -472,32 +501,26 @@
     },
     {
       id: "drag",
-      text: "Z\u0142ap wid\u017Cet za uchwyt u g\xF3ry i przeci\u0105gnij go w nowe miejsce.",
-      prepare: (session) => {
-        setMenuOpen(false);
-        if (!window.editMode && typeof window.switchEditMode === "function") {
-          window.switchEditMode();
-          session.enteredEditMode = true;
-        }
-        const widget = firstWidget();
-        if (widget) {
-          const rect = widget.getBoundingClientRect();
-          if (rect.top < 80 || rect.bottom > window.innerHeight - 160) {
-            widget.scrollIntoView({ block: "center", behavior: "smooth" });
-          }
-        }
-      },
-      target: () => firstWidget(),
-      handle: () => firstWidget()?.querySelector(".widget-drag-handle")
+      interactive: true,
+      text: "Spr\xF3buj z\u0142apa\u0107 wid\u017Cet za uchwyt u g\xF3ry i przeci\u0105gn\u0105\u0107 go.",
+      doneText: "\u015Awietnie! Tak zmieniasz kolejno\u015B\u0107 wid\u017Cet\xF3w.",
+      prepare: enterEditMode,
+      target: (session) => tourWidget(session),
+      hint: (session) => tourWidget(session)?.querySelector(".widget-drag-handle")
+    },
+    {
+      id: "resize",
+      interactive: true,
+      text: "Spr\xF3buj z\u0142apa\u0107 r\xF3g wid\u017Cetu i przeci\u0105gn\u0105\u0107 go, \u017Ceby zmieni\u0107 rozmiar.",
+      doneText: "Super! Tak zmieniasz rozmiar wid\u017Cetu.",
+      prepare: enterEditMode,
+      target: (session) => tourWidget(session),
+      hint: (session) => tourWidget(session)?.querySelector(".resize-zone")
     },
     {
       id: "done",
       text: "Gotowe! Samouczek powt\xF3rzysz w Ustawieniach.",
-      prepare: (session) => {
-        setMenuOpen(false);
-        if (session.enteredEditMode && window.editMode) window.switchEditMode?.();
-        session.enteredEditMode = false;
-      },
+      prepare: leaveEditMode,
       target: () => null
     }
   ];
@@ -515,20 +538,70 @@
     if (!a3 || !b2) return a3 === b2;
     return a3.top === b2.top && a3.left === b2.left && a3.width === b2.width && a3.height === b2.height;
   }
+  function px(rect) {
+    return {
+      top: `${rect.top}px`,
+      left: `${rect.left}px`,
+      width: `${Math.max(0, rect.width)}px`,
+      height: `${Math.max(0, rect.height)}px`
+    };
+  }
+  function Blockers({ spot }) {
+    if (!spot) return /* @__PURE__ */ k("div", { className: "idu-tour-blocker", style: { inset: 0 } });
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const top = Math.max(0, spot.top);
+    const bottom = Math.min(vh, spot.top + spot.height);
+    const left = Math.max(0, spot.left);
+    const right = Math.min(vw, spot.left + spot.width);
+    return /* @__PURE__ */ k("div", { className: "idu-tour-blockers" }, /* @__PURE__ */ k("div", { className: "idu-tour-blocker", style: px({ top: 0, left: 0, width: vw, height: top }) }), /* @__PURE__ */ k("div", { className: "idu-tour-blocker", style: px({ top: bottom, left: 0, width: vw, height: vh - bottom }) }), /* @__PURE__ */ k("div", { className: "idu-tour-blocker", style: px({ top, left: 0, width: left, height: bottom - top }) }), /* @__PURE__ */ k("div", { className: "idu-tour-blocker", style: px({ top, left: right, width: vw - right, height: bottom - top }) }));
+  }
+  function Demo({ step, spot, hint }) {
+    if (!spot || !hint) return null;
+    const startX = hint.left + hint.width / 2;
+    const startY = hint.top + hint.height / 2;
+    const vw = window.innerWidth;
+    const isWide = spot.width > vw * 0.6;
+    if (step.id === "drag") {
+      const towardsRight = spot.left + spot.width / 2 < vw / 2;
+      const dx2 = isWide ? 0 : Math.round((towardsRight ? 1 : -1) * Math.min(70, spot.width * 0.18));
+      const dy2 = Math.round(Math.min(48, spot.height * 0.3));
+      return /* @__PURE__ */ k("div", { className: "idu-tour-demo", style: { "--idu-tour-dx": `${dx2}px`, "--idu-tour-dy": `${dy2}px` } }, /* @__PURE__ */ k("div", { className: "idu-tour-ghost", style: px({ top: spot.top + 6, left: spot.left + 6, width: spot.width - 12, height: spot.height - 12 }) }), /* @__PURE__ */ k("div", { className: "idu-tour-handle-glow", style: { top: `${startY}px`, left: `${startX}px` } }), /* @__PURE__ */ k("div", { className: "idu-tour-finger", style: { top: `${startY}px`, left: `${startX}px` } }));
+    }
+    const cornerOnRight = startX > spot.left + spot.width / 2;
+    const cornerX = cornerOnRight ? hint.left + hint.width - 20 : hint.left + 20;
+    const cornerY = hint.top + hint.height - 20;
+    const grow = isWide ? -1 : 1;
+    const amountX = Math.round(Math.min(80, spot.width * 0.3));
+    const amountY = isWide ? 0 : Math.round(Math.min(60, spot.height * 0.4));
+    const dx = (cornerOnRight ? 1 : -1) * grow * amountX;
+    const dy = grow * amountY;
+    const ghostStyle = {
+      top: `${spot.top + 6}px`,
+      "--idu-tour-w": `${spot.width - 12}px`,
+      "--idu-tour-h": `${spot.height - 12}px`,
+      "--idu-tour-gw": `${grow * amountX}px`,
+      "--idu-tour-gh": `${dy}px`
+    };
+    if (cornerOnRight) ghostStyle.left = `${spot.left + 6}px`;
+    else ghostStyle.right = `${vw - (spot.left + spot.width - 6)}px`;
+    return /* @__PURE__ */ k("div", { className: "idu-tour-demo", style: { "--idu-tour-dx": `${dx}px`, "--idu-tour-dy": `${dy}px` } }, /* @__PURE__ */ k("div", { className: "idu-tour-ghost idu-tour-ghost-resize", style: ghostStyle }), /* @__PURE__ */ k("div", { className: "idu-tour-corner-glow", style: { top: `${cornerY}px`, left: `${cornerX}px` } }), /* @__PURE__ */ k("div", { className: "idu-tour-finger", style: { top: `${cornerY}px`, left: `${cornerX}px` } }));
+  }
   function Tour({ onClose }) {
-    const sessionRef = A2({ enteredEditMode: false });
+    const sessionRef = A2({ enteredEditMode: false, widgetId: null });
     const cardRef = A2(null);
+    const spotRef = A2(null);
     const [index, setIndex] = d2(0);
     const [spot, setSpot] = d2(null);
-    const [handleRect, setHandleRect] = d2(null);
+    const [hintRect, setHintRect] = d2(null);
     const [cardPos, setCardPos] = d2(null);
+    const [interacting, setInteracting] = d2(false);
+    const [tried, setTried] = d2(false);
     const step = STEPS[index];
     const isLast = index === STEPS.length - 1;
+    spotRef.current = spot;
     function finish() {
-      const session = sessionRef.current;
-      setMenuOpen(false);
-      if (session.enteredEditMode && window.editMode) window.switchEditMode?.();
-      session.enteredEditMode = false;
+      leaveEditMode(sessionRef.current);
       onClose();
     }
     function next() {
@@ -536,28 +609,63 @@
       else setIndex((value) => value + 1);
     }
     y2(() => {
+      setTried(false);
+      setInteracting(false);
       step.prepare?.(sessionRef.current);
     }, [index]);
     y2(() => {
       let frame = 0;
       let lastSpot;
-      let lastHandle;
+      let lastHint;
       const tick = () => {
-        const target = step.target();
-        const nextSpot = readRect(target, step.id === "drag" ? 6 : 4);
-        const nextHandle = step.handle ? readRect(step.handle(), 0) : null;
+        const session = sessionRef.current;
+        const nextSpot = readRect(step.target(session), step.interactive ? 6 : 4);
+        const nextHint = step.hint ? readRect(step.hint(session), 0) : null;
         if (!sameRect(nextSpot, lastSpot)) {
           lastSpot = nextSpot;
           setSpot(nextSpot);
         }
-        if (!sameRect(nextHandle, lastHandle)) {
-          lastHandle = nextHandle;
-          setHandleRect(nextHandle);
+        if (!sameRect(nextHint, lastHint)) {
+          lastHint = nextHint;
+          setHintRect(nextHint);
         }
         frame = requestAnimationFrame(tick);
       };
       tick();
       return () => cancelAnimationFrame(frame);
+    }, [index]);
+    y2(() => {
+      if (!step.interactive) return void 0;
+      let releaseTimer = null;
+      let active = false;
+      const inSpot = (event) => {
+        const rect = spotRef.current;
+        return rect && event.clientX >= rect.left && event.clientX <= rect.left + rect.width && event.clientY >= rect.top && event.clientY <= rect.top + rect.height;
+      };
+      const onDown = (event) => {
+        if (!inSpot(event)) return;
+        clearTimeout(releaseTimer);
+        active = true;
+        setInteracting(true);
+      };
+      const onUp = () => {
+        if (!active) return;
+        clearTimeout(releaseTimer);
+        releaseTimer = setTimeout(() => {
+          active = false;
+          setInteracting(false);
+          setTried(true);
+        }, 350);
+      };
+      document.addEventListener("pointerdown", onDown, true);
+      document.addEventListener("pointerup", onUp, true);
+      document.addEventListener("pointercancel", onUp, true);
+      return () => {
+        clearTimeout(releaseTimer);
+        document.removeEventListener("pointerdown", onDown, true);
+        document.removeEventListener("pointerup", onUp, true);
+        document.removeEventListener("pointercancel", onUp, true);
+      };
     }, [index]);
     _2(() => {
       const card = cardRef.current;
@@ -581,8 +689,8 @@
       }
       left = Math.min(Math.max(left, EDGE), vw - cw - EDGE);
       top = Math.min(Math.max(top, EDGE), vh - ch - EDGE);
-      const next2 = { top: Math.round(top), left: Math.round(left) };
-      if (!cardPos || cardPos.top !== next2.top || cardPos.left !== next2.left) setCardPos(next2);
+      const nextPos = { top: Math.round(top), left: Math.round(left) };
+      if (!cardPos || cardPos.top !== nextPos.top || cardPos.left !== nextPos.left) setCardPos(nextPos);
     });
     y2(() => {
       const onKey = (event) => {
@@ -592,37 +700,20 @@
       window.addEventListener("keydown", onKey);
       return () => window.removeEventListener("keydown", onKey);
     });
-    const spotStyle = spot ? { top: `${spot.top}px`, left: `${spot.left}px`, width: `${spot.width}px`, height: `${spot.height}px` } : { top: "50%", left: "50%", width: "0px", height: "0px" };
-    let dragDemo = null;
-    if (step.id === "drag" && handleRect && spot) {
-      const startX = handleRect.left + handleRect.width / 2;
-      const startY = handleRect.top + handleRect.height / 2;
-      const towardsRight = spot.left + spot.width / 2 < window.innerWidth / 2;
-      const isWide = spot.width > window.innerWidth * 0.6;
-      const dx = isWide ? 0 : Math.round((towardsRight ? 1 : -1) * Math.min(70, spot.width * 0.18));
-      const dy = Math.round(Math.min(48, spot.height * 0.3));
-      const ghostWidth = spot.width - 12;
-      const ghostHeight = spot.height - 12;
-      dragDemo = /* @__PURE__ */ k("div", { className: "idu-tour-drag", style: { "--idu-tour-dx": `${dx}px`, "--idu-tour-dy": `${dy}px` } }, /* @__PURE__ */ k(
-        "div",
-        {
-          className: "idu-tour-ghost",
-          style: {
-            top: `${spot.top + 6}px`,
-            left: `${spot.left + 6}px`,
-            width: `${ghostWidth}px`,
-            height: `${ghostHeight}px`
-          }
-        }
-      ), /* @__PURE__ */ k("div", { className: "idu-tour-handle-glow", style: { top: `${startY}px`, left: `${startX}px` } }), /* @__PURE__ */ k("div", { className: "idu-tour-finger", style: { top: `${startY}px`, left: `${startX}px` } }));
-    }
-    return /* @__PURE__ */ k("div", { className: "idu-tour", role: "dialog", "aria-modal": "true", "aria-live": "polite" }, /* @__PURE__ */ k(
+    const spotStyle = spot ? px(spot) : { top: "50%", left: "50%", width: "0px", height: "0px" };
+    const text = tried && step.doneText ? step.doneText : step.text;
+    const classes = [
+      "idu-tour",
+      step.interactive ? "is-interactive" : "",
+      interacting ? "is-interacting" : ""
+    ].join(" ");
+    return /* @__PURE__ */ k("div", { className: classes, role: "dialog", "aria-modal": "true", "aria-live": "polite" }, /* @__PURE__ */ k(Blockers, { spot: step.interactive ? spot : null }), /* @__PURE__ */ k(
       "div",
       {
-        className: `idu-tour-spot ${spot ? "has-target" : ""} ${step.id === "drag" ? "is-widget" : ""}`,
+        className: `idu-tour-spot ${spot ? "has-target" : ""} ${step.interactive ? "is-widget" : ""}`,
         style: spotStyle
       }
-    ), dragDemo, /* @__PURE__ */ k(
+    ), step.interactive && !tried && !interacting && /* @__PURE__ */ k(Demo, { step, spot, hint: hintRect }), /* @__PURE__ */ k(
       "div",
       {
         ref: cardRef,
@@ -630,7 +721,7 @@
         style: cardPos ? { top: `${cardPos.top}px`, left: `${cardPos.left}px` } : { visibility: "hidden" }
       },
       /* @__PURE__ */ k("div", { className: "idu-tour-step" }, index + 1, " / ", STEPS.length),
-      /* @__PURE__ */ k("p", { className: "idu-tour-text" }, step.text),
+      /* @__PURE__ */ k("p", { className: "idu-tour-text" }, text),
       /* @__PURE__ */ k("div", { className: "idu-tour-actions" }, !isLast && /* @__PURE__ */ k("button", { type: "button", className: "idu-tour-skip", onClick: finish }, "Pomi\u0144"), /* @__PURE__ */ k("button", { type: "button", className: "idu-tour-next", onClick: next }, isLast ? "Zaczynamy" : "Dalej"))
     ));
   }
@@ -640,6 +731,7 @@
     R(null, root2);
     root2.remove();
     document.documentElement.classList.remove("idu-tour-open");
+    window.dispatchEvent(new Event("idu-tutorial-closed"));
   }
   function startTutorial() {
     if (document.getElementById(ROOT_ID) || !isDashboard()) return false;
