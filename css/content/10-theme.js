@@ -257,6 +257,22 @@ window.setIduSnowfallEnabled = function (enabled) {
 		ctx.globalAlpha = 1;
 	}
 
+	// Move the flakes with the page while scrolling, so the snow feels part of
+	// the page instead of a layer stuck to the screen.
+	let lastScrollY = window.scrollY || 0;
+	function onScroll() {
+		const scrollY = window.scrollY || 0;
+		const delta = scrollY - lastScrollY;
+		lastScrollY = scrollY;
+		if (!delta || !flakes.length) return;
+		for (const f of flakes) {
+			f.y -= delta;
+			// Wrap around so the screen never runs out of snow.
+			if (f.y < -4) f.y += height + 8;
+			else if (f.y > height + 4) f.y -= height + 8;
+		}
+	}
+
 	function start() {
 		if (!canvas) {
 			canvas = document.createElement("canvas");
@@ -265,6 +281,8 @@ window.setIduSnowfallEnabled = function (enabled) {
 			ctx = canvas.getContext("2d");
 			document.body.appendChild(canvas);
 			window.addEventListener("resize", resize);
+			lastScrollY = window.scrollY || 0;
+			window.addEventListener("scroll", onScroll, { passive: true });
 			resize();
 		}
 		if (frame === null && !document.hidden) {
@@ -278,6 +296,7 @@ window.setIduSnowfallEnabled = function (enabled) {
 		frame = null;
 		if (canvas) {
 			window.removeEventListener("resize", resize);
+			window.removeEventListener("scroll", onScroll);
 			canvas.remove();
 			canvas = null;
 			ctx = null;
