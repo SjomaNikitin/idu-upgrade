@@ -96,7 +96,7 @@ html[data-theme="Besties"] {
 }
 
 html[data-theme="Christmas"] {
-	--idu-loader-color: #1f2a24;
+	--idu-loader-color: #65826a;
 	--idu-loader-spinner-color: #ffe4a3;
 	/* The Santa hat makes this one wider. */
 	--idu-loader-image: url("assets/loader-christmas.webp");
@@ -1697,6 +1697,16 @@ html.idu-loader-fading::after {
 		border-radius: 999px;
 		background-color: var(--module-color);
 		color: var(--main-text-color) !important;
+	}
+
+	.header-back-button {
+		font: inherit;
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.header-back-button:active svg {
+		transform: translateX(-2px);
 	}
 
 	.header-icon-button {
@@ -4181,8 +4191,7 @@ html[data-theme="Christmas"] {
 html[data-theme="Christmas"] body,
 html[data-theme="Christmas"] #content,
 html[data-theme="Christmas"] #content.idu-profile-content,
-html[data-theme="Christmas"] #footer,
-html[data-theme="Christmas"] .idu-app-footer {
+html[data-theme="Christmas"] #footer {
 	background: transparent !important;
 }
 
@@ -4258,7 +4267,7 @@ html[data-theme="Christmas"] .header-home-icon-button::after {
 }
 
 html[data-theme="Christmas"] .header-icon-button:nth-of-type(even)::after,
-html[data-theme="Christmas"] .header-home-icon-button::after {
+html[data-theme="Christmas"] .header-home-icon-button:not(.header-back-button)::after {
 	left: auto;
 	right: 6%;
 	transform: translateY(-48%) scaleX(-1);
@@ -4951,4 +4960,64 @@ html[data-theme="Christmas"] .widget-drag-handle::before {
 html[data-theme="Christmas"] body.edit-mode .widget-drag-handle:active::before {
 	width: 38px;
 	opacity: 1;
+}
+
+/* ------------------------------------------------------------------
+   Footer as a full-width widget card with the theme's sleeping character lying on
+   its top edge. Images are 300x186 crops of Ivan's drawings; the
+   character's "floor" sits 14% above the image bottom (the Christmas
+   Santa hat hangs below it, over the card's edge).
+   ------------------------------------------------------------------ */
+html {
+	--idu-footer-sleeper: url("assets/sleeper-default.webp");
+}
+html[data-theme="Ocean"] { --idu-footer-sleeper: url("assets/sleeper-ocean.webp"); }
+html[data-theme="Dzaga"] { --idu-footer-sleeper: url("assets/sleeper-dzaga.webp"); }
+html[data-theme="Besties"] { --idu-footer-sleeper: url("assets/sleeper-besties.webp"); }
+html[data-theme="Christmas"] { --idu-footer-sleeper: url("assets/sleeper-christmas.webp"); }
+
+@media (max-width: 500px) {
+	#footer {
+		/* Room above the card for the character to lie in. */
+		margin-top: 96px;
+		background: transparent;
+	}
+
+	#footer .idu-app-footer {
+		/* Looks like a widget card, spans the full width and sits flush
+		   on the bottom of the page. */
+		position: relative;
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 22px 20px max(24px, calc(env(safe-area-inset-bottom) + 16px));
+		/* Only a top line: side borders would stop short at the card's
+		   bottom on short pages. */
+		border: 0;
+		border-top: 1px solid var(--module-border-color);
+		border-radius: var(--padding-2) var(--padding-2) 0 0;
+		/* Same frosted glass as the header. */
+		background: var(--background-color);
+		background: color-mix(in srgb, var(--background-color) 50%, transparent);
+		-webkit-backdrop-filter: blur(18px);
+		backdrop-filter: blur(18px);
+		/* On short pages, keep the card's fill running down to the bottom
+		   of the screen (also covers the iOS overscroll bounce). A spread
+		   shadow is used because, unlike a pseudo-element, it never makes
+		   the page scroll further. It starts 40px down so the rounded top
+		   corners stay visible. */
+		box-shadow: 0 calc(100vh + 40px) 0 100vh color-mix(in srgb, var(--background-color) 50%, transparent);
+	}
+
+	#footer .idu-app-footer::before {
+		content: "";
+		position: absolute;
+		left: 22px;
+		bottom: calc(100% - 16px);
+		width: 132px;
+		aspect-ratio: 300 / 186;
+		background: var(--idu-footer-sleeper) center bottom / contain no-repeat;
+		pointer-events: none;
+		z-index: 1;
+	}
 }

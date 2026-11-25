@@ -75,7 +75,7 @@ const criticalLoaderHtml = `<script id="idu-theme-critical">
 	}
 
 	html[data-theme="Christmas"] {
-		--idu-loader-color: #1f2a24;
+		--idu-loader-color: #65826a;
 		--idu-loader-spinner-color: #ffe4a3;
 	}
 
