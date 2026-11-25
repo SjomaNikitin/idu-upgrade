@@ -1,0 +1,34 @@
+NIDU Source-Available License (View Only)
+
+Copyright (c) 2026 Szymon Nikitin and Jagoda Herbut-Tunik. All rights reserved.
+
+The source code, designs, images and other files in this repository
+(the "Software") are published only so that anyone can read them and
+check how the NIDU app works and that it is safe.
+
+You MAY:
+  - view and read the Software;
+  - run it on your own device only to review its security or behaviour.
+
+You MAY NOT, without prior written permission from the copyright holders:
+  - copy, modify, publish, distribute, sublicense or sell the Software
+    or any part of it;
+  - use the Software, or any part of it, in any other app, product or
+    service, commercial or non-commercial;
+  - use the Software to train or improve machine-learning models;
+  - use the NIDU name or logo.
+
+Viewing or forking this repository on GitHub, as GitHub's Terms of
+Service allow, gives no rights beyond those listed above.
+
+Third-party files included here (for example the Gradle wrapper and npm
+dependencies) stay under their own licenses.
+
+NIDU is an independent project and is not affiliated with IDU or with
+any school.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. IN NO
+EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY ARISING FROM THE SOFTWARE OR ITS USE.
+
+Permission requests: support.idu2@gmail.com

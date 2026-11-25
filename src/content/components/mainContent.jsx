@@ -10,6 +10,7 @@ import { Messages } from './widgets/messages.jsx';
 import { ComingEvents } from './widgets/comingEvents.jsx';
 import { LastReviews } from './widgets/lastReviews.jsx';
 import { LastHomeWork } from './widgets/lastHomeWork.jsx';
+import { maybeStartTutorial } from './tutorial.jsx';
 import { REFLOW_DURATION, REFLOW_EASING, prefersReducedMotion } from './widgets/widgetMotion.js';
 
 window.editMode = false;
@@ -121,6 +122,11 @@ export function MainContent({data}) {
 	useEffect(() => {
 		saveWidgetLayout(widgets);
 	}, [widgets]);
+
+	// First-run tutorial (shown once; replayable from Settings).
+	useEffect(() => {
+		maybeStartTutorial();
+	}, []);
 
 	useEffect(() => {
 		function handleOutsidePointerDown(e) {

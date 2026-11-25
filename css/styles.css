@@ -4697,3 +4697,187 @@ html[data-theme="Christmas"] .settings-dot {
 		transition: opacity 1ms;
 	}
 }
+
+/* ---------- First-run tutorial (src/content/components/tutorial.jsx) ---------- */
+.settings-action-button {
+	justify-self: start;
+	min-height: 40px;
+	padding: 0 16px;
+	border: 1px solid var(--module-border-color);
+	border-radius: 999px;
+	background: transparent;
+	color: var(--main-text-color);
+	font: inherit;
+	font-weight: 700;
+	box-shadow: none;
+	cursor: pointer;
+}
+
+/* Keep other first-run popups out of the way while the tour runs. */
+html.idu-tour-open .idu-xmas-notice {
+	visibility: hidden;
+}
+
+.idu-tour {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	pointer-events: auto;
+	touch-action: none;
+}
+
+.idu-tour-spot {
+	position: fixed;
+	border-radius: 14px;
+	box-shadow: 0 0 0 200vmax rgba(0, 0, 0, 0.62);
+	transition:
+		top 0.35s ease,
+		left 0.35s ease,
+		width 0.35s ease,
+		height 0.35s ease;
+	pointer-events: none;
+}
+
+.idu-tour-spot.is-widget {
+	border-radius: 22px;
+}
+
+.idu-tour-spot.has-target::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	border: 2px solid rgba(255, 255, 255, 0.95);
+	box-shadow: 0 0 18px 4px rgba(255, 255, 255, 0.55);
+	animation: idu-tour-glow 1.6s ease-in-out infinite;
+}
+
+.idu-tour-spot.is-widget::after {
+	border-color: rgba(255, 255, 255, 0.55);
+	box-shadow: 0 0 12px 2px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes idu-tour-glow {
+	0%, 100% { opacity: 0.55; transform: scale(1); }
+	50% { opacity: 1; transform: scale(1.04); }
+}
+
+.idu-tour-card {
+	position: fixed;
+	box-sizing: border-box;
+	width: min(320px, calc(100vw - 32px));
+	padding: 16px;
+	border: 1px solid var(--module-border-color);
+	border-radius: 16px;
+	background: var(--module-color);
+	color: var(--main-text-color);
+	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+	transition: top 0.3s ease, left 0.3s ease;
+}
+
+.idu-tour-step {
+	font-size: 0.75rem;
+	font-weight: 700;
+	opacity: 0.6;
+}
+
+.idu-tour-text {
+	margin: 6px 0 14px;
+	font-size: 1rem;
+	line-height: 1.35;
+	font-weight: 600;
+	color: inherit;
+}
+
+.idu-tour-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+.idu-tour-actions button {
+	min-height: 40px;
+	padding: 0 18px;
+	border-radius: 999px;
+	font: inherit;
+	font-weight: 700;
+	box-shadow: none;
+	cursor: pointer;
+}
+
+.idu-tour-skip {
+	border: 1px solid var(--module-border-color);
+	background: transparent;
+	color: var(--main-text-color);
+}
+
+.idu-tour-next {
+	border: 0;
+	background: var(--main-text-color);
+	color: var(--module-color);
+}
+
+.idu-tour-drag > * {
+	position: fixed;
+	pointer-events: none;
+}
+
+.idu-tour-ghost {
+	box-sizing: border-box;
+	border: 2px dashed rgba(255, 255, 255, 0.85);
+	border-radius: 18px;
+	background: rgba(255, 255, 255, 0.12);
+	animation: idu-tour-ghost 2.4s ease-in-out infinite;
+}
+
+.idu-tour-handle-glow {
+	width: 34px;
+	height: 10px;
+	margin: -11px 0 0 -17px;
+	border-radius: 999px;
+	background: #ffffff;
+	box-shadow: 0 0 12px 4px rgba(255, 255, 255, 0.8);
+	animation: idu-tour-handle 2.4s ease-in-out infinite;
+}
+
+.idu-tour-finger {
+	width: 34px;
+	height: 34px;
+	margin: -17px 0 0 -17px;
+	border-radius: 50%;
+	border: 2px solid #ffffff;
+	background: rgba(255, 255, 255, 0.35);
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+	animation: idu-tour-finger 2.4s ease-in-out infinite;
+}
+
+@keyframes idu-tour-finger {
+	0% { opacity: 0; transform: translate(0, 0) scale(1.2); }
+	12% { opacity: 1; transform: translate(0, 0) scale(1); }
+	22% { transform: translate(0, 0) scale(0.82); }
+	68% { opacity: 1; transform: translate(var(--idu-tour-dx), var(--idu-tour-dy)) scale(0.82); }
+	80% { opacity: 1; transform: translate(var(--idu-tour-dx), var(--idu-tour-dy)) scale(1); }
+	100% { opacity: 0; transform: translate(var(--idu-tour-dx), var(--idu-tour-dy)) scale(1); }
+}
+
+@keyframes idu-tour-ghost {
+	0%, 22% { opacity: 0; transform: translate(0, 0) scale(1); }
+	30% { opacity: 1; transform: translate(0, 0) scale(0.96); }
+	68% { opacity: 1; transform: translate(var(--idu-tour-dx), var(--idu-tour-dy)) scale(0.96); }
+	85%, 100% { opacity: 0; transform: translate(var(--idu-tour-dx), var(--idu-tour-dy)) scale(0.96); }
+}
+
+@keyframes idu-tour-handle {
+	0%, 100% { opacity: 0.5; }
+	15%, 25% { opacity: 1; }
+	40% { opacity: 0.2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.idu-tour-spot,
+	.idu-tour-card { transition: none; }
+	.idu-tour-spot.has-target::after,
+	.idu-tour-handle-glow { animation: none; }
+	.idu-tour-ghost { display: none; }
+	.idu-tour-finger { animation: none; opacity: 1; }
+}
