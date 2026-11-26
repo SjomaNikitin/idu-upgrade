@@ -389,6 +389,8 @@ window.setIduSnowfallEnabled = function (enabled) {
 		if (document.documentElement.classList.contains("idu-tour-open")) return true;
 		const onDashboard = window.location.pathname === "/" || Boolean(window.__IDU_MOCK_DATA);
 		if (!onDashboard) return false;
+		// No tutorial on the parents' home page.
+		if (window.isIduParentAccount?.()) return false;
 		try {
 			return !localStorage.getItem("iduTutorialSeen") || Boolean(localStorage.getItem("iduTutorialReplay"));
 		} catch {

@@ -22,8 +22,21 @@ function storageRemove(key) {
 	try { localStorage.removeItem(key); } catch {}
 }
 
+// Parents get a different IDU home page, so the tour doesn't fit there.
+// IDU writes idu.current_user = {"roles":["parent"]} into an inline script in
+// <head>; the account link (/parents/<id>) is a second signal.
+export function isParentAccount() {
+	if (document.documentElement.dataset.iduRole === "parent") return true;
+	if (document.querySelector('#account a[href^="/parents/"]')) return true;
+	for (const script of document.querySelectorAll("script:not([src])")) {
+		const match = script.textContent.match(/current_user\s*=\s*\{[^}]*"roles"\s*:\s*\[([^\]]*)\]/);
+		if (match) return /"parent"/.test(match[1]) && !/"student"/.test(match[1]);
+	}
+	return false;
+}
+
 function isDashboard() {
-	return Boolean(document.querySelector(".widgets-grid .widget"));
+	return Boolean(document.querySelector(".widgets-grid .widget")) && !isParentAccount();
 }
 
 function menuPanel() {
@@ -430,3 +443,4 @@ export function maybeStartTutorial() {
 }
 
 window.startIduTutorial = startTutorial;
+window.isIduParentAccount = isParentAccount;

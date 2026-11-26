@@ -23,6 +23,8 @@ window.replaceHeader = function replaceHeader(data = {}) {
 	let accountHref
 	if (document.querySelector("#account")) {
 		accountHref = document.querySelector("#account").children[0].href;
+		// Remember parent accounts before the old header (and #account) is gone.
+		if (/\/parents\/\d+/.test(accountHref)) document.documentElement.dataset.iduRole = "parent";
 	} else {
 		accountHref = "/";
 	}

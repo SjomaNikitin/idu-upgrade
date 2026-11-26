@@ -437,8 +437,17 @@
     } catch {
     }
   }
+  function isParentAccount() {
+    if (document.documentElement.dataset.iduRole === "parent") return true;
+    if (document.querySelector('#account a[href^="/parents/"]')) return true;
+    for (const script of document.querySelectorAll("script:not([src])")) {
+      const match = script.textContent.match(/current_user\s*=\s*\{[^}]*"roles"\s*:\s*\[([^\]]*)\]/);
+      if (match) return /"parent"/.test(match[1]) && !/"student"/.test(match[1]);
+    }
+    return false;
+  }
   function isDashboard() {
-    return Boolean(document.querySelector(".widgets-grid .widget"));
+    return Boolean(document.querySelector(".widgets-grid .widget")) && !isParentAccount();
   }
   function menuPanel() {
     return document.querySelector("#idu-header-root .header-menu-panel");
@@ -768,6 +777,7 @@
     tryStart();
   }
   window.startIduTutorial = startTutorial;
+  window.isIduParentAccount = isParentAccount;
 
   // src/content/scheduleYear.js
   var SCHEDULE_YEAR_STORAGE_KEY = "iduScheduleYear";
@@ -1101,7 +1111,7 @@
   }
   function Settings({ open, setOpen, semesterScope }) {
     let svgSize = 36;
-    return /* @__PURE__ */ k("div", { className: `settings-container ${open ? "open" : ""}` }, /* @__PURE__ */ k("div", { className: "settings-content" }, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Motyw"), /* @__PURE__ */ k(SettingsDots, null)), /* @__PURE__ */ k(SnowfallSetting, null), /* @__PURE__ */ k(ScheduleYearForm, null), semesterScope ? /* @__PURE__ */ k(SemesterScopeForm, { semesterScope }) : null, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { className: `settings-container ${open ? "open" : ""}` }, /* @__PURE__ */ k("div", { className: "settings-content" }, /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k("h2", null, "Motyw"), /* @__PURE__ */ k(SettingsDots, null)), /* @__PURE__ */ k(SnowfallSetting, null), /* @__PURE__ */ k(ScheduleYearForm, null), semesterScope ? /* @__PURE__ */ k(SemesterScopeForm, { semesterScope }) : null, !isParentAccount() && /* @__PURE__ */ k("section", { className: "settings-section" }, /* @__PURE__ */ k(
       "button",
       {
         type: "button",
@@ -4718,6 +4728,7 @@
     let accountHref;
     if (document.querySelector("#account")) {
       accountHref = document.querySelector("#account").children[0].href;
+      if (/\/parents\/\d+/.test(accountHref)) document.documentElement.dataset.iduRole = "parent";
     } else {
       accountHref = "/";
     }
