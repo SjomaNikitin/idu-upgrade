@@ -4334,7 +4334,7 @@
           doc.head.append(style);
         }
         const theme = getComputedStyle(form);
-        style.textContent = `html, body.cke_editable { background: ${theme.getPropertyValue("--background-color")}; color: ${theme.getPropertyValue("--main-text-color")}; caret-color: currentColor; } body.cke_editable { font: 16px/1.5 system-ui; padding: 4px; }`;
+        style.textContent = `html, body.cke_editable { background: ${theme.getPropertyValue("--idu-editor-bg").trim() || theme.getPropertyValue("--background-color")}; color: ${theme.getPropertyValue("--main-text-color")}; caret-color: currentColor; } body.cke_editable { font: 16px/1.5 system-ui; padding: 4px; }`;
       };
       form.addEventListener("load", themeEditor, true);
       window.CKEDITOR?.on("instanceReady", themeEditor);

@@ -5021,3 +5021,48 @@ html[data-theme="Christmas"] { --idu-footer-sleeper: url("assets/sleeper-christm
 		z-index: 1;
 	}
 }
+
+/* Send-message page (mobileMessages.js) in the Christmas theme: darker red
+   "wells" for the fields and the editor, light toolbar icons. */
+html[data-theme="Christmas"] .mail-compose {
+	--input-field-color: #4F0201;
+	--idu-editor-bg: #4F0201;
+}
+
+html[data-theme="Christmas"] .mail-compose :is(input[type=text], input:not([type]), textarea, select) {
+	background-color: var(--input-field-color);
+	border-color: var(--module-border-color);
+}
+
+html[data-theme="Christmas"] .mail-compose :is(.cke_top, .cke_bottom) {
+	background: #6B0403 !important;
+}
+
+html[data-theme="Christmas"] .mail-compose .cke_contents {
+	background: var(--idu-editor-bg) !important;
+}
+
+html[data-theme="Christmas"] .mobile-mail .cke_button_icon {
+	filter: invert(1) sepia(0.6) saturate(1.6) brightness(1.08);
+}
+
+html[data-theme="Christmas"] .mobile-mail a.cke_button:is(:hover, :focus, :active, .cke_button_on) {
+	background: #7A0C0A !important;
+	border-color: #9E1E19 !important;
+}
+
+/* The editor's resize grip shows up as a stray red square. */
+html[data-theme="Christmas"] .mail-compose .cke_resizer {
+	display: none !important;
+}
+
+/* Buttons stay a lighter red than the fields so they still read as buttons. */
+html[data-theme="Christmas"] .mail-compose input[type=submit] {
+	background-color: #7A0C0A !important;
+	border: 1px solid #9E1E19;
+	color: #FFE4A3;
+}
+
+html[data-theme="Christmas"] .mail-compose ::placeholder {
+	color: rgb(255 228 163 / 0.5);
+}
