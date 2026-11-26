@@ -119,8 +119,11 @@ function getScheduleLessons(schedule = document.querySelector(".schedule")) {
 			const dayKey = dayKeys[j - 1];
 			const subjectLink = lessonCell.querySelector(".subject a");
 			const locationLink = lessonCell.querySelector(".location a[href^='/rooms/']");
+			// Parents' plan adds <div><a href="/students/…">Child name</a></div> to every
+			// lesson; that's not a note.
 			const note = Array.from(lessonCell.children)
-				.find(child => child.tagName === "DIV" && !child.classList.contains("lesson-cell"))?.textContent.trim() || "";
+				.find(child => child.tagName === "DIV" && !child.classList.contains("lesson-cell")
+					&& !(child.children.length === 1 && child.firstElementChild.matches('a[href^="/students/"]')))?.textContent.trim() || "";
 
 			lessons[dayKey][time] = {
 				lessonNumber,
@@ -757,5 +760,129 @@ function extractAttendancePageData(doc = document) {
 		total: totalRow ? rowData(totalRow) : null,
 		subjects,
 		weeks,
+	};
+}
+
+
+// ---------------------------------------------------------------------------
+// Parents' home page ("/" for accounts with roles: ["parent"]).
+// Same IDU module markup as the student home, but different modules, and the
+// unique-id numbers differ, so every module is found by its <h3> title.
+// ---------------------------------------------------------------------------
+
+function findModuleByTitle(title, root = document) {
+	const wanted = cleanText(title).toLocaleLowerCase('pl-PL');
+	for (const h3 of root.querySelectorAll('.module > h3')) {
+		const text = cleanText(Array.from(h3.childNodes)
+			.filter((node) => !(node.nodeType === 1 && node.classList.contains('toggle-switch')))
+			.map((node) => node.textContent)
+			.join(' ')).toLocaleLowerCase('pl-PL');
+		if (text === wanted || text.startsWith(wanted)) {
+			return h3.parentElement.querySelector(':scope > .foldable') || h3.parentElement;
+		}
+	}
+	return null;
+}
+
+function extractChildren(container) {
+	if (!container) return [];
+	return Array.from(container.querySelectorAll('.user')).map((userEl) => {
+		const nameLink = userEl.querySelector('.name a');
+		const classLink = userEl.querySelector('.class a');
+		const avatar = userEl.querySelector('.avatar img');
+		const links = Array.from(userEl.querySelectorAll('.action a[href]')).map((a) => ({
+			text: cleanText(a.textContent),
+			href: a.getAttribute('href') || '',
+		}));
+		const find = (pattern) => links.find((link) => pattern.test(link.href))?.href || '';
+		return {
+			name: cleanText(nameLink?.textContent),
+			url: nameLink?.getAttribute('href') || '',
+			className: cleanText(classLink?.textContent).replace(/^\((.*)\)$/, '$1'),
+			classUrl: classLink?.getAttribute('href') || '',
+			avatar: avatar?.getAttribute('src') || '',
+			presencesUrl: find(/\/presences$/),
+			gradesUrl: find(/\/grades$/),
+			paymentsUrl: find(/\/payments$/),
+			filesUrl: find(/pso_subject_attachments/),
+			links,
+		};
+	});
+}
+
+function extractCalendarEvents(container) {
+	if (!container) return { events: [], calendarUrl: '', publicCalendarUrl: '' };
+	const events = Array.from(container.querySelectorAll('.profile-event')).map((eventEl) => {
+		const date = cleanText(eventEl.querySelector('.date')?.textContent);
+		const [day = '', time = ''] = date.split(',').map((part) => part.trim());
+		return {
+			title: cleanText(eventEl.querySelector('.name')?.textContent),
+			date,
+			day,
+			time,
+			detailsUrl: eventEl.querySelector('a[href*="callendar_events"]')?.getAttribute('href') || '',
+		};
+	});
+	return {
+		events,
+		calendarUrl: container.querySelector('.see-more a[href="/calendar"]')?.getAttribute('href') || '/calendar',
+		publicCalendarUrl: container.querySelector('.see-more a[href^="/public_calendar"]')?.getAttribute('href') || '',
+	};
+}
+
+function isParentHomePage() {
+	if (window.location.pathname !== '/') return false;
+	if (typeof window.isIduParentAccount === 'function') return window.isIduParentAccount();
+	return Boolean(document.querySelector('#account a[href^="/parents/"]'));
+}
+
+function extractParentHomeData() {
+	const children = extractChildren(findModuleByTitle('Dzieci'));
+	// Full names (for custom profile photos) are only on the lesson plan.
+	for (const child of children) {
+		const fullName = document.querySelector(`.schedule .lesson-cell div > a[href="${child.url}"]`);
+		child.fullName = cleanText(fullName?.textContent) || child.name;
+	}
+	const firstChild = children[0] || {};
+	const studentName = (el) => cleanText(el.querySelector(':scope > span:last-child a[href^="/students/"]')?.textContent);
+
+	const gradesModule = findModuleByTitle('Oceny');
+	const grades = extractGrades(gradesModule).map((grade, index) => ({
+		...grade,
+		student: studentName(gradesModule.querySelectorAll('.profile-event.mark')[index]),
+		seeMoreUrl: grade.seeMoreUrl || firstChild.gradesUrl || '',
+	}));
+
+	const attendanceModule = findModuleByTitle('Obecności');
+	const attendance = extractAttendance(attendanceModule).map((item) => ({
+		...item,
+		seeMoreUrl: item.seeMoreUrl || firstChild.presencesUrl || '',
+	}));
+
+	const scheduleModule = findModuleByTitle('Aktualny plan');
+	const calendar = extractCalendarEvents(findModuleByTitle('Najbliższe wydarzenia'));
+	const justifyModule = findModuleByTitle('Ostatnie wysłane prośby');
+
+	return {
+		isParent: true,
+		messagesUrl: extractMessagesUrl(),
+		reviewsUrl: findModuleByTitle('Ostatnie recenzje')?.querySelector('.see-more a')?.getAttribute('href') || '',
+		news: extractNews(findModuleByTitle('Aktualności')),
+		grades,
+		attendance,
+		schedule: getScheduleLessons(scheduleModule?.querySelector('.schedule') || document.querySelector('.schedule')),
+		children,
+		events: calendar.events,
+		calendarUrl: calendar.calendarUrl,
+		publicCalendarUrl: calendar.publicCalendarUrl,
+		justifyNewUrl: document.querySelector('a[href="/justify_absence_requests/new"]')?.getAttribute('href') || '/justify_absence_requests/new',
+		justifyListUrl: justifyModule?.querySelector('.see-more a')?.getAttribute('href') || '/justify_absence_requests',
+		justifyRequests: Array.from(justifyModule?.querySelectorAll('.profile-event') || []).map((el) => ({
+			title: cleanText(el.querySelector('.name')?.textContent || el.textContent),
+			date: cleanText(el.querySelector('.date')?.textContent),
+		})),
+		documentsUrl: document.querySelector('.action-module a[href^="/documents"]')?.getAttribute('href') || '/documents/attachments',
+		semesterScope: extractSemesterScope(),
+		ownProfileUrl: document.querySelector('#account a')?.getAttribute('href') || '',
 	};
 }

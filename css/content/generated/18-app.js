@@ -3029,7 +3029,8 @@
     y2(() => {
       let cancelled = false;
       async function loadStats() {
-        const data = await fetchAttendanceStats(seeMoreUrl);
+        const data = seeMoreUrl ? await fetchAttendanceStats(seeMoreUrl) : null;
+        if (!data) return;
         data.lateness = normalizePercentage(data.lateness);
         data.absence = normalizePercentage(data.absence);
         data.presence = normalizePercentage(data.presence);
@@ -3067,7 +3068,7 @@
   }
   function Attendance({ widgetId, moveWidget: moveWidget2, data }) {
     const attendance = data.attendance;
-    const mockData = data.attendance[0].mockData;
+    const mockData = Boolean(data.attendance[0]?.mockData);
     let possibleLayout;
     if (mockData) {
       possibleLayout = [
@@ -3203,6 +3204,99 @@
     };
     const Variant = widgetVariants[`${width}${height}`] || Grades22;
     return /* @__PURE__ */ k("div", { ref: widgetRef, id: "attendanceWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
+      "div",
+      {
+        className: "inner-widget",
+        style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" }
+      },
+      /* @__PURE__ */ k(Variant, null),
+      /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" })
+    ));
+  }
+
+  // src/content/components/widgets/messages.jsx
+  function Messages({ widgetId, moveWidget: moveWidget2, data }) {
+    const possibleLayout = [
+      { w: 2, h: 1 },
+      { w: 4, h: 1 }
+    ];
+    const fullSize = { w: 4, h: 1 };
+    const {
+      width,
+      height,
+      previewWidth,
+      previewHeight,
+      widgetRef,
+      resizeZoneRef,
+      resizingRef
+    } = useWidgetResize(possibleLayout, widgetId, 16, fullSize, false, possibleLayout[0]);
+    useWidgetDragging(widgetRef, previewWidth, previewHeight, resizingRef, resizeZoneRef, moveWidget2, widgetId);
+    function Messages21() {
+      return /* @__PURE__ */ k("div", { onClick: () => window.open("/internal_messages", "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("h1", null, "Wiadomo\u015Bci"), /* @__PURE__ */ k(
+        "svg",
+        {
+          className: "titleArrow",
+          fill: "currentColor",
+          version: "1.1",
+          baseProfile: "tiny",
+          id: "Layer_1",
+          "xmlns:x": "&ns_extend;",
+          "xmlns:i": "&ns_ai;",
+          "xmlns:graph": "&ns_graphs;",
+          xmlns: "http://www.w3.org/2000/svg",
+          "xmlns:xlink": "http://www.w3.org/1999/xlink",
+          "xmlns:a": "http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/",
+          width: "16px",
+          height: "16px",
+          viewBox: "0 0 42 42",
+          "xml:space": "preserve"
+        },
+        /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " })
+      )));
+    }
+    function Messages41() {
+      return /* @__PURE__ */ k("div", { onClick: () => window.open("/internal_messages", "_self"), style: { width: `${previewWidth}px`, height: `${previewHeight}px` }, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k("div", { className: "titleIcon" }, /* @__PURE__ */ k(
+        "svg",
+        {
+          fill: "currentColor",
+          version: "1.1",
+          id: "Capa_1",
+          xmlns: "http://www.w3.org/2000/svg",
+          "xmlns:xlink": "http://www.w3.org/1999/xlink",
+          width: "20px",
+          height: "20px",
+          viewBox: "0 0 50.215 50.215",
+          "xml:space": "preserve"
+        },
+        /* @__PURE__ */ k("g", null, /* @__PURE__ */ k("path", { d: "M25.108,0C11.357,0,0.171,9.396,0.171,20.946c0,6.226,3.339,12.146,9.01,16.104c-0.18,3.082-2.679,7.061-3.664,8.358\n		c-0.686,0.903-0.803,2.121-0.301,3.14c0.506,1.02,1.545,1.666,2.683,1.666c6.839,0,14.323-5.353,17.957-8.33\n		c13.403-0.334,24.188-9.599,24.188-20.938C50.044,9.396,38.858,0,25.108,0z M25.12,35.906h-0.003\n		c-0.82-0.057-1.662,0.168-2.291,0.707c-2.559,2.191-5.783,4.473-8.912,5.96c0.938-2.38,1.565-5.128,1.1-7.738\n		c-0.15-0.846-0.659-1.587-1.395-2.032c-4.742-2.877-7.463-7.199-7.463-11.856c0-8.249,8.502-14.961,18.952-14.961\n		c10.449,0,18.951,6.712,18.951,14.961S35.56,35.906,25.12,35.906z" }))
+      )), /* @__PURE__ */ k("h1", null, "Wiadomo\u015Bci"), /* @__PURE__ */ k(
+        "svg",
+        {
+          className: "titleArrow",
+          fill: "currentColor",
+          version: "1.1",
+          baseProfile: "tiny",
+          id: "Layer_1",
+          "xmlns:x": "&ns_extend;",
+          "xmlns:i": "&ns_ai;",
+          "xmlns:graph": "&ns_graphs;",
+          xmlns: "http://www.w3.org/2000/svg",
+          "xmlns:xlink": "http://www.w3.org/1999/xlink",
+          "xmlns:a": "http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/",
+          width: "16px",
+          height: "16px",
+          viewBox: "0 0 42 42",
+          "xml:space": "preserve"
+        },
+        /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " })
+      )));
+    }
+    const contentVariants = {
+      "21": Messages21,
+      "41": Messages41
+    };
+    const Variant = contentVariants[`${width}${height}`] || Messages21;
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: "messagesWidget", "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k(
       "div",
       {
         className: "inner-widget",
@@ -3453,6 +3547,143 @@
     ));
   }
 
+  // src/content/components/widgets/parentLinks.jsx
+  function TitleArrow() {
+    return /* @__PURE__ */ k("svg", { className: "titleArrow", fill: "currentColor", xmlns: "http://www.w3.org/2000/svg", width: "16px", height: "16px", viewBox: "0 0 42 42" }, /* @__PURE__ */ k("polygon", { "fill-rule": "evenodd", points: "13.933,1 34,21.068 14.431,40.637 9.498,35.704 24.136,21.068 9,5.933 " }));
+  }
+  var ICONS = {
+    justify: /* @__PURE__ */ k("svg", { width: "22px", height: "22px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M9 15L11 17L15 13M8 4H6.8C5.11984 4 4.27976 4 3.63803 4.32698C3.07354 4.6146 2.6146 5.07354 2.32698 5.63803C2 6.27976 2 7.11984 2 8.8V17.2C2 18.8802 2 19.7202 2.32698 20.362C2.6146 20.9265 3.07354 21.3854 3.63803 21.673C4.27976 22 5.11984 22 6.8 22H17.2C18.8802 22 19.7202 22 20.362 21.673C20.9265 21.3854 21.3854 20.9265 21.673 20.362C22 19.7202 22 18.8802 22 17.2V8.8C22 7.11984 22 6.27976 21.673 5.63803C21.3854 5.07354 20.9265 4.6146 20.362 4.32698C19.7202 4 18.8802 4 17.2 4H16M8 4V3M8 4V5M16 4V3M16 4V5M8 4H16", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" })),
+    documents: /* @__PURE__ */ k("svg", { width: "22px", height: "22px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M14 2.26946V6.4C14 6.96005 14 7.24008 14.109 7.45399C14.2049 7.64215 14.3578 7.79513 14.546 7.89101C14.7599 8 15.0399 8 15.6 8H19.7305M16 13H8M16 17H8M10 9H8M14 2H8.8C7.11984 2 6.27976 2 5.63803 2.32698C5.07354 2.6146 4.6146 3.07354 4.32698 3.63803C4 4.27976 4 5.11984 4 6.8V17.2C4 18.8802 4 19.7202 4.32698 20.362C4.6146 20.9265 5.07354 21.3854 5.63803 21.673C6.27976 22 7.11984 22 8.8 22H15.2C16.8802 22 17.7202 22 18.362 21.673C18.9265 21.3854 19.3854 20.9265 19.673 20.362C20 19.7202 20 18.8802 20 17.2V8L14 2Z", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" })),
+    calendar: /* @__PURE__ */ k("svg", { width: "22px", height: "22px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M3 10H21M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" })),
+    child: /* @__PURE__ */ k("svg", { width: "22px", height: "22px", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg" }, /* @__PURE__ */ k("path", { d: "M20 21C20 19.6044 20 18.9067 19.8278 18.3389C19.44 17.0605 18.4395 16.06 17.1611 15.6722C16.5933 15.5 15.8956 15.5 14.5 15.5H9.5C8.10444 15.5 7.40665 15.5 6.83886 15.6722C5.56045 16.06 4.56004 17.0605 4.17224 18.3389C4 18.9067 4 19.6044 4 21M16.5 7.5C16.5 9.98528 14.4853 12 12 12C9.51472 12 7.5 9.98528 7.5 7.5C7.5 5.01472 9.51472 3 12 3C14.4853 3 16.5 5.01472 16.5 7.5Z", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }))
+  };
+  function go(href) {
+    if (href) window.open(href, "_self");
+  }
+  function useSmallWidget(widgetId, moveWidget2, possibleLayout, defaultSize) {
+    const resize = useWidgetResize(possibleLayout, widgetId, 16, possibleLayout[possibleLayout.length - 1], false, defaultSize);
+    useWidgetDragging(resize.widgetRef, resize.previewWidth, resize.previewHeight, resize.resizingRef, resize.resizeZoneRef, moveWidget2, widgetId);
+    return resize;
+  }
+  function SmallTitle({ title, icon, onClick, style }) {
+    return /* @__PURE__ */ k("div", { onClick, style, className: "widget-content-container" }, /* @__PURE__ */ k("div", { className: "small-title-box" }, icon && /* @__PURE__ */ k("div", { className: "titleIcon" }, icon), /* @__PURE__ */ k("h1", null, title), /* @__PURE__ */ k(TitleArrow, null)));
+  }
+  function WidgetShell({ resize, widgetId, elementId, children }) {
+    const { width, height, previewWidth, previewHeight, widgetRef, resizeZoneRef } = resize;
+    return /* @__PURE__ */ k("div", { ref: widgetRef, id: elementId, "data-widget-id": widgetId, className: `widget w${width} h${height} ${window.editMode ? "edit-mode" : ""}` }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { width: `${previewWidth}px`, height: `${previewHeight}px`, position: "relative" } }, children, /* @__PURE__ */ k("div", { ref: resizeZoneRef, className: "resize-zone" })));
+  }
+  function JustifyAbsence({ widgetId, moveWidget: moveWidget2, data }) {
+    const resize = useSmallWidget(widgetId, moveWidget2, [
+      { w: 2, h: 1 },
+      { w: 4, h: 1 },
+      { w: 2, h: 2 }
+    ], { w: 2, h: 1 });
+    const { width, height, previewWidth, previewHeight } = resize;
+    const size = { width: `${previewWidth}px`, height: `${previewHeight}px` };
+    const newHref = data.justifyNewUrl || "/justify_absence_requests/new";
+    const listHref = data.justifyListUrl || "/justify_absence_requests";
+    const sent = data.justifyRequests || [];
+    let content;
+    if (width === 2 && height === 2) {
+      content = /* @__PURE__ */ k("div", { style: size, className: "widget-content-container parent-justify" }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, "Usprawie\xADdliwienia")), /* @__PURE__ */ k("div", { className: "parent-widget-muted" }, sent.length ? `Wys\u0142ane pro\u015Bby: ${sent.length}` : "Brak wys\u0142anych pr\xF3\u015Bb"), /* @__PURE__ */ k("div", { className: "parent-actions" }, /* @__PURE__ */ k("a", { className: "parent-action primary", href: newHref }, "Nowa pro\u015Bba"), /* @__PURE__ */ k("a", { className: "parent-action", href: listHref }, "Wszystkie")));
+    } else if (width === 4) {
+      content = /* @__PURE__ */ k(SmallTitle, { style: size, icon: ICONS.justify, title: "Usprawiedliw nieobecno\u015B\u0107", onClick: () => go(newHref) });
+    } else {
+      content = /* @__PURE__ */ k(SmallTitle, { style: size, title: "Usprawie\xADdliwienia", onClick: () => go(newHref) });
+    }
+    return /* @__PURE__ */ k(WidgetShell, { resize, widgetId, elementId: "justifyWidget" }, content);
+  }
+  function Documents({ widgetId, moveWidget: moveWidget2, data }) {
+    const resize = useSmallWidget(widgetId, moveWidget2, [
+      { w: 2, h: 1 },
+      { w: 4, h: 1 }
+    ], { w: 2, h: 1 });
+    const { width, previewWidth, previewHeight } = resize;
+    const size = { width: `${previewWidth}px`, height: `${previewHeight}px` };
+    const href = data.documentsUrl || "/documents/attachments";
+    return /* @__PURE__ */ k(WidgetShell, { resize, widgetId, elementId: "documentsWidget" }, /* @__PURE__ */ k(SmallTitle, { style: size, icon: width === 4 ? ICONS.documents : null, title: "Dokumenty", onClick: () => go(href) }));
+  }
+
+  // src/content/components/widgets/children.jsx
+  var QUICK_LINKS = [
+    ["presencesUrl", "Obecno\u015Bci"],
+    ["gradesUrl", "Oceny"],
+    ["paymentsUrl", "P\u0142atno\u015Bci"],
+    ["filesUrl", "Pliki PZO"]
+  ];
+  function ChildAvatar({ child }) {
+    const imgRef = A2(null);
+    y2(() => {
+      if (imgRef.current) window.upgradeProfileImage?.(imgRef.current, child.fullName || child.name);
+    }, [child.avatar, child.fullName]);
+    return /* @__PURE__ */ k("div", { className: "parent-child-avatar" }, child.avatar ? /* @__PURE__ */ k("img", { ref: imgRef, src: child.avatar, alt: "" }) : /* @__PURE__ */ k("span", null, (child.name || "?").charAt(0)));
+  }
+  function ChildRow({ child, links = 0 }) {
+    const quickLinks = QUICK_LINKS.filter(([key]) => child[key]).slice(0, links);
+    return /* @__PURE__ */ k("div", { className: "parent-child" }, /* @__PURE__ */ k("div", { className: "parent-child-head" }, /* @__PURE__ */ k(ChildAvatar, { child }), /* @__PURE__ */ k("div", { className: "parent-child-text" }, /* @__PURE__ */ k("a", { href: child.url, className: "parent-child-name" }, child.fullName || child.name), child.className && /* @__PURE__ */ k("span", { className: "parent-child-class" }, child.className))), quickLinks.length > 0 && /* @__PURE__ */ k("div", { className: "parent-child-links" }, quickLinks.map(([key, label]) => /* @__PURE__ */ k("div", { key, className: "widget-subject-box" }, /* @__PURE__ */ k("a", { href: child[key] }, label)))));
+  }
+  function Children({ widgetId, moveWidget: moveWidget2, data }) {
+    const children = data.children || [];
+    const possibleLayout = [
+      { w: 2, h: 1 },
+      { w: 4, h: 1 },
+      { w: 2, h: 2 },
+      { w: 4, h: 2 }
+    ];
+    const resize = useWidgetResize(possibleLayout, widgetId, 16, { w: 4, h: 2 }, false, { w: 4, h: 1 });
+    useWidgetDragging(resize.widgetRef, resize.previewWidth, resize.previewHeight, resize.resizingRef, resize.resizeZoneRef, moveWidget2, widgetId);
+    const { width, height, previewWidth, previewHeight } = resize;
+    const size = { width: `${previewWidth}px`, height: `${previewHeight}px` };
+    const first = children[0];
+    let content;
+    if (!first) {
+      content = /* @__PURE__ */ k(SmallTitle, { style: size, icon: width === 4 ? ICONS.child : null, title: "Dzieci" });
+    } else if (height === 1) {
+      content = /* @__PURE__ */ k("div", { style: size, className: "widget-content-container parent-children-small", onClick: () => go(first.url) }, /* @__PURE__ */ k("div", { className: "small-title-box" }, /* @__PURE__ */ k(ChildAvatar, { child: first }), /* @__PURE__ */ k("div", { className: "parent-child-text" }, /* @__PURE__ */ k("h1", null, width === 4 ? first.fullName || first.name : first.name), width === 4 && first.className && /* @__PURE__ */ k("span", { className: "parent-child-class" }, first.className)), children.length > 1 && /* @__PURE__ */ k("span", { className: "parent-child-more" }, "+", children.length - 1), /* @__PURE__ */ k(TitleArrow, null)));
+    } else {
+      content = /* @__PURE__ */ k("div", { style: size, className: `widget-content-container parent-children-list${children.length === 1 ? " single" : ""}` }, /* @__PURE__ */ k("div", { className: "widget-title-box" }, /* @__PURE__ */ k("h1", null, children.length > 1 ? "Dzieci" : "Twoje dziecko")), children.slice(0, width === 4 ? 2 : 1).map((child) => /* @__PURE__ */ k(ChildRow, { key: child.url, child, links: children.length > 1 && width === 2 ? 2 : 4 })));
+    }
+    return /* @__PURE__ */ k(WidgetShell, { resize, widgetId, elementId: "childrenWidget" }, content);
+  }
+
+  // src/content/components/widgets/calendarEvents.jsx
+  function EventRow({ item, isLast }) {
+    const linkRef = A2(null);
+    const href = item.detailsUrl || "";
+    y2(() => {
+      if (!href || !linkRef.current || !window.jQuery?.fn?.fancybox) return;
+      window.jQuery(linkRef.current).fancybox({});
+    }, [href]);
+    const fallbackHref = window.jQuery?.fn?.fancybox ? href : href.replace(/[?&]layout=none/, "");
+    return /* @__PURE__ */ k("div", { className: `widget-news-box parent-event ${isLast ? "last" : ""}` }, /* @__PURE__ */ k("div", { className: "widget-news-box-date" }, /* @__PURE__ */ k("span", { className: "widget-news-box-date-day" }, item.day.slice(0, 2)), /* @__PURE__ */ k("br", null), /* @__PURE__ */ k("span", { className: "widget-news-box-date-month" }, item.day.slice(3, 6))), /* @__PURE__ */ k("a", { ref: linkRef, href: fallbackHref || void 0, className: href ? "fancybox" : "" }, item.title, /* @__PURE__ */ k("br", null), /* @__PURE__ */ k("span", { className: "widget-news-box-comments" }, item.time || "ca\u0142y dzie\u0144")));
+  }
+  function CalendarEvents({ widgetId, moveWidget: moveWidget2, data }) {
+    const events = data.events || [];
+    const calendarHref = data.calendarUrl || "/calendar";
+    const possibleLayout = [
+      { w: 4, h: 2 },
+      { w: 2, h: 2 },
+      { w: 2, h: 4 },
+      { w: 4, h: 4 },
+      { w: 2, h: 1 },
+      { w: 4, h: 1 }
+    ];
+    const resize = useWidgetResize(possibleLayout, widgetId, 16, { w: 4, h: 6 }, true, { w: 4, h: 2 });
+    useWidgetDragging(resize.widgetRef, resize.previewWidth, resize.previewHeight, resize.resizingRef, resize.resizeZoneRef, moveWidget2, widgetId);
+    const { width, height, previewWidth, previewHeight } = resize;
+    const size = { width: `${previewWidth}px`, height: `${previewHeight}px` };
+    if (height === 1) {
+      const next = events[0];
+      const title = width === 4 && next ? next.title : "Wydarzenia";
+      return /* @__PURE__ */ k(WidgetShell, { resize, widgetId, elementId: "calendarEventsWidget" }, /* @__PURE__ */ k("div", { style: size, className: "widget-content-container parent-events-small", onClick: () => go(calendarHref) }, /* @__PURE__ */ k("div", { className: "small-title-box" }, width === 4 && /* @__PURE__ */ k("div", { className: "titleIcon" }, ICONS.calendar), /* @__PURE__ */ k("div", { className: "parent-child-text" }, /* @__PURE__ */ k("h1", null, title), width === 4 && next && /* @__PURE__ */ k("span", { className: "parent-child-class" }, next.date)), /* @__PURE__ */ k(TitleArrow, null))));
+    }
+    const limits = { "22": 2, "42": 2, "24": 5, "44": 8, "46": 12 };
+    const limit = limits[`${width}${height}`] || 2;
+    const visible = events.slice(0, limit);
+    const showGradient = height >= 4;
+    return /* @__PURE__ */ k(WidgetShell, { resize, widgetId, elementId: "calendarEventsWidget" }, /* @__PURE__ */ k("div", { style: size, className: "widget-content-container parent-events" }, /* @__PURE__ */ k("div", { className: "widget-title-box", style: { marginBottom: "var(--padding-1)" } }, /* @__PURE__ */ k("h1", null, "Wydarzenia"), /* @__PURE__ */ k(TitleArrow, null)), visible.length === 0 && /* @__PURE__ */ k("div", { className: "parent-widget-muted" }, "Brak nadchodz\u0105cych wydarze\u0144"), visible.map((item, index) => /* @__PURE__ */ k(EventRow, { key: `${item.detailsUrl}-${index}`, item, isLast: index === visible.length - 1 })), showGradient && visible.length > 0 && /* @__PURE__ */ k("div", { className: "widget-news-gradient" }), height >= 4 && /* @__PURE__ */ k("a", { className: "grades-all-link", href: calendarHref }, "Kalendarz")));
+  }
+
   // src/content/components/mainContent.jsx
   window.editMode = false;
   var widgetRegistry = {
@@ -3464,7 +3695,13 @@
     attendance: Attendance,
     comingEvents: ComingEvents,
     reviews: LastReviews,
-    homework: LastHomeWork
+    homework: LastHomeWork,
+    messages: Messages,
+    // Parents' home page only.
+    children: Children,
+    calendarEvents: CalendarEvents,
+    justifyAbsence: JustifyAbsence,
+    documents: Documents
   };
   var initialWidgets = [
     { id: "grades", type: "grades" },
@@ -3488,6 +3725,22 @@
     ];
   }
   var widgetLayoutStorageKey = "mainContent.widgetOrder";
+  var parentWidgets = [
+    { id: "parent-children", type: "children" },
+    { id: "parent-grades", type: "grades" },
+    { id: "parent-schedule", type: "schedule" },
+    { id: "parent-justify", type: "justifyAbsence" },
+    { id: "parent-attendance", type: "attendance" },
+    { id: "parent-events", type: "calendarEvents" },
+    { id: "parent-news", type: "news" },
+    { id: "parent-messages", type: "messages" },
+    { id: "parent-reviews", type: "reviews" },
+    { id: "parent-documents", type: "documents" }
+  ];
+  var parentWidgetLayoutStorageKey = "mainContent.parentWidgetOrder";
+  function layoutConfig(data) {
+    return data?.isParent ? { defaults: parentWidgets, storageKey: parentWidgetLayoutStorageKey } : { defaults: initialWidgets, storageKey: widgetLayoutStorageKey };
+  }
   function moveWidget(list, movedId, targetId) {
     if (movedId === targetId) return list;
     const updated = [...list];
@@ -3513,34 +3766,35 @@
   function PlaceholderWidget({ widgetId, width = 2, height = 2 }) {
     return /* @__PURE__ */ k("div", { "data-widget-id": widgetId, className: `widget w${width} h${height}` }, /* @__PURE__ */ k("div", { className: "inner-widget", style: { width: "100%", height: "100%" } }));
   }
-  function saveWidgetLayout(widgets) {
+  function saveWidgetLayout(widgets, storageKey = widgetLayoutStorageKey) {
     localStorage.setItem(
-      widgetLayoutStorageKey,
+      storageKey,
       JSON.stringify(widgets.map((widget) => widget.id))
     );
   }
-  function loadWidgetLayout() {
-    const raw = localStorage.getItem(widgetLayoutStorageKey);
-    if (!raw) return initialWidgets;
+  function loadWidgetLayout(defaults = initialWidgets, storageKey = widgetLayoutStorageKey) {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return defaults;
     try {
       const savedIds = JSON.parse(raw);
-      if (!Array.isArray(savedIds)) return initialWidgets;
-      const widgetMap = new Map(initialWidgets.map((widget) => [widget.id, widget]));
+      if (!Array.isArray(savedIds)) return defaults;
+      const widgetMap = new Map(defaults.map((widget) => [widget.id, widget]));
       const orderedWidgets = savedIds.map((id) => widgetMap.get(id)).filter(Boolean);
-      const missingWidgets = initialWidgets.filter((widget) => !savedIds.includes(widget.id));
+      const missingWidgets = defaults.filter((widget) => !savedIds.includes(widget.id));
       return [...orderedWidgets, ...missingWidgets];
     } catch {
-      return initialWidgets;
+      return defaults;
     }
   }
   function MainContent({ data }) {
-    const [widgets, setWidgets] = d2(loadWidgetLayout);
+    const { defaults, storageKey } = layoutConfig(data);
+    const [widgets, setWidgets] = d2(() => loadWidgetLayout(defaults, storageKey));
     const [openPopupId, setOpenPopupId] = d2(null);
     const popupContainerRef = A2(null);
     const gridRef = A2(null);
     const reflowSnapshotRef = A2(null);
     y2(() => {
-      saveWidgetLayout(widgets);
+      saveWidgetLayout(widgets, storageKey);
     }, [widgets]);
     y2(() => {
       maybeStartTutorial();
@@ -3626,7 +3880,7 @@
         }
       );
     }
-    return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("div", { className: "widgets-grid", ref: gridRef }, widgets.map(renderWidget)));
+    return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("div", { className: `widgets-grid${data?.isParent ? " parent-widgets" : ""}`, ref: gridRef }, widgets.map(renderWidget)));
   }
 
   // node_modules/preact/compat/dist/compat.module.js

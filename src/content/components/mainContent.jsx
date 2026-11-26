@@ -10,6 +10,9 @@ import { Messages } from './widgets/messages.jsx';
 import { ComingEvents } from './widgets/comingEvents.jsx';
 import { LastReviews } from './widgets/lastReviews.jsx';
 import { LastHomeWork } from './widgets/lastHomeWork.jsx';
+import { Children } from './widgets/children.jsx';
+import { CalendarEvents } from './widgets/calendarEvents.jsx';
+import { JustifyAbsence, Documents } from './widgets/parentLinks.jsx';
 import { maybeStartTutorial } from './tutorial.jsx';
 import { REFLOW_DURATION, REFLOW_EASING, prefersReducedMotion } from './widgets/widgetMotion.js';
 
@@ -24,6 +27,12 @@ const widgetRegistry = {
 	comingEvents: ComingEvents,
 	reviews: LastReviews,
 	homework: LastHomeWork,
+	messages: Messages,
+	// Parents' home page only.
+	children: Children,
+	calendarEvents: CalendarEvents,
+	justifyAbsence: JustifyAbsence,
+	documents: Documents,
 };
 
 let initialWidgets = [
@@ -48,6 +57,28 @@ if (window.__IDU_MOCK_DATA) {
 	];
 }
 const widgetLayoutStorageKey = 'mainContent.widgetOrder';
+
+// Parents' home page: shared widgets reuse the student components, with their
+// own ids so their sizes and order are saved separately from a student's.
+const parentWidgets = [
+	{ id: 'parent-children', type: 'children' },
+	{ id: 'parent-grades', type: 'grades' },
+	{ id: 'parent-schedule', type: 'schedule' },
+	{ id: 'parent-justify', type: 'justifyAbsence' },
+	{ id: 'parent-attendance', type: 'attendance' },
+	{ id: 'parent-events', type: 'calendarEvents' },
+	{ id: 'parent-news', type: 'news' },
+	{ id: 'parent-messages', type: 'messages' },
+	{ id: 'parent-reviews', type: 'reviews' },
+	{ id: 'parent-documents', type: 'documents' },
+];
+const parentWidgetLayoutStorageKey = 'mainContent.parentWidgetOrder';
+
+function layoutConfig(data) {
+	return data?.isParent
+		? { defaults: parentWidgets, storageKey: parentWidgetLayoutStorageKey }
+		: { defaults: initialWidgets, storageKey: widgetLayoutStorageKey };
+}
 
 function moveWidget(list, movedId, targetId) {
 	if (movedId === targetId) return list;
@@ -86,33 +117,34 @@ function PlaceholderWidget({ widgetId, width = 2, height = 2 }) {
 	);
 }
 
-function saveWidgetLayout(widgets) {
+function saveWidgetLayout(widgets, storageKey = widgetLayoutStorageKey) {
 	localStorage.setItem(
-		widgetLayoutStorageKey,
+		storageKey,
 		JSON.stringify(widgets.map((widget) => widget.id))
 	);
 }
 
-function loadWidgetLayout() {
-	const raw = localStorage.getItem(widgetLayoutStorageKey);
-	if (!raw) return initialWidgets;
+function loadWidgetLayout(defaults = initialWidgets, storageKey = widgetLayoutStorageKey) {
+	const raw = localStorage.getItem(storageKey);
+	if (!raw) return defaults;
 
 	try {
 		const savedIds = JSON.parse(raw);
-		if (!Array.isArray(savedIds)) return initialWidgets;
+		if (!Array.isArray(savedIds)) return defaults;
 
-		const widgetMap = new Map(initialWidgets.map((widget) => [widget.id, widget]));
+		const widgetMap = new Map(defaults.map((widget) => [widget.id, widget]));
 		const orderedWidgets = savedIds.map((id) => widgetMap.get(id)).filter(Boolean);
-		const missingWidgets = initialWidgets.filter((widget) => !savedIds.includes(widget.id));
+		const missingWidgets = defaults.filter((widget) => !savedIds.includes(widget.id));
 
 		return [...orderedWidgets, ...missingWidgets];
 	} catch {
-		return initialWidgets;
+		return defaults;
 	}
 }
 
 export function MainContent({data}) {
-	const [widgets, setWidgets] = useState(loadWidgetLayout);
+	const { defaults, storageKey } = layoutConfig(data);
+	const [widgets, setWidgets] = useState(() => loadWidgetLayout(defaults, storageKey));
 	const [openPopupId, setOpenPopupId] = useState(null);
 	const popupContainerRef = useRef(null);
 	const gridRef = useRef(null);
@@ -120,7 +152,7 @@ export function MainContent({data}) {
 	const reflowSnapshotRef = useRef(null);
 
 	useEffect(() => {
-		saveWidgetLayout(widgets);
+		saveWidgetLayout(widgets, storageKey);
 	}, [widgets]);
 
 	// First-run tutorial (shown once; replayable from Settings).
@@ -229,7 +261,7 @@ export function MainContent({data}) {
 
 	return (
 		<div>
-			<div className="widgets-grid" ref={gridRef}>
+			<div className={`widgets-grid${data?.isParent ? ' parent-widgets' : ''}`} ref={gridRef}>
 				{widgets.map(renderWidget)}
 			</div>
 		</div>

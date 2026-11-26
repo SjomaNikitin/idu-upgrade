@@ -72,7 +72,16 @@ if (!window.__iduContentBootstrapRegistered) {
 			});
 			console.log("Synced schedule to app");
 		}
-		if (!document.querySelector("a[href='/justify_absence_requests/new']")) {
+		// Parents' home ("/" too): same widget grid, built from the parent modules.
+		if (!mockData && isParentHomePage()) {
+			const parentData = extractParentHomeData();
+			const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader(parentData);
+			console.log("Custom header loaded:", customHeaderLoaded)
+			const customFooterLoaded = typeof replaceFooter === "function" && replaceFooter();
+			console.log("Custom footer loaded:", customFooterLoaded)
+			const customContentLoaded = typeof replaceMainContent === "function" && replaceMainContent(parentData);
+			console.log("Custom parent content loaded:", customContentLoaded)
+		} else if (!document.querySelector("a[href='/justify_absence_requests/new']")) {
 			const customHeaderLoaded = typeof replaceHeader === "function" && replaceHeader(pageData);
 			console.log("Custom header loaded:", customHeaderLoaded)
 			const customFooterLoaded = typeof replaceFooter === "function" && replaceFooter();

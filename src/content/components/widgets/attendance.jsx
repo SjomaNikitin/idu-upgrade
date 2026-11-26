@@ -101,7 +101,8 @@ export function AttendanceChart({width = "100%", seeMoreUrl, mockData = false}) 
 		let cancelled = false;
 
 		async function loadStats() {
-			const data = await fetchAttendanceStats(seeMoreUrl);
+			const data = seeMoreUrl ? await fetchAttendanceStats(seeMoreUrl) : null;
+			if (!data) return;
 			data.lateness = normalizePercentage(data.lateness);
 			data.absence = normalizePercentage(data.absence);
 			data.presence = normalizePercentage(data.presence);
@@ -148,7 +149,7 @@ export function AttendanceChart({width = "100%", seeMoreUrl, mockData = false}) 
 
 export function Attendance({ widgetId, moveWidget, data }) {
 	const attendance = data.attendance;
-	const mockData = data.attendance[0].mockData;
+	const mockData = Boolean(data.attendance[0]?.mockData);
 	let possibleLayout;
 	if (mockData) {
 		possibleLayout = [

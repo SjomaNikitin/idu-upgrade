@@ -5066,3 +5066,166 @@ html[data-theme="Christmas"] .mail-compose input[type=submit] {
 html[data-theme="Christmas"] .mail-compose ::placeholder {
 	color: rgb(255 228 163 / 0.5);
 }
+
+/* Parents' home page widgets (Dzieci, Wydarzenia, Usprawiedliwienia, Dokumenty).
+   Built from the student widget classes; only the new bits live here. */
+@media (max-width: 500px) {
+	.parent-child-avatar {
+		flex: 0 0 auto;
+		width: calc(var(--padding-4) + var(--padding-1) / 2);
+		height: calc(var(--padding-4) + var(--padding-1) / 2);
+		margin-right: var(--padding-1);
+		border-radius: 100%;
+		overflow: hidden;
+		background-color: var(--title-icon-bg);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+		span {
+			font-weight: bold;
+			color: var(--main-text-color);
+		}
+	}
+
+	.parent-child-text {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		flex: 1 1 auto;
+		h1 {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	}
+
+	.parent-child-class {
+		font-size: 0.8rem;
+		color: var(--mc);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.parent-child-more {
+		flex: 0 0 auto;
+		margin: 0 var(--padding-1);
+		padding: 2px 8px;
+		border-radius: 999px;
+		font-size: 0.8rem;
+		font-weight: bold;
+		background-color: var(--news-date-bg);
+		color: var(--main-text-color);
+	}
+
+	.parent-children-list {
+		gap: var(--padding-1);
+		overflow: hidden;
+	}
+
+	.parent-child {
+		display: flex;
+		flex-direction: column;
+		gap: var(--padding-1);
+		width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
+		padding: var(--padding-1);
+		border-radius: var(--padding-1);
+		background-color: var(--grades-box-bg);
+	}
+
+	.widget.w4 .parent-child {
+		width: calc(50% - var(--padding-1) / 2);
+	}
+
+	.widget.w4 .parent-children-list.single .parent-child {
+		width: 100%;
+	}
+
+	.parent-child-head {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+	}
+
+	.parent-child-head .parent-child-avatar {
+		width: calc(var(--padding-2) * 3);
+		height: calc(var(--padding-2) * 3);
+		border-radius: var(--padding-1);
+	}
+
+	.parent-child-name[href] {
+		font-weight: bold;
+		font-size: 1rem;
+		color: var(--main-text-color) !important;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.parent-child-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		.widget-subject-box {
+			padding: 4px 10px;
+		}
+		.widget-subject-box a[href] {
+			font-size: 0.8rem;
+		}
+	}
+
+	.parent-widget-muted {
+		margin: 0;
+		font-size: 0.85rem !important;
+		line-height: 1.3;
+		color: var(--mc);
+	}
+
+	.parent-justify {
+		gap: var(--padding-1);
+	}
+
+	.parent-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		width: 100%;
+		margin-top: auto;
+	}
+
+	.parent-action {
+		display: block;
+		box-sizing: border-box;
+		width: 100%;
+		padding: 6px 10px;
+		border-radius: var(--padding-1);
+		border: 1px solid var(--module-border-color);
+		background-color: var(--grades-box-bg);
+		color: var(--main-text-color) !important;
+		font-size: 0.85rem !important;
+		line-height: 1.2 !important;
+		font-weight: bold;
+		text-align: center;
+		text-decoration: none;
+	}
+
+	.parent-action.primary {
+		background-color: var(--news-date-bg);
+	}
+
+	.parent-event > a {
+		text-decoration: none !important;
+	}
+
+	.parent-event .widget-news-box-comments {
+		text-decoration: none;
+	}
+}
